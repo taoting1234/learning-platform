@@ -1,8 +1,9 @@
+from flask_login import current_user, login_required
 from flask_restful import Resource, abort, marshal_with
 
 from app.fields.user import user_fields
 from app.models.user import User
-from app.parsers.user import user_register_parser
+from app.parsers.user import user_modify_parser, user_register_parser
 
 
 class ResourceUser(Resource):
@@ -20,3 +21,18 @@ class ResourceUser(Resource):
             abort(400, message='User already exist')
         User.create(**args)
         return {'message': 'Create user success'}, 201
+
+    @login_required
+    def put(self, id_):
+        if current_user.get_id() != str(id_):
+            abort(403)
+        user = User.get_by_id(id_)
+        if user is None:
+            abort(404, message='User not found')
+        args = user_modify_parser.parse_args()
+        if args['password'] and user.check_password(
+            args['old_password']
+        ) is not True:
+            abort(400, message='Old password Wrong')
+        user.modify(**args)
+        return {'message': 'Modify user success'}, 201

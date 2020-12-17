@@ -7,3 +7,7 @@ user_register_parser.add_argument(
 user_register_parser.add_argument(
     'password', type=str, required=True, help='Password cannot be empty'
 )
+
+user_modify_parser = reqparse.RequestParser()
+user_modify_parser.add_argument('password', type=str)
+user_modify_parser.add_argument('old_password', type=str)

@@ -21,7 +21,7 @@ class User(UserMixin, Base):
         self._password = generate_password_hash(raw)
 
     def check_password(self, raw):
-        if not self._password:
+        if not self._password or not raw:
             return False
         return check_password_hash(self._password, raw)
 

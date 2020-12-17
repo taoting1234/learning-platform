@@ -3,12 +3,11 @@ import platform
 from flask import Flask
 from flask_cors import CORS
 from flask_login import LoginManager
-from flask_restful import Api
+from flask_restful import Api, abort
 
 from app import config
 from app.models.base import db
 
-api = Api(catch_all_404s=True)
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
 
@@ -22,9 +21,6 @@ def create_app():
 
 
 def register_plugin(app):
-    # 注册restful
-    api.init_app(app)
-
     # 注册sqlalchemy
     db.init_app(app)
 
@@ -42,6 +38,10 @@ def register_plugin(app):
     def load_user(id_):
         return User.get_by_id(id_)
 
+    @login_manager.unauthorized_handler
+    def unauthorized_handler():
+        abort(401)
+
     login_manager.init_app(app)
 
     return app
@@ -50,8 +50,10 @@ def register_plugin(app):
 def register_resource(app):
     from app.resources.session import ResourceSession
     from app.resources.user import ResourceUser
+    api = Api(catch_all_404s=True)
     api.add_resource(ResourceSession, '/session')
     api.add_resource(ResourceUser, '/user', '/user/<int:id_>')
+    api.init_app(app)
     return app
 
 
