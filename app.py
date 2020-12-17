@@ -1,3 +1,5 @@
+import platform
+
 from flask import Flask
 from flask_cors import CORS
 from flask_login import LoginManager
@@ -54,4 +56,7 @@ def register_resource(app):
 
 if __name__ == '__main__':
     flask_app = create_app()
-    flask_app.run(host="0.0.0.0", port=5000, debug=True)
+    if platform.system() == 'Linux':
+        flask_app.run(host="0.0.0.0", port=5000, debug=False)
+    else:
+        flask_app.run(host="0.0.0.0", port=5000, debug=True)
