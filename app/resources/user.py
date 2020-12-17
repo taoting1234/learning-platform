@@ -1,8 +1,8 @@
 from flask_restful import Resource, abort, marshal_with
 
-from fields.user import user_fields
-from models.user import User
-from parsers.user import user_register_parser
+from app.fields.user import user_fields
+from app.models.user import User
+from app.parsers.user import user_register_parser
 
 
 class ResourceUser(Resource):

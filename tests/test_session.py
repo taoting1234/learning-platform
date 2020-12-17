@@ -1,14 +1,15 @@
 import pytest
 from flask import Flask
 
-from app import register_plugin, register_resource
-from models.user import User
+from app import config
+from app.models.user import User
+from flask_app import register_plugin, register_resource
 
 
 @pytest.fixture
 def client():
     app = Flask(__name__)
-    app.config.from_object('config')
+    app.config.from_object(config)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
     app.config['TESTING'] = True
     register_resource(app)

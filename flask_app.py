@@ -5,7 +5,8 @@ from flask_cors import CORS
 from flask_login import LoginManager
 from flask_restful import Api
 
-from models.base import db
+from app import config
+from app.models.base import db
 
 api = Api(catch_all_404s=True)
 cors = CORS(supports_credentials=True)
@@ -14,7 +15,7 @@ login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object('config')
+    app.config.from_object(config)
     register_resource(app)
     register_plugin(app)
     return app
@@ -35,7 +36,7 @@ def register_plugin(app):
     cors.init_app(app)
 
     # 注册用户管理器
-    from models.user import User
+    from app.models.user import User
 
     @login_manager.user_loader
     def load_user(id_):
@@ -47,8 +48,8 @@ def register_plugin(app):
 
 
 def register_resource(app):
-    from resources.session import ResourceSession
-    from resources.user import ResourceUser
+    from app.resources.session import ResourceSession
+    from app.resources.user import ResourceUser
     api.add_resource(ResourceSession, '/session')
     api.add_resource(ResourceUser, '/user', '/user/<int:id_>')
     return app

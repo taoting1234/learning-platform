@@ -1,9 +1,9 @@
 from flask_login import current_user, login_user, logout_user
 from flask_restful import Resource, abort, marshal_with
 
-from fields.user import user_fields
-from models.user import User
-from parsers.session import session_parser
+from app.fields.user import user_fields
+from app.models.user import User
+from app.parsers.session import session_parser
 
 
 class ResourceSession(Resource):
