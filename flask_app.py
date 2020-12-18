@@ -6,8 +6,6 @@ from flask_login import LoginManager
 from flask_restful import Api, abort
 
 from app.models.base import db
-from app.resources.project import ResourceProjectList
-from app.resources.user import ResourceUserList
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
@@ -52,15 +50,19 @@ def register_plugin(app):
 
 
 def register_resource(app):
-    from app.resources.project import ResourceProject
+    from app.resources.file import ResourceFile, ResourceFileList
+    from app.resources.project import ResourceProject, ResourceProjectList
     from app.resources.session import ResourceSession
-    from app.resources.user import ResourceUser
+    from app.resources.user import ResourceUser, ResourceUserList
+
     api = Api(catch_all_404s=True)
     api.add_resource(ResourceSession, '/session')
     api.add_resource(ResourceUser, '/user/<int:id_>')
     api.add_resource(ResourceUserList, '/user')
     api.add_resource(ResourceProject, '/project/<int:id_>')
     api.add_resource(ResourceProjectList, '/project')
+    api.add_resource(ResourceFile, '/file/<int:id_>')
+    api.add_resource(ResourceFileList, '/file')
     api.init_app(app)
     return app
 
