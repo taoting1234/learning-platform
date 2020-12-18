@@ -3,4 +3,5 @@ isort
 yapf
 pytest-isort
 pytest-yapf3
+pytest-cov
 codecov
