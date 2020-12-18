@@ -90,3 +90,36 @@ def test_put(client):
         }
     ).status_code == 200
     assert client.get('/project/1').json['name'] == 'project3'
+
+
+def test_delete(client):
+    # 删除失败（未登录）
+    assert client.delete(
+        '/project/1', json={
+            'name': 'project3',
+            'tag': '123'
+        }
+    ).status_code == 401
+    # 删除失败（项目不存在）
+    assert client.post(
+        '/session', json={
+            'username': 'user1',
+            'password': '123'
+        }
+    ).status_code == 201
+    assert client.delete(
+        '/project/10', json={
+            'name': 'project3',
+            'tag': '123'
+        }
+    ).status_code == 404
+    # 删除失败（项目不属于你）
+    assert client.delete(
+        '/project/3', json={
+            'name': 'project3',
+            'tag': '123'
+        }
+    ).status_code == 403
+    # 删除成功
+    assert client.delete('/project/1').status_code == 204
+    assert client.get('/project/1').status_code == 404
