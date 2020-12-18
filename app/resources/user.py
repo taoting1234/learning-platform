@@ -14,14 +14,6 @@ class ResourceUser(Resource):
             abort(404, message='User not found')
         return user
 
-    def post(self):
-        args = user_register_parser.parse_args()
-        user = User.get_by_username(args['username'])
-        if user is not None:
-            abort(400, message='User already exist')
-        User.create(**args)
-        return {'message': 'Create user success'}, 201
-
     @login_required
     def put(self, id_):
         if current_user.id != id_:
@@ -29,8 +21,18 @@ class ResourceUser(Resource):
         user = current_user
         args = user_modify_parser.parse_args()
         if args['password'] and user.check_password(
-            args['old_password']
+                args['old_password']
         ) is not True:
             abort(400, message='Old password Wrong')
         user.modify(**args)
         return {'message': 'Modify user success'}
+
+
+class ResourceUserList(Resource):
+    def post(self):
+        args = user_register_parser.parse_args()
+        user = User.get_by_username(args['username'])
+        if user is not None:
+            abort(400, message='User already exist')
+        User.create(**args)
+        return {'message': 'Create user success'}, 201
