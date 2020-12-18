@@ -5,7 +5,6 @@ from flask_cors import CORS
 from flask_login import LoginManager
 from flask_restful import Api, abort
 
-from app import config
 from app.models.base import db
 from app.resources.project import ResourceProjectList
 from app.resources.user import ResourceUserList
@@ -16,7 +15,10 @@ login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(config)
+    try:
+        app.config.from_object("app.config")
+    except ImportError:
+        app.config.from_object("app.config_demo")
     register_resource(app)
     register_plugin(app)
     return app
