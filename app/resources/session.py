@@ -15,7 +15,6 @@ class ResourceSession(Resource):
 
     def post(self):
         args = session_parser.parse_args()
-        print(args)
         user = User.get_by_username(args['username'])
         if user is None or user.check_password(args['password']) is not True:
             abort(400, message='Username or password wrong')
