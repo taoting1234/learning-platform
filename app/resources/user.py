@@ -24,7 +24,7 @@ class ResourceUser(Resource):
 
     @login_required
     def put(self, id_):
-        if current_user.get_id() != str(id_):
+        if int(current_user.get_id()) != id_:
             abort(403)
         user = User.get_by_id(id_)
         args = user_modify_parser.parse_args()
