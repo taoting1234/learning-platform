@@ -3,7 +3,6 @@ from contextlib import contextmanager
 
 from flask_sqlalchemy import BaseQuery
 from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
-from sqlalchemy import asc, desc
 
 
 class SQLAlchemy(_SQLAlchemy):
@@ -65,14 +64,6 @@ class Base(db.Model):
                         res = res.filter(getattr(cls, key).like(value))
                     else:
                         res = res.filter(getattr(cls, key) == value)
-
-        if kwargs.get('order'):
-            for key, value in kwargs['order'].items():
-                if hasattr(cls, key):
-                    if value == 'asc':
-                        res = res.order_by(asc(getattr(cls, key)))
-                    if value == 'desc':
-                        res = res.order_by(desc(getattr(cls, key)))
 
         page = kwargs.get('page') if kwargs.get('page') else 1
         page_size = kwargs.get('page_size') if kwargs.get('page_size') else 20
