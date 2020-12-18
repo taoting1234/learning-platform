@@ -33,4 +33,4 @@ class ResourceUser(Resource):
         ) is not True:
             abort(400, message='Old password Wrong')
         user.modify(**args)
-        return {'message': 'Modify user success'}, 201
+        return {'message': 'Modify user success'}
