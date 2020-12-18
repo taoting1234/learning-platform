@@ -1,2 +1,4 @@
-# Project exclude paths
 /venv/
+.pytest_cache
+.coverage
+.idea
