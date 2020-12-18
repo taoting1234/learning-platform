@@ -18,8 +18,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest isort yapf pytest-isort pytest-yapf3
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
       - name: Test with pytest
         run: |
           pytest
+      - name: Upload to codecov
+        run: |
+          codecov --token 8f3b66ae-ec67-44db-8097-3f415a5bd513
