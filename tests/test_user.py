@@ -82,6 +82,12 @@ def test_user(client):
             'old_password': '123'
         }
     ).status_code == 400
+    assert client.put(
+        '/user/2', json={
+            'password': 'user',
+            'old_password': ''
+        }
+    ).status_code == 400
     # 修改成功
     assert client.put(
         '/user/2', json={
