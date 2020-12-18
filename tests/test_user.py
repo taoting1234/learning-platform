@@ -25,7 +25,14 @@ def test_user(client):
     # 获取用户
     assert client.get('/user/1').json['username'] == 'admin'
     assert client.get('/user/2').status_code == 404
-    # 创建用户
+    # 创建用户（失败）
+    assert client.post(
+        '/user', json={
+            'username': 'admin',
+            'password': 'user'
+        }
+    ).status_code == 400
+    # 创建用户（成功）
     assert client.post(
         '/user', json={
             'username': 'user',

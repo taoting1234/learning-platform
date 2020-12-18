@@ -27,8 +27,6 @@ class ResourceUser(Resource):
         if current_user.get_id() != str(id_):
             abort(403)
         user = User.get_by_id(id_)
-        if user is None:
-            abort(404, message='User not found')
         args = user_modify_parser.parse_args()
         if args['password'] and user.check_password(
             args['old_password']
