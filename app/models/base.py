@@ -35,11 +35,6 @@ class Base(db.Model):
                 if value is not None:
                     if hasattr(cls, key):
                         setattr(base, key, value)
-            if hasattr(cls, 'create_time'):
-                if kwargs.get('create_time'):
-                    setattr(base, 'create_time', kwargs['create_time'])
-                else:
-                    setattr(base, 'create_time', datetime.datetime.now())
             db.session.add(base)
         return base
 
