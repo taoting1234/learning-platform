@@ -1,15 +1,18 @@
 from .base import client
 
 
-def test_user(client):
-    # 获取用户
-    assert client.get('/user/1').json['username'] == 'admin'
-    assert client.get('/user/2').status_code == 404
+def test_get(client):
+    assert client.get('/user/1').json['username'] == 'user1'
+    assert client.get('/user/2').json['username'] == 'user2'
+    assert client.get('/user/3').status_code == 404
+
+
+def test_post(client):
     # 创建用户（失败）
     assert client.post(
         '/user', json={
-            'username': 'admin',
-            'password': 'user'
+            'username': 'user1',
+            'password': '123'
         }
     ).status_code == 400
     # 创建用户（成功）
@@ -19,19 +22,20 @@ def test_user(client):
             'password': 'user'
         }
     ).status_code == 201
-    # 登录
     assert client.post(
         '/session', json={
             'username': 'user',
             'password': 'user'
         }
     ).status_code == 201
-    # 获取用户
-    assert client.get('/user/2').json['username'] == 'user'
+    assert client.get('/user/3').json['username'] == 'user'
+
+
+def test_put(client):
     # 修改用户失败（未登录）
     assert client.delete('/session').status_code == 204
     assert client.put(
-        '/user/2', json={
+        '/user/1', json={
             'password': 'user',
             'old_password': 'user'
         }
@@ -39,12 +43,12 @@ def test_user(client):
     # 修改用户失败（登录其他人）
     assert client.post(
         '/session', json={
-            'username': 'admin',
-            'password': 'admin'
+            'username': 'user2',
+            'password': '123'
         }
     ).status_code == 201
     assert client.put(
-        '/user/2', json={
+        '/user/1', json={
             'password': 'user',
             'old_password': 'user'
         }
@@ -52,39 +56,38 @@ def test_user(client):
     # 修改用户失败（密码错误）
     assert client.post(
         '/session', json={
-            'username': 'user',
-            'password': 'user'
+            'username': 'user1',
+            'password': '123'
         }
     ).status_code == 201
     assert client.put(
-        '/user/2', json={
+        '/user/1', json={
             'password': 'user',
-            'old_password': '123'
+            'old_password': 'user'
         }
     ).status_code == 400
     assert client.put(
-        '/user/2', json={
+        '/user/1', json={
             'password': 'user',
             'old_password': ''
         }
     ).status_code == 400
     # 修改成功
     assert client.put(
-        '/user/2', json={
-            'password': '123',
-            'old_password': 'user'
+        '/user/1', json={
+            'password': 'user',
+            'old_password': '123'
         }
     ).status_code == 200
-    # 登录
     assert client.post(
         '/session', json={
-            'username': 'user',
-            'password': 'user'
+            'username': 'user1',
+            'password': '123'
         }
     ).status_code == 400
     assert client.post(
         '/session', json={
-            'username': 'user',
-            'password': '123'
+            'username': 'user1',
+            'password': 'user'
         }
     ).status_code == 201
