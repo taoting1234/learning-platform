@@ -1,4 +1,6 @@
-/venv/
+venv
 .pytest_cache
 .coverage
 .idea
+app/config.py
+__pycache__
