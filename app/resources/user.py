@@ -21,7 +21,7 @@ class ResourceUser(Resource):
         user = current_user
         args = user_modify_parser.parse_args()
         if args['password'] and user.check_password(
-                args['old_password']
+            args['old_password']
         ) is not True:
             abort(400, message='Old password Wrong')
         user.modify(**args)
