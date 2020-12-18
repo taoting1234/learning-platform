@@ -74,7 +74,7 @@ def test_user(client):
             'password': '123',
             'old_password': 'user'
         }
-    ).status_code == 201
+    ).status_code == 200
     # 登录
     assert client.post(
         '/session', json={
