@@ -4,7 +4,7 @@ from .base import client
 def test_get(client):
     assert client.get('/project/1').status_code == 401
     assert client.post(
-        '/session', json={
+        '/session', data={
             'username': 'user1',
             'password': '123'
         }
@@ -19,27 +19,27 @@ def test_get(client):
 def test_post(client):
     # 创建失败（未登录）
     assert client.post(
-        '/project', json={
+        '/project', data={
             'name': 'project',
             'tag': '123'
         }
     ).status_code == 401
     # 创建失败（重名）
     assert client.post(
-        '/session', json={
+        '/session', data={
             'username': 'user1',
             'password': '123'
         }
     ).status_code == 201
     assert client.post(
-        '/project', json={
+        '/project', data={
             'name': 'project1',
             'tag': '123'
         }
     ).status_code == 400
     # 创建成功
     assert client.post(
-        '/project', json={
+        '/project', data={
             'name': 'project',
             'tag': '123'
         }
@@ -50,41 +50,41 @@ def test_post(client):
 def test_put(client):
     # 修改失败（未登录）
     assert client.put(
-        '/project/1', json={
+        '/project/1', data={
             'name': 'project3',
             'tag': '123'
         }
     ).status_code == 401
     # 修改失败（项目不存在）
     assert client.post(
-        '/session', json={
+        '/session', data={
             'username': 'user1',
             'password': '123'
         }
     ).status_code == 201
     assert client.put(
-        '/project/10', json={
+        '/project/10', data={
             'name': 'project3',
             'tag': '123'
         }
     ).status_code == 404
     # 修改失败（项目不属于你）
     assert client.put(
-        '/project/3', json={
+        '/project/3', data={
             'name': 'project3',
             'tag': '123'
         }
     ).status_code == 403
     # 修改失败（项目重名）
     assert client.put(
-        '/project/1', json={
+        '/project/1', data={
             'name': 'project1',
             'tag': '123'
         }
     ).status_code == 400
     # 修改成功
     assert client.put(
-        '/project/1', json={
+        '/project/1', data={
             'name': 'project3',
             'tag': '123'
         }
@@ -95,27 +95,27 @@ def test_put(client):
 def test_delete(client):
     # 删除失败（未登录）
     assert client.delete(
-        '/project/1', json={
+        '/project/1', data={
             'name': 'project3',
             'tag': '123'
         }
     ).status_code == 401
     # 删除失败（项目不存在）
     assert client.post(
-        '/session', json={
+        '/session', data={
             'username': 'user1',
             'password': '123'
         }
     ).status_code == 201
     assert client.delete(
-        '/project/10', json={
+        '/project/10', data={
             'name': 'project3',
             'tag': '123'
         }
     ).status_code == 404
     # 删除失败（项目不属于你）
     assert client.delete(
-        '/project/3', json={
+        '/project/3', data={
             'name': 'project3',
             'tag': '123'
         }

@@ -6,7 +6,7 @@ def test_session(client):
     assert client.get('/session').status_code == 404
     # 登录
     assert client.post(
-        '/session', json={
+        '/session', data={
             'username': 'user1',
             'password': '123'
         }
@@ -18,7 +18,7 @@ def test_session(client):
     assert client.get('/session').status_code == 404
     # 失败的登录
     assert client.post(
-        '/session', json={
+        '/session', data={
             'username': 'user1',
             'password': '123456'
         }
