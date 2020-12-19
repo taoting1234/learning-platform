@@ -18,7 +18,7 @@ class ResourceFile(Resource):
         file = File.get_by_id(id_)
         if file is None:
             abort(404, message='File not found')
-        project = Project.get_by_id(file.id)
+        project = Project.get_by_id(file.project_id)
         if project.user_id != current_user.id:
             abort(403)
         return file
@@ -28,7 +28,7 @@ class ResourceFile(Resource):
         file = File.get_by_id(id_)
         if file is None:
             abort(404, message='File not found')
-        project = Project.get_by_id(file.id)
+        project = Project.get_by_id(file.project_id)
         if project.user_id != current_user.id:
             abort(403)
         args = file_modify_parser.parse_args()

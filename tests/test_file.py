@@ -209,6 +209,7 @@ def test_delete(client):
     # 删除文件失败（文件不存在）
     assert client.delete('/file/10').status_code == 404
     # 删除文件失败（项目不属于你）
+    assert client.get('/file/2').status_code == 403
     assert client.delete('/file/2').status_code == 403
     # 删除文件成功
     assert client.delete('/file/1').status_code == 204
