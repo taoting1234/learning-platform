@@ -31,6 +31,7 @@ def test_post(client):
         }
     ).status_code == 201
     assert client.get('/project/4').json['name'] == 'project'
+    assert len(client.get('/project').json['projects']) == 3
 
 
 def test_put(client):
