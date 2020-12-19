@@ -1,21 +1,6 @@
 from .base import client
 
 
-def test_get(client):
-    assert client.get('/project/1').status_code == 401
-    assert client.post(
-        '/session', data={
-            'username': 'user1',
-            'password': '123'
-        }
-    ).status_code == 201
-    assert client.get('/project/1').json['name'] == 'project1'
-    assert client.get('/project/2').json['name'] == 'project2'
-    assert client.get('/project/3').status_code == 403
-    assert client.get('/project/4').status_code == 404
-    assert len(client.get('/project').json['projects']) == 2
-
-
 def test_post(client):
     # 创建失败（未登录）
     assert client.post(
@@ -24,13 +9,14 @@ def test_post(client):
             'tag': '123'
         }
     ).status_code == 401
-    # 创建失败（重名）
+    # 登录
     assert client.post(
         '/session', data={
             'username': 'user1',
             'password': '123'
         }
     ).status_code == 201
+    # 创建失败（重名）
     assert client.post(
         '/project', data={
             'name': 'project1',
@@ -55,13 +41,14 @@ def test_put(client):
             'tag': '123'
         }
     ).status_code == 401
-    # 修改失败（项目不存在）
+    # 登录
     assert client.post(
         '/session', data={
             'username': 'user1',
             'password': '123'
         }
     ).status_code == 201
+    # 修改失败（项目不存在）
     assert client.put(
         '/project/10', data={
             'name': 'project3',
@@ -100,13 +87,14 @@ def test_delete(client):
             'tag': '123'
         }
     ).status_code == 401
-    # 删除失败（项目不存在）
+    # 登录
     assert client.post(
         '/session', data={
             'username': 'user1',
             'password': '123'
         }
     ).status_code == 201
+    # 删除失败（项目不存在）
     assert client.delete(
         '/project/10', data={
             'name': 'project3',

@@ -1,12 +1,6 @@
 from .base import client
 
 
-def test_get(client):
-    assert client.get('/user/1').json['username'] == 'user1'
-    assert client.get('/user/2').json['username'] == 'user2'
-    assert client.get('/user/3').status_code == 404
-
-
 def test_post(client):
     # 创建用户（失败）
     assert client.post(
