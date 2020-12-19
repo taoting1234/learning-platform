@@ -22,7 +22,7 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Test with pytest
         run: |
-          pytest
+          pytest --cov-report=xml --cov=app/
       - name: Upload to codecov
         run: |
           codecov --token 8f3b66ae-ec67-44db-8097-3f415a5bd513
