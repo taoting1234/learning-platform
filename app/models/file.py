@@ -1,6 +1,6 @@
+import datetime
 import os
 import shutil
-import time
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 
@@ -29,7 +29,8 @@ class File(Base):
     @classmethod
     def create(cls, **kwargs):
         file = kwargs['file']
-        file_path = os.path.join(kwargs['prefix'], file.filename)
+        filename = file.filename.split('/')[-1]
+        file_path = os.path.join(kwargs['prefix'], filename)
         file_path = file_path.lstrip('/')
         res = cls.search(project_id=kwargs['project_id'],
                          filename=file_path)['data']
@@ -57,9 +58,15 @@ class File(Base):
 
     def update_meta(self):
         size = os.path.getsize(self.path)
-        access_time = time.localtime(os.path.getatime(self.path))
-        create_time = time.localtime(os.path.getctime(self.path))
-        modify_time = time.localtime(os.path.getmtime(self.path))
+        access_time = datetime.datetime.fromtimestamp(
+            os.path.getatime(self.path)
+        )
+        create_time = datetime.datetime.fromtimestamp(
+            os.path.getctime(self.path)
+        )
+        modify_time = datetime.datetime.fromtimestamp(
+            os.path.getmtime(self.path)
+        )
         self.modify(
             size=size,
             access_time=access_time,
