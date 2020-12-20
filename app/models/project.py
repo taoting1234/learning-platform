@@ -1,3 +1,4 @@
+import os
 import shutil
 
 from sqlalchemy import Column, ForeignKey, Integer, String
@@ -14,6 +15,12 @@ class Project(Base):
     name = Column(String(100), nullable=False)
     description = Column(String(1000))
     tag = Column(String(100))
+
+    @classmethod
+    def create(cls, **kwargs):
+        base = super().create(**kwargs)
+        os.makedirs('./file/{}'.format(base.id), exist_ok=True)
+        return base
 
     def delete(self):
         from app.models.file import File
