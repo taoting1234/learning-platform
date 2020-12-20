@@ -1,6 +1,6 @@
 from flask_restful import fields
 
-file_fields = {
+file_field = {
     'id': fields.Integer,
     'project_id': fields.Integer,
     'filename': fields.String,
@@ -10,4 +10,4 @@ file_fields = {
     'modify_time': fields.DateTime(dt_format='iso8601')
 }
 
-files_fields = {'files': fields.List(fields.Nested(file_fields))}
+files_field = {'files': fields.List(fields.Nested(file_field))}
