@@ -1,7 +1,7 @@
 from flask_login import current_user, login_required
 from flask_restful import Resource, abort, marshal_with
 
-from app.fields.file import file_fields, files_fields
+from app.fields.file import file_field, files_field
 from app.models.file import File
 from app.models.project import Project
 from app.parsers.file import (
@@ -12,7 +12,7 @@ from app.parsers.file import (
 
 
 class ResourceFile(Resource):
-    @marshal_with(file_fields)
+    @marshal_with(file_field)
     @login_required
     def get(self, id_):
         file = File.get_by_id(id_)
@@ -52,7 +52,7 @@ class ResourceFile(Resource):
 
 
 class ResourceFileList(Resource):
-    @marshal_with(files_fields)
+    @marshal_with(files_field)
     @login_required
     def get(self):
         args = file_list_parser.parse_args()

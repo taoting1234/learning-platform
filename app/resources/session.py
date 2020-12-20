@@ -1,13 +1,13 @@
 from flask_login import current_user, login_user, logout_user
 from flask_restful import Resource, abort, marshal_with
 
-from app.fields.user import user_fields
+from app.fields.user import user_field
 from app.models.user import User
 from app.parsers.session import session_parser
 
 
 class ResourceSession(Resource):
-    @marshal_with(user_fields)
+    @marshal_with(user_field)
     def get(self):
         if current_user.is_anonymous:
             abort(404, message='Not login')
