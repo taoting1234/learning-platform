@@ -24,7 +24,7 @@ class File(Base):
         return self.join_path(self.filename) if self.filename else None
 
     def join_path(self, filename):
-        return os.path.join('./file/{}/'.format(self.project_id), filename)
+        return os.path.join('./file/{}/user/'.format(self.project_id), filename)
 
     @classmethod
     def create(cls, **kwargs):

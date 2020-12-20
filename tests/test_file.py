@@ -66,7 +66,7 @@ def test_post(client):
         ).status_code == 201
     assert client.get('/file/1').json['filename'] == '1.a'
     assert len(client.get('/file', data={'project_id': 1}).json['files']) == 1
-    assert os.path.exists('./file/1/1.a')
+    assert os.path.exists('./file/1/user/1.a')
     size = client.get('/file/1').json['size']
     # 修改文件
     with open(file_path, "wb") as f:
@@ -80,7 +80,7 @@ def test_post(client):
             }
         ).status_code == 201
     assert client.get('/file/1').json['filename'] == '1.a'
-    assert os.path.exists('./file/1/1.a')
+    assert os.path.exists('./file/1/user/1.a')
     assert client.get('/file/1').json['size'] > size
     # 删除文件夹
     shutil.rmtree('./file')
@@ -153,7 +153,7 @@ def test_put(client):
     # 修改文件成功
     assert client.put('/file/1', data={'filename': '1.c'}).status_code == 200
     assert client.get('/file/1').json['filename'] == '1.c'
-    assert os.path.exists('./file/1/1.c')
+    assert os.path.exists('./file/1/user/1.c')
     # 删除文件夹
     shutil.rmtree('./file')
 
@@ -214,6 +214,6 @@ def test_delete(client):
     # 删除文件成功
     assert client.delete('/file/1').status_code == 204
     assert client.get('/file/1').status_code == 404
-    assert os.path.exists('./file/1/1.a') is False
+    assert os.path.exists('./file/1/user/1.a') is False
     # 删除文件夹
     shutil.rmtree('./file')
