@@ -32,7 +32,10 @@ class ResourceNode(Resource):
         if project.user_id != current_user.id:
             abort(403)
         args = node_modify_parser.parse_args()
-        nodes = [i.id for i in Node.search(project_id=project.id, page_size=-1)['data']]
+        nodes = [
+            i.id
+            for i in Node.search(project_id=project.id, page_size=-1)['data']
+        ]
         for node_id in args['in_edges'] if args['in_edges'] else []:
             if node_id not in nodes:
                 abort(400, message='Node not found')
