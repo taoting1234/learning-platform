@@ -67,7 +67,6 @@ def test_post(client):
             }
         ).status_code == 201
     assert client.get('/file/3').json['filename'] == '1.a'
-    assert len(client.get('/file', data={'project_id': 1}).json['files']) == 2
     assert os.path.exists('./file/1/user/1.a')
     size = client.get('/file/3').json['size']
     # 修改文件
