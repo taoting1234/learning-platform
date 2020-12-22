@@ -20,6 +20,8 @@ class Project(Base):
     def create(cls, **kwargs):
         base = super().create(**kwargs)
         os.makedirs('./file/{}'.format(base.id), exist_ok=True)
+        os.makedirs('./file/{}/user'.format(base.id), exist_ok=True)
+        os.makedirs('./file/{}/node'.format(base.id), exist_ok=True)
         return base
 
     def delete(self):
