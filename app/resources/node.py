@@ -70,7 +70,7 @@ class ResourceNodeList(Resource):
         res = Node.search(project_id=project.id, page_size=-1)['data']
         return {'nodes': res}
 
-    @marshal_with(nodes_field)
+    @marshal_with(node_field)
     @login_required
     def post(self):
         args = node_create_parser.parse_args()

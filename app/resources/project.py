@@ -41,7 +41,7 @@ class ResourceProjectList(Resource):
         res = Project.search(user_id=current_user.id, page_size=-1)['data']
         return {'projects': res}
 
-    @marshal_with(projects_field)
+    @marshal_with(project_field)
     @login_required
     def post(self):
         args = project_create_parser.parse_args()
