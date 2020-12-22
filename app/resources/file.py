@@ -50,9 +50,10 @@ class ResourceFileList(Resource):
         res = File.search(project_id=args['project_id'], page_size=-1)['data']
         return {'files': res}
 
+    @marshal_with(files_field)
     @login_required
     @self_only(File, file_create_parser)
     def post(self):
         args = file_create_parser.parse_args()
-        File.create(**args)
-        return {'message': 'Create file success'}, 201
+        file = File.create(**args)
+        return file, 201

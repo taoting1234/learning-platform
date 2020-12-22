@@ -41,11 +41,12 @@ class ResourceProjectList(Resource):
         res = Project.search(user_id=current_user.id, page_size=-1)['data']
         return {'projects': res}
 
+    @marshal_with(projects_field)
     @login_required
     def post(self):
         args = project_create_parser.parse_args()
         if Project.search(user_id=current_user.id,
                           name=args['name'])['meta']['count']:
             abort(400, message='Project already exist')
-        Project.create(user_id=current_user.id, **args)
-        return {'message': 'Create project success'}, 201
+        project = Project.create(user_id=current_user.id, **args)
+        return project, 201

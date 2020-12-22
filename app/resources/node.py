@@ -70,6 +70,7 @@ class ResourceNodeList(Resource):
         res = Node.search(project_id=project.id, page_size=-1)['data']
         return {'nodes': res}
 
+    @marshal_with(nodes_field)
     @login_required
     def post(self):
         args = node_create_parser.parse_args()
@@ -78,5 +79,5 @@ class ResourceNodeList(Resource):
             abort(404, message='Project not found')
         if project.user_id != current_user.id:
             abort(403)
-        Node.create(**args)
-        return {'message': 'Create node success'}, 201
+        node = Node.create(**args)
+        return node, 201

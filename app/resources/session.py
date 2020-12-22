@@ -13,14 +13,15 @@ class ResourceSession(Resource):
             abort(404, message='Not login')
         return current_user
 
+    @marshal_with(user_field)
     def post(self):
         args = session_parser.parse_args()
         user = User.get_by_username(args['username'])
         if user is None or user.check_password(args['password']) is not True:
             abort(400, message='Username or password wrong')
         login_user(user)
-        return {'message': 'Login success'}, 201
+        return user, 201
 
     def delete(self):
         logout_user()
-        return {'message': 'Logout success'}, 204
+        return '', 204

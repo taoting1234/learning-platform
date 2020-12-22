@@ -29,10 +29,11 @@ class ResourceUser(Resource):
 
 
 class ResourceUserList(Resource):
+    @marshal_with(user_field)
     def post(self):
         args = user_register_parser.parse_args()
         user = User.get_by_username(args['username'])
         if user is not None:
             abort(400, message='User already exist')
-        User.create(**args)
-        return {'message': 'Create user success'}, 201
+        user = User.create(**args)
+        return user, 201
