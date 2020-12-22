@@ -3,6 +3,7 @@ import tempfile
 import pytest
 from flask import Flask
 
+from app.models.node import Node
 from app.models.project import Project
 from app.models.user import User
 from flask_app import register_plugin, register_resource
@@ -22,8 +23,10 @@ def client():
 
     with app.test_client() as client:
         with app.app_context():
+            # 创建用户
             User.create(username='user1', password='123')
             User.create(username='user2', password='123')
+            # 创建项目
             Project.create(
                 user_id=1,
                 name='project1',
@@ -42,6 +45,7 @@ def client():
                 description='description3',
                 tag='tag3'
             )
+            # 创建文件
             file_path = "{}/1.test".format(tempfile.gettempdir())
             with open(file_path, "wb") as f:
                 f.write(bytes("123", encoding='utf8'))
@@ -72,5 +76,7 @@ def client():
                     }
                 ).status_code == 201
             assert client.delete('/session').status_code == 204
-
+            # 创建节点
+            Node.create(project_id=1, node_type='input_node')
+            Node.create(project_id=3, node_type='input_node')
         yield client
