@@ -22,16 +22,16 @@ def create_app():
     return app
 
 
-def register_plugin(app):
+def register_plugin(app_):
     # 注册sqlalchemy
-    db.init_app(app)
+    db.init_app(app_)
 
     # 初始化数据库
-    with app.app_context():
+    with app_.app_context():
         db.create_all()
 
     # 注册cors
-    cors.init_app(app)
+    cors.init_app(app_)
 
     # 注册用户管理器
     from app.models.user import User
@@ -44,12 +44,12 @@ def register_plugin(app):
     def unauthorized_handler():
         abort(401)
 
-    login_manager.init_app(app)
+    login_manager.init_app(app_)
 
-    return app
+    return app_
 
 
-def register_resource(app):
+def register_resource(app_):
     from app.resources.file import ResourceFile, ResourceFileList
     from app.resources.node import ResourceNode, ResourceNodeList
     from app.resources.project import ResourceProject, ResourceProjectList
@@ -66,8 +66,8 @@ def register_resource(app):
     api.add_resource(ResourceFileList, '/file')
     api.add_resource(ResourceNode, '/node/<int:id_>')
     api.add_resource(ResourceNodeList, '/node')
-    api.init_app(app)
-    return app
+    api.init_app(app_)
+    return app_
 
 
 if __name__ == '__main__':
