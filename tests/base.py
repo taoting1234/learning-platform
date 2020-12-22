@@ -23,8 +23,8 @@ def client():
     register_plugin(app)
 
     with app.test_client() as client:
-        # 测试前运行
         with app.app_context():
+            # 测试前运行
             # 创建用户
             User.create(username='user1', password='123')
             User.create(username='user2', password='123')
@@ -99,7 +99,9 @@ def client():
                 }
             ).status_code == 201
             assert client.delete('/session').status_code == 204
+
             # yield
             yield client
+
             # 测试后运行
             shutil.rmtree('./file', ignore_errors=True)
