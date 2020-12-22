@@ -15,6 +15,7 @@ db = SQLAlchemy(query_class=BaseQuery)
 
 
 class Base(db.Model):
+    __tablename__ = ''
     __abstract__ = True
     __table_args__ = {"extend_existing": True}
 
