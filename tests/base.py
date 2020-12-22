@@ -99,6 +99,7 @@ def client():
                 }
             ).status_code == 201
             assert client.delete('/session').status_code == 204
-        yield client
-        # 测试后运行
-        shutil.rmtree('./file')
+            # yield
+            yield client
+            # 测试后运行
+            shutil.rmtree('./file', ignore_errors=True)
