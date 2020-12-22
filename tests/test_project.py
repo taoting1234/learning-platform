@@ -40,13 +40,10 @@ def test_post(client):
         }
     ).status_code == 400
     # 创建成功
-    assert client.post(
-        '/project', data={
-            'name': 'project',
-            'tag': '123'
-        }
-    ).status_code == 201
-    assert client.get('/project/4').json['name'] == 'project'
+    res = client.post('/project', data={'name': 'project', 'tag': '123'})
+    assert res.status_code == 201
+    id_ = res.json['id']
+    assert client.get('/project/{}'.format(id_)).json['name'] == 'project'
 
 
 def test_put(client):

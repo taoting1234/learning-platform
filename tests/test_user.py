@@ -16,19 +16,17 @@ def test_post(client):
         }
     ).status_code == 400
     # 创建用户（成功）
-    assert client.post(
-        '/user', data={
-            'username': 'user',
-            'password': 'user'
-        }
-    ).status_code == 201
+    res = client.post('/user', data={'username': 'user', 'password': 'user'})
+    assert res.status_code == 201
+    id_ = res.json['id']
+    # 登录
     assert client.post(
         '/session', data={
             'username': 'user',
             'password': 'user'
         }
     ).status_code == 201
-    assert client.get('/user/3').json['username'] == 'user'
+    assert client.get('/user/{}'.format(id_)).json['username'] == 'user'
 
 
 def test_put(client):

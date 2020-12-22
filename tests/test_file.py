@@ -60,29 +60,23 @@ def test_post(client):
         ).status_code == 403
     # 上传文件成功
     with open(file_path, "rb") as f:
-        assert client.post(
-            '/file', data={
-                'file': f,
-                'project_id': 1
-            }
-        ).status_code == 201
-    assert client.get('/file/3').json['filename'] == '1.a'
+        res = client.post('/file', data={'file': f, 'project_id': 1})
+        assert res.status_code == 201
+        id_ = res.json['id']
+    assert client.get('/file/{}'.format(id_)).json['filename'] == '1.a'
     assert os.path.exists('./file/1/user/1.a')
-    size = client.get('/file/3').json['size']
+    size = client.get('/file/{}'.format(id_)).json['size']
     # 修改文件
     with open(file_path, "wb") as f:
         f.write(bytes("1234", encoding='utf8'))
     # 覆盖文件
     with open(file_path, "rb") as f:
-        assert client.post(
-            '/file', data={
-                'file': f,
-                'project_id': 1
-            }
-        ).status_code == 201
-    assert client.get('/file/3').json['filename'] == '1.a'
+        res = client.post('/file', data={'file': f, 'project_id': 1})
+        assert res.status_code == 201
+        assert id_ == res.json['id']
+    assert client.get('/file/{}'.format(id_)).json['filename'] == '1.a'
     assert os.path.exists('./file/1/user/1.a')
-    assert client.get('/file/3').json['size'] > size
+    assert client.get('/file/{}'.format(id_)).json['size'] > size
     # 删除文件夹
     shutil.rmtree('./file')
 
