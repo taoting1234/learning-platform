@@ -56,7 +56,11 @@ def test_post(client):
 
 def test_put(client):
     # 修改节点失败（未登录）
-    assert client.put('/node/1', data={'extra': '{"a": "b"}'}).status_code == 401
+    assert client.put(
+        '/node/1', data={
+            'extra': '{"a": "b"}'
+        }
+    ).status_code == 401
     # 登录
     assert client.post(
         '/session', data={
@@ -71,13 +75,21 @@ def test_put(client):
         }
     ).status_code == 404
     # 修改节点失败（项目不属于你）
-    assert client.put('/node/2', data={'extra': '{"a": "b"}'}).status_code == 403
+    assert client.put(
+        '/node/2', data={
+            'extra': '{"a": "b"}'
+        }
+    ).status_code == 403
     # 修改节点失败（无法解析json）
     assert client.put('/node/1', data={'extra': '{"a": "b}'}).status_code == 400
     # 修改节点失败（解析后非dict）
     assert client.put('/node/1', data={'extra': '[0, 1, 2]'}).status_code == 400
     # 修改节点成功
-    assert client.put('/node/1', data={'extra': '{"a": "b"}'}).status_code == 200
+    assert client.put(
+        '/node/1', data={
+            'extra': '{"a": "b"}'
+        }
+    ).status_code == 200
     assert client.get('/node/1').json['extra'] == {'a': 'b'}
 
 
