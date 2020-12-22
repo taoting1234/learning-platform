@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_restful import Api, abort
 
 from app.models.base import db
+from app.resources.node import ResourceNodeEdge
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
@@ -66,6 +67,7 @@ def register_resource(app_):
     api.add_resource(ResourceFileList, '/file')
     api.add_resource(ResourceNode, '/node/<int:id_>')
     api.add_resource(ResourceNodeList, '/node')
+    api.add_resource(ResourceNodeEdge, '/node/edge')
     api.init_app(app_)
     return app_
 

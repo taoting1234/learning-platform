@@ -28,3 +28,14 @@ node_list_parser = reqparse.RequestParser()
 node_list_parser.add_argument(
     'project_id', type=int, required=True, help='Project id cannot be empty'
 )
+
+node_edge_parser = reqparse.RequestParser()
+node_edge_parser.add_argument(
+    'project_id', type=int, required=True, help='Project id cannot be empty'
+)
+node_edge_parser.add_argument(
+    'node1_id', type=int, required=True, help='Node id cannot be empty'
+)
+node_edge_parser.add_argument(
+    'node2_id', type=int, required=True, help='Node id cannot be empty'
+)

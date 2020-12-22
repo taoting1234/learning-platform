@@ -1,11 +1,12 @@
 from flask_login import login_required
-from flask_restful import Resource, marshal_with
+from flask_restful import Resource, abort, marshal_with
 
 from app.fields.node import node_field, nodes_field
 from app.libs.auth import self_only
 from app.models.node import Node
 from app.parsers.node import (
     node_create_parser,
+    node_edge_parser,
     node_list_parser,
     node_modify_parser,
 )
@@ -51,3 +52,48 @@ class ResourceNodeList(Resource):
         args = node_create_parser.parse_args()
         node = Node.create(**args)
         return node, 201
+
+
+class ResourceNodeEdge(Resource):
+    @login_required
+    @self_only(Node, node_edge_parser)
+    def post(self):
+        args = node_edge_parser.parse_args()
+        node1 = Node.get_by_id(args['node1_id'])
+        node2 = Node.get_by_id(args['node2_id'])
+        if node1 is None or node2 is None:
+            abort(400, message='Node not found')
+        if node1.project_id != args['project_id'] \
+                or node2.project_id != args['project_id']:
+            abort(403)
+        out_edges = node1.out_edges
+        in_edges = node2.in_edges
+        if out_edges.count(node2.id):
+            abort(400, message='Edge already exist')
+        out_edges.append(node2.id)
+        in_edges.append(node1.id)
+        node1.modify(out_edges=out_edges)
+        node2.modify(in_edges=in_edges)
+        return {'message': 'Create edge success'}, 201
+
+    @login_required
+    @self_only(Node, node_edge_parser)
+    def delete(self):
+        args = node_edge_parser.parse_args()
+        node1 = Node.get_by_id(args['node1_id'])
+        node2 = Node.get_by_id(args['node2_id'])
+        if node1 is None or node2 is None:
+            abort(400, message='Node not found')
+        if node1.project_id != args['project_id'] \
+                or node2.project_id != args['project_id']:
+            abort(403)
+        try:
+            out_edges = node1.out_edges
+            out_edges.remove(node2.id)
+            node1.modify(out_edges=out_edges)
+            in_edges = node2.in_edges
+            in_edges.remove(node1.id)
+            node2.modify(in_edges=in_edges)
+        except ValueError:
+            abort(400, message='Edge not found')
+        return '', 204

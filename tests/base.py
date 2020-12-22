@@ -1,3 +1,4 @@
+import shutil
 import tempfile
 
 import pytest
@@ -22,6 +23,7 @@ def client():
     register_plugin(app)
 
     with app.test_client() as client:
+        # 测试前运行
         with app.app_context():
             # 创建用户
             User.create(username='user1', password='123')
@@ -79,4 +81,24 @@ def client():
             # 创建节点
             Node.create(project_id=1, node_type='input_node')
             Node.create(project_id=3, node_type='input_node')
+            Node.create(project_id=1, node_type='input_node')
+            Node.create(project_id=1, node_type='input_node')
+            # 创建边
+            assert client.post(
+                '/session', data={
+                    'username': 'user1',
+                    'password': '123'
+                }
+            ).status_code == 201
+            assert client.post(
+                '/node/edge',
+                data={
+                    'project_id': 1,
+                    'node1_id': 1,
+                    'node2_id': 3
+                }
+            ).status_code == 201
+            assert client.delete('/session').status_code == 204
         yield client
+        # 测试后运行
+        shutil.rmtree('./file')
