@@ -1,3 +1,5 @@
+import tempfile
+
 import pytest
 from flask import Flask
 
@@ -40,4 +42,35 @@ def client():
                 description='description3',
                 tag='tag3'
             )
+            file_path = "{}/1.test".format(tempfile.gettempdir())
+            with open(file_path, "wb") as f:
+                f.write(bytes("123", encoding='utf8'))
+            assert client.post(
+                '/session', data={
+                    'username': 'user1',
+                    'password': '123'
+                }
+            ).status_code == 201
+            with open(file_path, "rb") as f:
+                assert client.post(
+                    '/file', data={
+                        'file': f,
+                        'project_id': 1
+                    }
+                ).status_code == 201
+            assert client.post(
+                '/session', data={
+                    'username': 'user2',
+                    'password': '123'
+                }
+            ).status_code == 201
+            with open(file_path, "rb") as f:
+                assert client.post(
+                    '/file', data={
+                        'file': f,
+                        'project_id': 3
+                    }
+                ).status_code == 201
+            assert client.delete('/session').status_code == 204
+
         yield client
