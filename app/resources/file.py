@@ -24,10 +24,9 @@ class ResourceFile(Resource):
     @self_only(File)
     def put(self, id_):
         file = File.get_by_id(id_)
-        project = Project.get_by_id(file.project_id)
         args = file_modify_parser.parse_args()
         args['filename'] = args['filename'].lstrip('/')
-        if File.search(project_id=project.id,
+        if File.search(project_id=file.project_id,
                        filename=args['filename'])['meta']['count']:
             abort(400, message='File already exist')
         file.modify(**args)
