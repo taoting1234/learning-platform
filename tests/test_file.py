@@ -1,6 +1,8 @@
 import os
 import tempfile
 
+from flask import current_app
+
 from .base import client
 
 
@@ -63,7 +65,9 @@ def test_post(client):
         assert res.status_code == 201
         id_ = res.json['id']
     assert client.get('/file/{}'.format(id_)).json['filename'] == '1.a'
-    assert os.path.exists('./file/1/user/1.a')
+    assert os.path.exists(
+        '{}/1/user/1.a'.format(current_app.config['FILE_DIRECTORY'])
+    )
     size = client.get('/file/{}'.format(id_)).json['size']
     # 修改文件
     with open(file_path, "wb") as f:
@@ -74,7 +78,9 @@ def test_post(client):
         assert res.status_code == 201
         assert id_ == res.json['id']
     assert client.get('/file/{}'.format(id_)).json['filename'] == '1.a'
-    assert os.path.exists('./file/1/user/1.a')
+    assert os.path.exists(
+        '{}/1/user/1.a'.format(current_app.config['FILE_DIRECTORY'])
+    )
     assert client.get('/file/{}'.format(id_)).json['size'] > size
 
 
@@ -97,7 +103,9 @@ def test_put(client):
     # 修改文件成功
     assert client.put('/file/1', data={'filename': '1.c'}).status_code == 200
     assert client.get('/file/1').json['filename'] == '1.c'
-    assert os.path.exists('./file/1/user/1.c')
+    assert os.path.exists(
+        '{}/1/user/1.c'.format(current_app.config['FILE_DIRECTORY'])
+    )
 
 
 def test_delete(client):
@@ -118,4 +126,6 @@ def test_delete(client):
     # 删除文件成功
     assert client.delete('/file/1').status_code == 204
     assert client.get('/file/1').status_code == 404
-    assert os.path.exists('./file/1/user/1.test') is False
+    assert os.path.exists(
+        '{}/1/user/1.test'.format(current_app.config['FILE_DIRECTORY'])
+    ) is False

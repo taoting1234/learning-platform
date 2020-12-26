@@ -1,6 +1,8 @@
 import json
 import os
+from threading import Thread
 
+from flask import current_app
 from sqlalchemy import Column, ForeignKey, Integer, String
 
 from app.models.base import Base
@@ -66,7 +68,9 @@ class Node(Base):
 
     @property
     def dictionary_path(self):
-        return './file/{}/node/{}'.format(self.project_id, self.id)
+        return '{}/{}/node/{}'.format(
+            current_app.config['FILE_DIRECTORY'], self.project_id, self.id
+        )
 
     def join_path(self, filename):
         return os.path.join(self.dictionary_path, filename)
@@ -92,3 +96,39 @@ class Node(Base):
                 out_edges.remove(self.id)
                 node.modify(out_edges=out_edges)
         super().delete()
+
+    def run(self):
+        from app.libs.nodes.helper import run_nodes
+        nodes = self.get_nodes(self)
+        nodes = self.change_nodes(nodes)
+        input_ = 0
+        for node in nodes:
+            assert input_ in node.allow_input, 'Node{}({}) not support input {}'.format(
+                node.id, node.node_type, input_
+            )
+            input_ = node.get_output(input_)
+        Thread(target=run_nodes, args=(nodes, )).start()
+
+    @staticmethod
+    def get_nodes(node):
+        res = []
+        nodes = [node]
+        while nodes:
+            node = nodes.pop()
+            assert node not in res, 'Graph have cycle'
+            res.append(node)
+            for node_id in node.in_edges:
+                nodes.append(Node.get_by_id(node_id))
+        res.reverse()
+        return res
+
+    @staticmethod
+    def change_nodes(nodes):
+        from app.libs.nodes.helper import change_node
+        res = []
+        for node in nodes:
+            res.append(change_node(node))
+        return res
+
+    def __eq__(self, other):
+        return isinstance(other, Node) and self.id == other.id

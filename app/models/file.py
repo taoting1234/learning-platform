@@ -2,6 +2,7 @@ import datetime
 import os
 import shutil
 
+from flask import current_app
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 
 from app.models.base import Base
@@ -24,7 +25,11 @@ class File(Base):
         return self.join_path(self.filename) if self.filename else None
 
     def join_path(self, filename):
-        return os.path.join('./file/{}/user/'.format(self.project_id), filename)
+        return os.path.join(
+            '{}/{}/user/'.format(
+                current_app.config['FILE_DIRECTORY'], self.project_id
+            ), filename
+        )
 
     @classmethod
     def create(cls, **kwargs):

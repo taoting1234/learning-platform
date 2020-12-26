@@ -1,6 +1,7 @@
 import os
 import shutil
 
+from flask import current_app
 from sqlalchemy import Column, ForeignKey, Integer, String
 
 from app.models.base import Base
@@ -19,9 +20,18 @@ class Project(Base):
     @classmethod
     def create(cls, **kwargs):
         base = super().create(**kwargs)
-        os.makedirs('./file/{}'.format(base.id), exist_ok=True)
-        os.makedirs('./file/{}/user'.format(base.id), exist_ok=True)
-        os.makedirs('./file/{}/node'.format(base.id), exist_ok=True)
+        os.makedirs(
+            '{}/{}'.format(current_app.config['FILE_DIRECTORY'], base.id),
+            exist_ok=True
+        )
+        os.makedirs(
+            '{}/{}/user'.format(current_app.config['FILE_DIRECTORY'], base.id),
+            exist_ok=True
+        )
+        os.makedirs(
+            '{}/{}/node'.format(current_app.config['FILE_DIRECTORY'], base.id),
+            exist_ok=True
+        )
         return base
 
     def delete(self):
@@ -33,5 +43,20 @@ class Project(Base):
         nodes = Node.search(project_id=self.id, page_size=-1)['data']
         for node in nodes:
             node.delete()
-        shutil.rmtree('./file/{}'.format(self.id))
+        shutil.rmtree(
+            '{}/{}'.format(current_app.config['FILE_DIRECTORY'], self.id)
+        )
         super().delete()
+
+    def run(self):
+        from app.models.node import Node
+        nodes = Node.search(project_id=self.id, page_size=-1)['data']
+        run_node = None
+        for node in nodes:
+            if not node.out_edges:
+                if run_node is None:
+                    run_node = node
+                else:
+                    assert False, 'Project has multiple graph'
+        assert run_node, 'Graph have cycle'
+        run_node.run()
