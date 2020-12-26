@@ -7,7 +7,7 @@ file_create_parser.add_argument(
 )
 file_create_parser.add_argument('prefix', type=str, default='')
 file_create_parser.add_argument(
-    'file', type=FileStorage, location='files', help='File cannot be empty'
+    'file', type=FileStorage, required=True, location='files', help='File cannot be empty'
 )
 
 file_modify_parser = reqparse.RequestParser()
