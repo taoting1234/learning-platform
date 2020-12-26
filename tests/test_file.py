@@ -1,5 +1,4 @@
 import os
-import shutil
 import tempfile
 
 from .base import client
@@ -77,8 +76,6 @@ def test_post(client):
     assert client.get('/file/{}'.format(id_)).json['filename'] == '1.a'
     assert os.path.exists('./file/1/user/1.a')
     assert client.get('/file/{}'.format(id_)).json['size'] > size
-    # 删除文件夹
-    shutil.rmtree('./file')
 
 
 def test_put(client):
@@ -101,8 +98,6 @@ def test_put(client):
     assert client.put('/file/1', data={'filename': '1.c'}).status_code == 200
     assert client.get('/file/1').json['filename'] == '1.c'
     assert os.path.exists('./file/1/user/1.c')
-    # 删除文件夹
-    shutil.rmtree('./file')
 
 
 def test_delete(client):
@@ -124,5 +119,3 @@ def test_delete(client):
     assert client.delete('/file/1').status_code == 204
     assert client.get('/file/1').status_code == 404
     assert os.path.exists('./file/1/user/1.test') is False
-    # 删除文件夹
-    shutil.rmtree('./file')

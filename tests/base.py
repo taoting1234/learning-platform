@@ -19,6 +19,7 @@ def client():
         app.config.from_object("app.config_demo")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
     app.config['TESTING'] = True
+    app.config['FILE_DIRECTORY'] = './test_files'
     register_resource(app)
     register_plugin(app)
 
@@ -104,4 +105,4 @@ def client():
             yield client
 
             # 测试后运行
-            shutil.rmtree('./file', ignore_errors=True)
+            shutil.rmtree(app.config['FILE_DIRECTORY'], ignore_errors=True)

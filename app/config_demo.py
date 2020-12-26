@@ -6,3 +6,6 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # 定义flask信息
 SECRET_KEY = '123456'
+
+# 定义文件存放位置
+FILE_DIRECTORY = './file'
