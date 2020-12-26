@@ -6,7 +6,6 @@ from flask_login import LoginManager
 from flask_restful import Api, abort
 
 from app.models.base import db
-from app.resources.node import ResourceNodeEdge
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
@@ -52,8 +51,17 @@ def register_plugin(app_):
 
 def register_resource(app_):
     from app.resources.file import ResourceFile, ResourceFileList
-    from app.resources.node import ResourceNode, ResourceNodeList
-    from app.resources.project import ResourceProject, ResourceProjectList
+    from app.resources.node import (
+        ResourceNode,
+        ResourceNodeEdge,
+        ResourceNodeList,
+        ResourceNodeRun,
+    )
+    from app.resources.project import (
+        ResourceProject,
+        ResourceProjectList,
+        ResourceProjectRun,
+    )
     from app.resources.session import ResourceSession
     from app.resources.user import ResourceUser, ResourceUserList
 
@@ -63,11 +71,13 @@ def register_resource(app_):
     api.add_resource(ResourceUserList, '/user')
     api.add_resource(ResourceProject, '/project/<int:id_>')
     api.add_resource(ResourceProjectList, '/project')
+    api.add_resource(ResourceProjectRun, '/project/<int:id_>/run')
     api.add_resource(ResourceFile, '/file/<int:id_>')
     api.add_resource(ResourceFileList, '/file')
     api.add_resource(ResourceNode, '/node/<int:id_>')
     api.add_resource(ResourceNodeList, '/node')
     api.add_resource(ResourceNodeEdge, '/node/edge')
+    api.add_resource(ResourceNodeRun, '/node/<int:id_>/run')
     api.init_app(app_)
     return app_
 

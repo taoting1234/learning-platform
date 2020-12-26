@@ -97,3 +97,15 @@ class ResourceNodeEdge(Resource):
         except ValueError:
             abort(400, message='Edge not found')
         return '', 204
+
+
+class ResourceNodeRun(Resource):
+    @login_required
+    @self_only(Node)
+    def post(self, id_):
+        node = Node.get_by_id(id_)
+        try:
+            node.run()
+        except Exception as e:
+            abort(400, message=str(e))
+        return {'message': 'Create task success'}, 201

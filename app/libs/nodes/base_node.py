@@ -4,10 +4,12 @@ from abc import abstractmethod
 
 
 class BaseNode:
-    def __init__(self, id_, project_id, node_type, in_edges, out_edges):
+    allow_input = []
+
+    def __init__(self, id_, node_type, project_id, in_edges, out_edges):
         self.id = id_
-        self.project_id = project_id
         self.node_type = node_type
+        self.project_id = project_id
         self.in_edges = in_edges
         self.out_edges = out_edges
         # shape
@@ -21,13 +23,24 @@ class BaseNode:
             logging.FileHandler(self.join_path('log.txt'), mode='w')
         )
 
-    @property
-    def dictionary_path(self):
-        return './file/{}/node/{}'.format(self.project_id, self.id)
+    def dictionary_path(self, id_=None):
+        return './file/{}/node/{}'.format(
+            self.project_id, self.id if id_ is None else id_
+        )
 
-    def join_path(self, filename):
-        return os.path.join(self.dictionary_path, filename)
+    def join_path(self, filename, id_=None):
+        return os.path.join(self.dictionary_path(id_), filename)
 
     @abstractmethod
     def run(self):
         pass
+
+    def run_train(self):
+        return self.run()
+
+    def run_test(self):
+        return self.run()
+
+    @staticmethod
+    def get_output(input_):
+        return input_

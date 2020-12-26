@@ -5,22 +5,29 @@ from app.models.file import File
 
 
 class InputNode(BaseNode):
-    def __init__(
-        self, id_, node_type, project_id, in_edges, out_edges, input_file
-    ):
+    allow_input = [0]
+
+    def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
         super().__init__(id_, node_type, project_id, in_edges, out_edges)
-        self.input_file = input_file
+        assert len(in_edges) == 0, 'Input node cannot exist in_edges'
+        # x_input_file
+        x_input_file = extra.get('x_input_file')
+        assert isinstance(x_input_file, int), 'x_input_file must be integer'
+        self.x_input_file = File.get_by_id(x_input_file)
+        assert x_input_file, 'x_input_file not found'
+        # y_input_file
+        y_input_file = extra.get('y_input_file')
+        assert isinstance(y_input_file, int), 'y_input_file must be integer'
+        self.y_input_file = File.get_by_id(y_input_file)
+        assert y_input_file, 'y_input_file not found'
+
+    @staticmethod
+    def get_output(input_):
+        return 1
 
     def run(self):
-        self.logger.debug('file id: {}'.format(self.input_file))
-        if self.input_file is None:
-            self.logger.error('file not found')
-            raise
-        file = File.get_by_id(self.input_file)
-        if file is None:
-            self.logger.error('file not found')
-            raise
-        self.logger.debug('file path: {}'.format(file.path))
-        df = pd.read_csv(file.path)
-        self.output_shape = df.shape
-        df.to_csv(self.join_path('output.csv'))
+        x_df = pd.read_csv(self.x_input_file.path)
+        y_df = pd.read_csv(self.y_input_file.path)
+        self.output_shape = [[x_df.shape, y_df.shape]]
+        x_df.to_csv(self.join_path('x.csv'))
+        y_df.to_csv(self.join_path('y.csv'))

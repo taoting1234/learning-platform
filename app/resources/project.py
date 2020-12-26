@@ -50,3 +50,15 @@ class ResourceProjectList(Resource):
             abort(400, message='Project already exist')
         project = Project.create(user_id=current_user.id, **args)
         return project, 201
+
+
+class ResourceProjectRun(Resource):
+    @login_required
+    @self_only(Project)
+    def post(self, id_):
+        project = Project.get_by_id(id_)
+        try:
+            project.run()
+        except Exception as e:
+            abort(400, message=e)
+        return {'message': 'Create task success'}, 201
