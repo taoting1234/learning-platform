@@ -5,3 +5,4 @@ flask-login
 flask-cors
 pymysql
 pandas
+sklearn
