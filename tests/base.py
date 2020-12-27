@@ -1,3 +1,4 @@
+import os
 import shutil
 import tempfile
 
@@ -41,7 +42,7 @@ def client():
             # 创建文件
             file_path = "{}/1.test".format(tempfile.gettempdir())
             with open(file_path, "wb") as f:
-                f.write(bytes("123", encoding='utf8'))
+                f.write(os.urandom(128))
             assert client.post(
                 '/session', data={
                     'username': 'user1',
