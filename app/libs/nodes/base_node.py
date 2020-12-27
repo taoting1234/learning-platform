@@ -2,6 +2,8 @@ import logging
 import os
 from abc import abstractmethod
 
+from flask import current_app
+
 
 class BaseNode:
     allow_input = []
@@ -24,8 +26,9 @@ class BaseNode:
         )
 
     def dictionary_path(self, id_=None):
-        return './file/{}/node/{}'.format(
-            self.project_id, self.id if id_ is None else id_
+        return '{}/{}/node/{}'.format(
+            current_app.config['FILE_DIRECTORY'], self.project_id,
+            self.id if id_ is None else id_
         )
 
     def join_path(self, filename, id_=None):
