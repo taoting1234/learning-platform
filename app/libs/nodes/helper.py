@@ -17,9 +17,14 @@ def change_node(node: Node) -> BaseNode:
         )
 
 
-def run_nodes(nodes: [BaseNode]):
+def run_nodes(nodes: [BaseNode], thread):
+    from flask_app import create_app
+    app = create_app()
+    if thread:
+        app.app_context().push()
     for node in nodes:
         try:
             node.run()
         except Exception as e:
+            print(str(e))
             node.logger.error(e)

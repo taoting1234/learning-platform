@@ -1,3 +1,7 @@
+import json
+import random
+from importlib import resources
+
 from .base import client
 
 
@@ -124,3 +128,205 @@ def test_delete(client):
     # 删除成功
     assert client.delete('/project/1').status_code == 204
     assert client.get('/project/1').status_code == 404
+
+
+def test_run(client):
+    # 运行失败（未登录）
+    assert client.post('/project/2/run').status_code == 401
+    # 登录
+    assert client.post(
+        '/session', data={
+            'username': 'user1',
+            'password': '123'
+        }
+    ).status_code == 201
+    # 运行失败（项目不属于你）
+    assert client.post('/project/3/run').status_code == 403
+    # 运行失败（项目有多个部分）
+    res = client.post(
+        '/project', data={
+            'name': str(random.random()),
+            'tag': 'test'
+        }
+    )
+    assert res.status_code == 201
+    project_id = res.json['id']
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': 'input_node'
+        }
+    )
+    assert res.status_code == 201
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': 'input_node'
+        }
+    )
+    assert res.status_code == 201
+    assert client.post('/project/{}/run'.format(project_id)).status_code == 400
+    # 运行失败（项目有环）
+    res = client.post(
+        '/project', data={
+            'name': str(random.random()),
+            'tag': 'test'
+        }
+    )
+    assert res.status_code == 201
+    project_id = res.json['id']
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': 'input_node'
+        }
+    )
+    assert res.status_code == 201
+    node1_id = res.json['id']
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': 'input_node'
+        }
+    )
+    assert res.status_code == 201
+    node2_id = res.json['id']
+    assert client.post(
+        '/node/edge',
+        data={
+            'project_id': project_id,
+            'node1_id': node1_id,
+            'node2_id': node2_id
+        }
+    ).status_code == 201
+    assert client.post(
+        '/node/edge',
+        data={
+            'project_id': project_id,
+            'node1_id': node2_id,
+            'node2_id': node1_id
+        }
+    ).status_code == 201
+    assert client.post('/project/{}/run'.format(project_id)).status_code == 400
+    # 运行失败（项目部分有环）
+    res = client.post(
+        '/project', data={
+            'name': str(random.random()),
+            'tag': 'test'
+        }
+    )
+    assert res.status_code == 201
+    project_id = res.json['id']
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': 'input_node'
+        }
+    )
+    assert res.status_code == 201
+    node1_id = res.json['id']
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': 'input_node'
+        }
+    )
+    assert res.status_code == 201
+    node2_id = res.json['id']
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': 'input_node'
+        }
+    )
+    assert res.status_code == 201
+    node3_id = res.json['id']
+    assert client.post(
+        '/node/edge',
+        data={
+            'project_id': project_id,
+            'node1_id': node1_id,
+            'node2_id': node2_id
+        }
+    ).status_code == 201
+    assert client.post(
+        '/node/edge',
+        data={
+            'project_id': project_id,
+            'node1_id': node2_id,
+            'node2_id': node1_id
+        }
+    ).status_code == 201
+    assert client.post(
+        '/node/edge',
+        data={
+            'project_id': project_id,
+            'node1_id': node2_id,
+            'node2_id': node3_id
+        }
+    ).status_code == 201
+    assert client.post('/project/{}/run'.format(project_id)).status_code == 400
+    # 运行失败（项目有无效节点）
+    res = client.post(
+        '/project', data={
+            'name': str(random.random()),
+            'tag': 'test'
+        }
+    )
+    assert res.status_code == 201
+    project_id = res.json['id']
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': '123'
+        }
+    )
+    assert res.status_code == 201
+    node_id = res.json['id']
+    assert client.put(
+        '/node/{}'.format(node_id),
+        data={
+            'extra': '{"x_input_file":1, "y_input_file":1}'
+        }
+    ).status_code == 200
+    assert client.post('/project/{}/run'.format(project_id)).status_code == 400
+    # 运行成功
+    res = client.post(
+        '/project', data={
+            'name': str(random.random()),
+            'tag': 'test'
+        }
+    )
+    assert res.status_code == 201
+    project_id = res.json['id']
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': 'input_node'
+        }
+    )
+    assert res.status_code == 201
+    node_id = res.json['id']
+    with resources.open_binary(
+        'tests.files.linear_regression', 'x_data.csv'
+    ) as f:
+        res = client.post('/file', data={'file': f, 'project_id': project_id})
+        assert res.status_code == 201
+        file1_id = res.json['id']
+    with resources.open_binary(
+        'tests.files.linear_regression', 'y_data.csv'
+    ) as f:
+        res = client.post('/file', data={'file': f, 'project_id': project_id})
+        assert res.status_code == 201
+        file2_id = res.json['id']
+    assert client.put(
+        '/node/{}'.format(node_id),
+        data={
+            'extra':
+                json.dumps({
+                    'x_input_file': file1_id,
+                    'y_input_file': file2_id
+                })
+        }
+    ).status_code == 200
+    assert client.post('/project/{}/run'.format(project_id)).status_code == 201
