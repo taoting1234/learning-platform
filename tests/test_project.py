@@ -292,6 +292,31 @@ def test_run(client):
         }
     ).status_code == 200
     assert client.post('/project/{}/run'.format(project_id)).status_code == 400
+    # 运行成功（运行节点报错）
+    res = client.post(
+        '/project', data={
+            'name': str(random.random()),
+            'tag': 'test'
+        }
+    )
+    assert res.status_code == 201
+    project_id = res.json['id']
+    res = client.post(
+        '/node', data={
+            'project_id': project_id,
+            'node_type': 'input_node'
+        }
+    )
+    assert res.status_code == 201
+    node_id = res.json['id']
+    assert client.put(
+        '/node/{}'.format(node_id),
+        data={
+            'extra': '{"x_input_file":1, "y_input_file":1}'
+        }
+    ).status_code == 200
+    assert client.post('/project/{}/run'.format(project_id)).status_code == 201
+    assert client.get('/node/{}'.format(node_id)).json['log']
     # 运行成功
     res = client.post(
         '/project', data={
