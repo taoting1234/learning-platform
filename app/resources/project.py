@@ -60,5 +60,5 @@ class ResourceProjectRun(Resource):
         try:
             project.run()
         except Exception as e:
-            abort(400, message=e)
+            abort(400, message=str(e))
         return {'message': 'Create task success'}, 201
