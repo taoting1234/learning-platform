@@ -2,6 +2,8 @@ import json
 import random
 from importlib import resources
 
+from flask import current_app
+
 from .base import client
 
 
@@ -329,4 +331,7 @@ def test_run(client):
                 })
         }
     ).status_code == 200
+    assert client.post('/project/{}/run'.format(project_id)).status_code == 201
+    # 运行成功（线程）
+    current_app.config['THREAD'] = True
     assert client.post('/project/{}/run'.format(project_id)).status_code == 201

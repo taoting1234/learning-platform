@@ -5,6 +5,7 @@ from threading import Thread
 from flask import current_app
 from sqlalchemy import Column, ForeignKey, Integer, String
 
+from app.libs.global_varible import g
 from app.models.base import Base
 from app.models.project import Project
 
@@ -118,10 +119,22 @@ class Node(Base):
                 node.id, node.node_type, input_
             )
             input_ = node.get_output(input_)
-        if current_app.config['TESTING']:
-            run_nodes(nodes, False)
+        if current_app.config['TESTING'
+                             ] and not current_app.config.get('THREAD'):
+            run_nodes(nodes, True, False)
         else:
-            Thread(target=run_nodes, args=(nodes, True)).start()
+            t = Thread(
+                target=run_nodes,
+                args=(
+                    nodes, current_app.config['TESTING'],
+                    current_app.config.get('THREAD')
+                )
+            )
+            t.start()
+            if current_app.config['TESTING']:
+                if getattr(g, 'thread_list', None) is None:
+                    g.thread_list = []
+                g.thread_list.append(t)
 
     @staticmethod
     def get_nodes(node):

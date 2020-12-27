@@ -1,9 +1,11 @@
 import shutil
 import tempfile
+import time
 
 import pytest
 from flask import Flask
 
+from app.libs.global_varible import g
 from app.models.node import Node
 from app.models.project import Project
 from app.models.user import User
@@ -105,4 +107,14 @@ def client():
             yield client
 
             # 测试后运行
+            # 等待线程结束
+            if getattr(g, 'thread_list', None):
+                flag = True
+                while flag:
+                    flag = False
+                    for thread in g.thread_list:
+                        if thread.is_alive():
+                            flag = True
+                    time.sleep(1)
+            # 删除文件夹
             shutil.rmtree(app.config['FILE_DIRECTORY'], ignore_errors=True)
