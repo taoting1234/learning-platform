@@ -81,6 +81,15 @@ class Node(Base):
             with open(self.join_path('log.txt')) as f:
                 return f.read()
 
+    @classmethod
+    def create(cls, **kwargs):
+        base = super().create(**kwargs)
+        os.makedirs(
+            '{}/{}/node/{}'.format(current_app.config['FILE_DIRECTORY'], base.project_id, base.id),
+            exist_ok=True
+        )
+        return base
+
     def modify(self, **kwargs):
         super().modify(status=0, **kwargs)
 
@@ -107,7 +116,7 @@ class Node(Base):
                 node.id, node.node_type, input_
             )
             input_ = node.get_output(input_)
-        Thread(target=run_nodes, args=(nodes, )).start()
+        Thread(target=run_nodes, args=(nodes,)).start()
 
     @staticmethod
     def get_nodes(node):
