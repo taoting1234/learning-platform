@@ -1,9 +1,7 @@
 import shutil
 import tempfile
-import time
 
 import pytest
-from flask import Flask
 
 from app import create_app
 from app.libs.global_varible import g
