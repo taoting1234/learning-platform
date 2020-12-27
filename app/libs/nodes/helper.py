@@ -27,3 +27,5 @@ def run_nodes(nodes: [BaseNode], testing, thread):
             node.run()
         except Exception as e:
             node.logger.error(e)
+        finally:
+            node.update()
