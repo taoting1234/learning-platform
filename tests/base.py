@@ -116,5 +116,6 @@ def client():
                         if thread.is_alive():
                             flag = True
                     time.sleep(1)
+                g.thread_list = None
             # 删除文件夹
             shutil.rmtree(app.config['FILE_DIRECTORY'], ignore_errors=True)
