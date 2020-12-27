@@ -23,6 +23,7 @@ def run_nodes(nodes: [BaseNode], testing, thread):
         app = create_app()
         if thread:
             app.config['FILE_DIRECTORY'] = './test_files'
+            app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
         app.app_context().push()
     for node in nodes:
         try:
