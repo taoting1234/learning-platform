@@ -85,7 +85,9 @@ class Node(Base):
     def create(cls, **kwargs):
         base = super().create(**kwargs)
         os.makedirs(
-            '{}/{}/node/{}'.format(current_app.config['FILE_DIRECTORY'], base.project_id, base.id),
+            '{}/{}/node/{}'.format(
+                current_app.config['FILE_DIRECTORY'], base.project_id, base.id
+            ),
             exist_ok=True
         )
         return base
@@ -116,7 +118,10 @@ class Node(Base):
                 node.id, node.node_type, input_
             )
             input_ = node.get_output(input_)
-        Thread(target=run_nodes, args=(nodes,)).start()
+        if current_app.config['TESTING']:
+            run_nodes(nodes, False)
+        else:
+            Thread(target=run_nodes, args=(nodes, True)).start()
 
     @staticmethod
     def get_nodes(node):
