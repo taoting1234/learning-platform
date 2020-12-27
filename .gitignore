@@ -1,8 +1,8 @@
-venv
-.pytest_cache
-.coverage
-.idea
-app/config.py
+/venv
+/.pytest_cache
+/.coverage
+/.idea
+/app/config.py
 __pycache__
-coverage.xml
+/coverage.xml
 /files
