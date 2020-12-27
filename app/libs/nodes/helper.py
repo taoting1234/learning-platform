@@ -20,10 +20,10 @@ def change_node(node: Node) -> BaseNode:
 def run_nodes(nodes: [BaseNode], testing, thread):
     if not testing or thread:
         from flask_app import create_app
-        app = create_app()
         if thread:
-            app.config['FILE_DIRECTORY'] = './test_files'
-            app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+            app = create_app(test=True)
+        else:
+            app = create_app()
         app.app_context().push()
     for node in nodes:
         try:

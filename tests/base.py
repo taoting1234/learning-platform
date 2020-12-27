@@ -5,26 +5,16 @@ import time
 import pytest
 from flask import Flask
 
+from app import create_app
 from app.libs.global_varible import g
 from app.models.node import Node
 from app.models.project import Project
 from app.models.user import User
-from flask_app import register_plugin, register_resource
 
 
 @pytest.fixture
 def client():
-    app = Flask(__name__)
-    try:
-        app.config.from_object("app.config")
-    except ImportError:
-        app.config.from_object("app.config_demo")
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
-    app.config['TESTING'] = True
-    app.config['FILE_DIRECTORY'] = './test_files'
-    register_resource(app)
-    register_plugin(app)
-
+    app = create_app(test=True)
     with app.test_client() as client:
         with app.app_context():
             # 测试前运行
@@ -109,13 +99,8 @@ def client():
             # 测试后运行
             # 等待线程结束
             if getattr(g, 'thread_list', None):
-                flag = True
-                while flag:
-                    flag = False
-                    for thread in g.thread_list:
-                        if thread.is_alive():
-                            flag = True
-                    time.sleep(1)
+                for thread in g.thread_list:
+                    thread.join()
                 g.thread_list = None
             # 删除文件夹
             shutil.rmtree(app.config['FILE_DIRECTORY'], ignore_errors=True)
