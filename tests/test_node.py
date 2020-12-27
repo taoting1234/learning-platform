@@ -18,7 +18,7 @@ def test_get(client):
     assert client.get('/node', data={'project_id': 3}).status_code == 403
 
 
-def test_post(client):
+def test_create(client):
     # 创建节点失败（未登录）
     assert client.post(
         '/node', data={
@@ -54,7 +54,7 @@ def test_post(client):
     assert client.get('/node/{}'.format(id_)).json['node_type'] == '123'
 
 
-def test_put(client):
+def test_modify(client):
     # 修改节点失败（未登录）
     assert client.put(
         '/node/1', data={
@@ -112,7 +112,7 @@ def test_delete(client):
     assert client.get('/node/1').status_code == 404
 
 
-def test_edge_post(client):
+def test_edge_create(client):
     # 创建边失败（未登录）
     assert client.post(
         '/node/edge', data={

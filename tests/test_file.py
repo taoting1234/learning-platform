@@ -23,7 +23,7 @@ def test_get(client):
     assert client.get('/file', data={'project_id': 3}).status_code == 403
 
 
-def test_post(client):
+def test_create(client):
     # 创建文件
     file_path = "{}/1.a".format(tempfile.gettempdir())
     with open(file_path, "wb") as f:
@@ -84,7 +84,7 @@ def test_post(client):
     assert client.get('/file/{}'.format(id_)).json['size'] > size
 
 
-def test_put(client):
+def test_modify(client):
     # 修改文件失败（未登录）
     assert client.put('/file/1', data={'filename': '1.b'}).status_code == 401
     # 登录

@@ -7,7 +7,7 @@ def test_get(client):
     assert client.get('/user/3').status_code == 404
 
 
-def test_post(client):
+def test_create(client):
     # 创建用户（失败）
     assert client.post(
         '/user', data={
@@ -29,7 +29,7 @@ def test_post(client):
     assert client.get('/user/{}'.format(id_)).json['username'] == 'user'
 
 
-def test_put(client):
+def test_modify(client):
     # 修改用户失败（未登录）
     assert client.delete('/session').status_code == 204
     assert client.put(

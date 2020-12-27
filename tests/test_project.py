@@ -17,7 +17,7 @@ def test_get(client):
     assert len(client.get('/project').json['projects']) == 2
 
 
-def test_post(client):
+def test_create(client):
     # 创建失败（未登录）
     assert client.post(
         '/project', data={
@@ -46,7 +46,7 @@ def test_post(client):
     assert client.get('/project/{}'.format(id_)).json['name'] == 'project'
 
 
-def test_put(client):
+def test_modify(client):
     # 修改失败（未登录）
     assert client.put(
         '/project/1', data={
