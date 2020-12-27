@@ -1,7 +1,7 @@
 import json
 import random
-from importlib import resources
 
+import pkg_resources
 from flask import current_app
 
 from .base import client
@@ -309,14 +309,18 @@ def test_run(client):
     )
     assert res.status_code == 201
     node_id = res.json['id']
-    with resources.open_binary(
-        'tests.files.linear_regression', 'x_data.csv'
+    with open(
+        pkg_resources.resource_filename(
+            'tests.files.linear_regression', 'x_data.csv'
+        ), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
         file1_id = res.json['id']
-    with resources.open_binary(
-        'tests.files.linear_regression', 'y_data.csv'
+    with open(
+        pkg_resources.resource_filename(
+            'tests.files.linear_regression', 'y_data.csv'
+        ), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
