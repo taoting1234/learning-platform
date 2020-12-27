@@ -14,8 +14,8 @@ class BaseNode:
         self.in_edges = in_edges
         self.out_edges = out_edges
         # shape
-        self.input_shape = None
-        self.output_shape = None
+        self.input_shape = []
+        self.output_shape = []
         # logger
         self.logger = logging.getLogger('node-{}'.format(id_))
         self.logger.setLevel(logging.DEBUG)
