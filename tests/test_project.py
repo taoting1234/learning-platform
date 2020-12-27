@@ -268,6 +268,7 @@ def test_run(client):
         }
     ).status_code == 201
     assert client.post('/project/{}/run'.format(project_id)).status_code == 400
+    assert client.post('/node/{}/run'.format(node3_id)).status_code == 400
     # 运行失败（项目有无效节点）
     res = client.post(
         '/project', data={
@@ -292,6 +293,7 @@ def test_run(client):
         }
     ).status_code == 200
     assert client.post('/project/{}/run'.format(project_id)).status_code == 400
+    assert client.post('/node/{}/run'.format(node_id)).status_code == 400
     # 运行成功（运行节点报错）
     res = client.post(
         '/project', data={
@@ -361,6 +363,7 @@ def test_run(client):
         }
     ).status_code == 200
     assert client.post('/project/{}/run'.format(project_id)).status_code == 201
+    assert client.post('/node/{}/run'.format(node_id)).status_code == 201
     # 运行成功（线程）
     current_app.config['THREAD'] = True
     assert client.post('/project/{}/run'.format(project_id)).status_code == 201
