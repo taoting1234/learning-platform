@@ -16,7 +16,7 @@ def create_app(test=False):
     except ImportError:
         app.config.from_object("app.config_demo")
     if test:
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../test.db'
         app.config['TESTING'] = True
         app.config['FILE_DIRECTORY'] = './test_files'
     register_resource(app)

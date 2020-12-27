@@ -13,6 +13,8 @@ from app.models.user import User
 
 @pytest.fixture
 def client():
+    if os.path.exists('test.db'):
+        os.remove('test.db')
     app = create_app(test=True)
     with app.test_client() as client:
         with app.app_context():
@@ -90,6 +92,14 @@ def client():
                     'node2_id': 3
                 }
             ).status_code == 201
+            assert client.post(
+                '/node/edge',
+                data={
+                    'project_id': 1,
+                    'node1_id': 3,
+                    'node2_id': 1
+                }
+            ).status_code == 201
             assert client.delete('/session').status_code == 204
 
             # yield
@@ -103,3 +113,4 @@ def client():
                 g.thread_list = None
             # 删除文件夹
             shutil.rmtree(app.config['FILE_DIRECTORY'], ignore_errors=True)
+            os.remove('test.db')
