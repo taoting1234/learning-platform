@@ -1,13 +1,12 @@
 import logging
 import os
-from abc import abstractmethod
 
 from flask import current_app
 
+from app.models.node import Node
+
 
 class BaseNode:
-    allow_input = []
-
     def __init__(self, id_, node_type, project_id, in_edges, out_edges):
         self.id = id_
         self.node_type = node_type
@@ -34,15 +33,11 @@ class BaseNode:
     def join_path(self, filename, id_=None):
         return os.path.join(self.dictionary_path(id_), filename)
 
-    @abstractmethod
-    def run(self):
-        pass
-
-    def run_train(self):
-        return self.run()
-
-    def run_test(self):
-        return self.run()
+    def update(self):
+        node = Node.get_by_id(self.id)
+        node.modify(
+            input_shape=self.input_shape, output_shape=self.output_shape
+        )
 
     @staticmethod
     def get_output(input_):

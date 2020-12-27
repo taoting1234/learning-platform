@@ -23,7 +23,9 @@ class InputNode(BaseNode):
 
     @staticmethod
     def get_output(input_):
-        return 1
+        if input_ == 0:
+            return 1
+        assert False
 
     def run(self):
         x_df = pd.read_csv(self.x_input_file.path)

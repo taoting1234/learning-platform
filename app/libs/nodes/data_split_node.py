@@ -5,8 +5,6 @@ from app.libs.nodes.base_node import BaseNode
 
 
 class DataSplitNode(BaseNode):
-    allow_input = [1]
-
     def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
         super().__init__(id_, node_type, project_id, in_edges, out_edges)
         assert len(in_edges) == 1, 'Data split node only allow one in_edges'
@@ -23,7 +21,9 @@ class DataSplitNode(BaseNode):
 
     @staticmethod
     def get_output(input_):
-        return 2
+        if input_ == 1:
+            return 2
+        assert False
 
     def run(self):
         x_df = pd.read_csv(self.join_path('x.csv', self.in_edges[0]))
