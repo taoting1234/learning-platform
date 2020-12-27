@@ -5,4 +5,4 @@ venv
 app/config.py
 __pycache__
 coverage.xml
-files
+./files
