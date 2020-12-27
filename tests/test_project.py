@@ -294,6 +294,8 @@ def test_run(client):
     ).status_code == 200
     assert client.post('/project/{}/run'.format(project_id)).status_code == 400
     assert client.post('/node/{}/run'.format(node_id)).status_code == 400
+    # 运行失败（输入数量错误）
+    # TODO 目前测试不到
     # 运行成功（运行节点报错）
     res = client.post(
         '/project', data={
