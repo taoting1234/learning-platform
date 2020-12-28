@@ -1,10 +1,8 @@
-from app.libs.nodes.base_node import BaseNode
 from app.libs.nodes.data_split_node import DataSplitNode
 from app.libs.nodes.input_node import InputNode
-from app.models.node import Node
 
 
-def change_node(node: Node) -> BaseNode:
+def change_node(node):
     node_mapping = {'input_node': InputNode, 'data_split_node': DataSplitNode}
     try:
         return node_mapping[node.node_type](
@@ -17,7 +15,7 @@ def change_node(node: Node) -> BaseNode:
         )
 
 
-def run_nodes(nodes: [BaseNode], testing, thread):
+def run_nodes(nodes, testing, thread):
     if not testing or thread:
         from flask_app import create_app
         app = create_app(test=testing)
