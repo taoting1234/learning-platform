@@ -16,7 +16,7 @@ class DataSplitNode(BaseNode):
         self.random_state = extra.get('random_state')
         if self.random_state:
             assert isinstance(
-                self.random_state, float
+                self.random_state, int
             ), 'random_state must be integer'
 
     @staticmethod
