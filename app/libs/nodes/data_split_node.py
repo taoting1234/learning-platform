@@ -26,15 +26,23 @@ class DataSplitNode(BaseNode):
         assert False
 
     def run(self):
-        x_df = pd.read_csv(self.join_path('x.csv', self.in_edges[0]))
-        y_df = pd.read_csv(self.join_path('y.csv', self.in_edges[0]))
+        x_df = pd.read_csv(
+            self.join_path('x.csv', self.in_edges[0]), header=None
+        )
+        y_df = pd.read_csv(
+            self.join_path('y.csv', self.in_edges[0]), header=None
+        )
+        self.input_shape = [x_df.shape, y_df.shape]
         x_train, x_test, y_train, y_test = train_test_split(
             x_df,
             y_df,
             test_size=self.test_ratio,
             random_state=self.random_state
         )
-        x_train.to_csv('x_train.csv')
-        x_test.to_csv('x_test.csv')
-        y_train.to_csv('y_train.csv')
-        y_test.to_csv('y_test.csv')
+        self.output_shape = [
+            x_train.shape, x_test.shape, y_train.shape, y_test.shape
+        ]
+        x_train.to_csv(self.join_path('x_train.csv'), index=False, header=False)
+        x_test.to_csv(self.join_path('x_test.csv'), index=False, header=False)
+        y_train.to_csv(self.join_path('y_train.csv'), index=False, header=False)
+        y_test.to_csv(self.join_path('y_test.csv'), index=False, header=False)
