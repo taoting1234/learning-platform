@@ -38,7 +38,3 @@ class BaseNode:
         node.modify(
             input_shape=self.input_shape, output_shape=self.output_shape
         )
-
-    @staticmethod
-    def get_output(input_):
-        return input_
