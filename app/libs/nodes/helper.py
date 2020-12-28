@@ -1,6 +1,8 @@
 from app.libs.nodes.data_split_node import DataSplitNode
 from app.libs.nodes.input_node import InputNode
-from app.libs.nodes.models.k_neighbors_classifier_node import KNeighborsClassifierNode
+from app.libs.nodes.models.k_neighbors_classifier_node import (
+    KNeighborsClassifierNode,
+)
 from app.libs.nodes.models.linear_regression_node import LinearRegressionNode
 from app.libs.nodes.models.logistic_regression_node import (
     LogisticRegressionNode,

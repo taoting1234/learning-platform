@@ -38,8 +38,8 @@ class KNeighborsClassifierNode(BaseNode):
         y_test = pd.read_csv(
             self.join_path('y_test.csv', self.in_edges[0]), header=None
         ).to_numpy()
-        y_train = y_train.reshape((-1,))
-        y_test = y_test.reshape((-1,))
+        y_train = y_train.reshape((-1, ))
+        y_test = y_test.reshape((-1, ))
         model = KNeighborsClassifier()
         model.fit(x_train, y_train)
         y_pred = model.predict(x_test)
