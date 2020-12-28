@@ -30,6 +30,6 @@ class InputNode(BaseNode):
     def run(self):
         x_df = pd.read_csv(self.x_input_file.path, header=None)
         y_df = pd.read_csv(self.y_input_file.path, header=None)
-        self.output_shape = [[x_df.shape, y_df.shape]]
+        self.output_shape = [x_df.shape, y_df.shape]
         x_df.to_csv(self.join_path('x.csv'), index=False, header=False)
         y_df.to_csv(self.join_path('y.csv'), index=False, header=False)
