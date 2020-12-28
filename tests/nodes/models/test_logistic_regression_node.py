@@ -6,7 +6,7 @@ import pkg_resources
 from ...base import client
 
 
-def test_linear_regression_node(client):
+def test_logistic_regression_node(client):
     # 登录
     assert client.post(
         '/session', data={
