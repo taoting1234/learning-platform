@@ -20,16 +20,16 @@ class LinearRegressionNode(BaseNode):
     def run(self):
         x_train = pd.read_csv(
             self.join_path('x_train.csv', self.in_edges[0]), header=None
-        )
+        ).to_numpy()
         x_test = pd.read_csv(
             self.join_path('x_test.csv', self.in_edges[0]), header=None
-        )
+        ).to_numpy()
         y_train = pd.read_csv(
             self.join_path('y_train.csv', self.in_edges[0]), header=None
-        )
+        ).to_numpy()
         y_test = pd.read_csv(
             self.join_path('y_test.csv', self.in_edges[0]), header=None
-        )
+        ).to_numpy()
         model = LinearRegression()
         model.fit(x_train, y_train)
         y_pred = model.predict(x_test)
