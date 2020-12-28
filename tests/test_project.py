@@ -312,18 +312,22 @@ def test_run(client):
     assert res.status_code == 201
     node1_id = res.json['id']
     res = client.post(
-        '/node', data={
+        '/node',
+        data={
             'project_id': project_id,
             'node_type': 'linear_regression_node'
         }
     )
     assert res.status_code == 201
     node2_id = res.json['id']
-    assert client.post('/node/edge', data={
-        'project_id': project_id,
-        'node1_id': node1_id,
-        'node2_id': node2_id
-    })
+    assert client.post(
+        '/node/edge',
+        data={
+            'project_id': project_id,
+            'node1_id': node1_id,
+            'node2_id': node2_id
+        }
+    )
     assert client.put(
         '/node/{}'.format(node1_id),
         data={

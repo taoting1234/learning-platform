@@ -4,8 +4,11 @@ from app.libs.nodes.models.linear_regression_node import LinearRegressionNode
 
 
 def change_node(node):
-    node_mapping = {'input_node': InputNode, 'data_split_node': DataSplitNode,
-                    'linear_regression_node': LinearRegressionNode}
+    node_mapping = {
+        'input_node': InputNode,
+        'data_split_node': DataSplitNode,
+        'linear_regression_node': LinearRegressionNode
+    }
     try:
         return node_mapping[node.node_type](
             node.id, node.node_type, node.project_id, node.in_edges,
