@@ -25,17 +25,17 @@ def test_linear_regression_node(client):
     project_id = res.json['id']
     # 上传文件
     with open(
-            pkg_resources.resource_filename(
-                'tests.files.linear_regression', 'x_data.csv'
-            ), 'rb'
+        pkg_resources.resource_filename(
+            'tests.files.linear_regression', 'x_data.csv'
+        ), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
         file1_id = res.json['id']
     with open(
-            pkg_resources.resource_filename(
-                'tests.files.linear_regression', 'y_data.csv'
-            ), 'rb'
+        pkg_resources.resource_filename(
+            'tests.files.linear_regression', 'y_data.csv'
+        ), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
