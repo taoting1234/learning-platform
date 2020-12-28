@@ -111,7 +111,7 @@ def client():
                 for thread in g.thread_list:
                     thread.join()
                 g.thread_list = None
-            # 删除文件夹
-            shutil.rmtree(app.config['FILE_DIRECTORY'], ignore_errors=True)
-        # 删除数据库
+
+        # 删除文件
+        shutil.rmtree(app.config['FILE_DIRECTORY'], ignore_errors=True)
         os.remove('test.db')
