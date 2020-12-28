@@ -19,10 +19,13 @@ class BaseNode:
         # logger
         self.logger = logging.getLogger('node-{}'.format(id_))
         self.logger.setLevel(logging.DEBUG)
-        self.logger.addHandler(logging.StreamHandler())
-        self.logger.addHandler(
-            logging.FileHandler(self.join_path('log.txt'), mode='w')
-        )
+        formatter = logging.Formatter('%(asctime)s %(filename)s: %(levelname)s %(message)s')
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        file_handler = logging.FileHandler(self.join_path('log.txt'), mode='w')
+        file_handler.setFormatter(formatter)
+        self.logger.addHandler(stream_handler)
+        self.logger.addHandler(file_handler)
 
     def dictionary_path(self, id_=None):
         return '{}/{}/node/{}'.format(
