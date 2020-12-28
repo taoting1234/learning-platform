@@ -23,7 +23,6 @@ class DataSplitNode(BaseNode):
     def get_output(input_):
         if input_ == 1:
             return 2
-        assert False
 
     def run(self):
         x_df = pd.read_csv(

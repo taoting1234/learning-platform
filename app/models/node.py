@@ -115,14 +115,10 @@ class Node(Base):
         nodes = self.change_nodes(nodes)
         input_ = 0
         for node in nodes:
-            try:
-                input_ = node.get_output(input_)
-            except Exception:
-                raise Exception(
-                    'Node{}({}) not support input {}'.format(
-                        node.id, node.node_type, input_
-                    )
-                )
+            input_ = node.get_output(input_)
+            assert input_, 'Node{}({}) not support input {}'.format(
+                node.id, node.node_type, input_
+            )
         if current_app.config['TESTING'] \
                 and not current_app.config.get('THREAD'):
             run_nodes(nodes, True, False)

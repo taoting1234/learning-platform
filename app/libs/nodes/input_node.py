@@ -25,7 +25,6 @@ class InputNode(BaseNode):
     def get_output(input_):
         if input_ == 0:
             return 1
-        assert False
 
     def run(self):
         x_df = pd.read_csv(self.x_input_file.path, header=None)
