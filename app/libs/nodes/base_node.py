@@ -17,7 +17,7 @@ class BaseNode:
         self.input_shape = []
         self.output_shape = []
         # logger
-        self.logger = logging.getLogger('node-{}'.format(id_))
+        self.logger = logging.Logger('node-{}'.format(id_))
         self.logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
             '%(asctime)s %(filename)s: %(levelname)s %(message)s'
