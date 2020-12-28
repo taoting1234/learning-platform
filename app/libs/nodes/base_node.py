@@ -19,7 +19,9 @@ class BaseNode:
         # logger
         self.logger = logging.getLogger('node-{}'.format(id_))
         self.logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s %(filename)s: %(levelname)s %(message)s')
+        formatter = logging.Formatter(
+            '%(asctime)s %(filename)s: %(levelname)s %(message)s'
+        )
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         file_handler = logging.FileHandler(self.join_path('log.txt'), mode='w')
