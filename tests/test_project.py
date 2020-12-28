@@ -358,8 +358,7 @@ def test_run(client):
             'extra': '{"x_input_file":1, "y_input_file":1}'
         }
     ).status_code == 200
-    assert client.post('/project/{}/run'.format(project_id)).status_code == 201
-    assert client.get('/node/{}'.format(node_id)).json['log']
+    assert client.post('/project/{}/run'.format(project_id)).status_code == 400
     # 运行成功
     res = client.post(
         '/project', data={
