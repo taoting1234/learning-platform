@@ -378,7 +378,7 @@ def test_run(client):
     node_id = res.json['id']
     with open(
         pkg_resources.resource_filename(
-            'tests.files.linear_regression', 'x_data.csv'
+            'tests.files.linear_regression', 'x.csv'
         ), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
@@ -386,7 +386,7 @@ def test_run(client):
         file1_id = res.json['id']
     with open(
         pkg_resources.resource_filename(
-            'tests.files.linear_regression', 'y_data.csv'
+            'tests.files.linear_regression', 'y.csv'
         ), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
