@@ -25,17 +25,13 @@ def test_logistic_regression_node(client):
     project_id = res.json['id']
     # 上传文件
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.logistic_regression', 'telco_x.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'telco_x.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
         file1_id = res.json['id']
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.logistic_regression', 'telco_y.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'telco_y.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201

@@ -25,17 +25,13 @@ def test_k_neighbors_classifier_node_1(client):
     project_id = res.json['id']
     # 上传文件
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.k_neighbors_classifier', 'amazon_x.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'amazon_x.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
         file1_id = res.json['id']
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.k_neighbors_classifier', 'amazon_y.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'amazon_y.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
@@ -129,17 +125,13 @@ def test_k_neighbors_classifier_node_2(client):
     project_id = res.json['id']
     # 上传文件
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.k_neighbors_classifier', 'cancer_x.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'cancer_x.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
         file1_id = res.json['id']
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.k_neighbors_classifier', 'cancer_y.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'cancer_y.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
