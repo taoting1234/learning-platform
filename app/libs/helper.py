@@ -1,22 +1,7 @@
-from app.libs.nodes.data_split_node import DataSplitNode
-from app.libs.nodes.input_node import InputNode
-from app.libs.nodes.models.k_neighbors_classifier_node import (
-    KNeighborsClassifierNode,
-)
-from app.libs.nodes.models.linear_regression_node import LinearRegressionNode
-from app.libs.nodes.models.logistic_regression_node import (
-    LogisticRegressionNode,
-)
+from app.libs.nodes import node_mapping
 
 
 def change_node(node):
-    node_mapping = {
-        'input_node': InputNode,
-        'data_split_node': DataSplitNode,
-        'linear_regression_node': LinearRegressionNode,
-        'logistic_regression_node': LogisticRegressionNode,
-        'k_neighbors_classifier_node': KNeighborsClassifierNode
-    }
     try:
         return node_mapping[node.node_type](
             node.id, node.node_type, node.project_id, node.in_edges,
@@ -38,7 +23,7 @@ def run_nodes(nodes, testing, thread):
             node.run()
         except Exception as e:
             if testing:
-                raise Exception(e)
+                raise
             node.logger.error(e)
         finally:
             node.update()

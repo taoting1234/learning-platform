@@ -7,7 +7,11 @@ from app.models.node import Node
 
 
 class BaseNode:
-    def __init__(self, id_, node_type, project_id, in_edges, out_edges):
+    params = []
+    input_node = 0  # 来源节点数量，多输入模型才会改
+    input_size = []  # 0 无数据 1 未拆分训练集测试集的数据 2 拆分训练集测试集的数据
+
+    def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
         self.id = id_
         self.node_type = node_type
         self.project_id = project_id
@@ -28,6 +32,17 @@ class BaseNode:
         file_handler.setFormatter(formatter)
         self.logger.addHandler(stream_handler)
         self.logger.addHandler(file_handler)
+        # input_node
+        if len(in_edges) != self.input_node:
+            raise Exception(
+                'node-{}({}) only allow {} input_node'.format(
+                    self.id, self.__class__.__name__, self.input_node
+                )
+            )
+        # extra
+        for param in self.params:
+            param.check(extra.get(param.name))
+            setattr(self, param.name, param.value)
 
     def dictionary_path(self, id_=None):
         return '{}/{}/node/{}'.format(
@@ -43,3 +58,7 @@ class BaseNode:
         node.modify(
             input_shape=self.input_shape, output_shape=self.output_shape
         )
+
+    @staticmethod
+    def get_output(input_):
+        return input_

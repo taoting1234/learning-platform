@@ -2,27 +2,20 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from app.libs.nodes.base_node import BaseNode
+from app.libs.parser import Parser
 
 
 class DataSplitNode(BaseNode):
-    def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
-        super().__init__(id_, node_type, project_id, in_edges, out_edges)
-        assert len(in_edges) == 1, 'Data split node only allow one in_edges'
-        # test_ratio
-        self.test_ratio = extra.get('test_ratio')
-        assert isinstance(self.test_ratio, float), 'test_ratio must be float'
-        assert 0 < self.test_ratio < 1, 'test_ratio must 0 < x < 1'
-        # random_state
-        self.random_state = extra.get('random_state')
-        if self.random_state:
-            assert isinstance(
-                self.random_state, int
-            ), 'random_state must be integer'
+    params = [
+        Parser('test_ratio', type_=float, required=True, range_=(0, 1)),
+        Parser('random_state', type_=int),
+    ]
+    input_node = 1
+    input_size = [1]
 
     @staticmethod
     def get_output(input_):
-        if input_ == 1:
-            return 2
+        return 2
 
     def run(self):
         x_df = pd.read_csv(
@@ -35,8 +28,8 @@ class DataSplitNode(BaseNode):
         x_train, x_test, y_train, y_test = train_test_split(
             x_df,
             y_df,
-            test_size=self.test_ratio,
-            random_state=self.random_state
+            test_size=getattr(self, 'test_ratio'),
+            random_state=getattr(self, 'random_state')
         )
         self.output_shape = [
             x_train.shape, x_test.shape, y_train.shape, y_test.shape
