@@ -113,4 +113,5 @@ def client():
                 g.thread_list = None
             # 删除文件夹
             shutil.rmtree(app.config['FILE_DIRECTORY'], ignore_errors=True)
-            os.remove('test.db')
+        # 删除数据库
+        os.remove('test.db')
