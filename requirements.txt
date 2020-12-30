@@ -6,3 +6,4 @@ flask-cors
 pymysql
 pandas
 sklearn
+numpy
