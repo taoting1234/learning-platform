@@ -4,4 +4,4 @@
 [![Codecov](https://img.shields.io/codecov/c/github/taoting1234/learning-platform)](https://codecov.io/gh/taoting1234/learning-platform)
 
 ## 待完善功能
-* input_node新增多种数据读入，例如支持（tests/files/logistic_regression/telco.csv）
+* input_node新增多种数据读入，例如支持（tests/files/telco.csv）
