@@ -358,8 +358,7 @@ def test_run(client):
             'extra': '{"x_input_file":1, "y_input_file":1}'
         }
     ).status_code == 200
-    assert client.post('/project/{}/run'.format(project_id)).status_code == 201
-    assert client.get('/node/{}'.format(node_id)).json['log']
+    assert client.post('/project/{}/run'.format(project_id)).status_code == 400
     # 运行成功
     res = client.post(
         '/project', data={
@@ -378,17 +377,13 @@ def test_run(client):
     assert res.status_code == 201
     node_id = res.json['id']
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.linear_regression', 'x_data.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'x1.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
         file1_id = res.json['id']
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.linear_regression', 'y_data.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'y1.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201

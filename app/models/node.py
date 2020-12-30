@@ -110,15 +110,15 @@ class Node(Base):
         super().delete()
 
     def run(self):
-        from app.libs.nodes.helper import run_nodes
+        from app.libs.helper import run_nodes
         nodes = self.get_nodes(self)
         nodes = self.change_nodes(nodes)
         input_ = 0
         for node in nodes:
-            assert node.get_output(input_
-                                  ), 'Node{}({}) not support input {}'.format(
-                                      node.id, node.node_type, input_
-                                  )
+            assert node.get_output(input_), \
+                'Node{}({}) not support input {}'.format(
+                    node.id, node.node_type, input_
+                )
             input_ = node.get_output(input_)
         if current_app.config['TESTING'] \
                 and not current_app.config.get('THREAD'):
@@ -152,7 +152,7 @@ class Node(Base):
 
     @staticmethod
     def change_nodes(nodes):
-        from app.libs.nodes.helper import change_node
+        from app.libs.helper import change_node
         res = []
         for node in nodes:
             res.append(change_node(node))

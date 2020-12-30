@@ -41,17 +41,13 @@ def test_data_split_node(client):
     assert res.status_code == 201
     node2_id = res.json['id']
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.linear_regression', 'x_data.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'x1.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
         file1_id = res.json['id']
     with open(
-        pkg_resources.resource_filename(
-            'tests.files.linear_regression', 'y_data.csv'
-        ), 'rb'
+        pkg_resources.resource_filename('tests.files', 'y1.csv'), 'rb'
     ) as f:
         res = client.post('/file', data={'file': f, 'project_id': project_id})
         assert res.status_code == 201
