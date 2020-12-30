@@ -5,7 +5,3 @@
 
 ## 待完善功能
 * input_node新增多种数据读入，例如支持（tests/files/logistic_regression/telco.csv）
-* 模型节点支持用户自定义参数
-* extra的check整合（和parser一样）
-* 自动识别二分类还是多分类，选用不同的评价指标
-* 评价指标代码统一
