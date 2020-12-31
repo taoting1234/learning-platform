@@ -23,6 +23,7 @@ def init(client, file):
         ).status_code
         == 201
     )
+    # 创建项目
     project = Project.create(name=str(random.random()), tag="", user_id=1)
     # 上传文件
     with open(pkg_resources.resource_filename("tests.files", file[0]), "rb") as f:
@@ -94,4 +95,15 @@ def test_k_neighbors_classifier(client):
             node.modify(
                 extra={"model": "KNeighborsClassifier", "model_kwargs": model_kwargs}
             )
+            node.run()
+
+
+def test_svc(client):
+    model_kwargs_list = [{}]
+    for file in files[: None if os.environ.get("COMPLETE_TEST") else 1]:
+        for model_kwargs in model_kwargs_list[
+            : None if os.environ.get("COMPLETE_TEST") else 1
+        ]:
+            node = init(client, file)
+            node.modify(extra={"model": "SVC", "model_kwargs": model_kwargs})
             node.run()
