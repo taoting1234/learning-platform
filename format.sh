@@ -1,2 +1,2 @@
-yapf -e venv -i -r ./
+black .
 isort .
