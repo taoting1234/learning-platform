@@ -28,8 +28,8 @@ def run_nodes(nodes, testing, thread):
         try:
             node.run()
         except Exception as e:
+            node.logger.error(e)
             if testing:
                 raise
-            node.logger.error(e)
         finally:
             node.update()
