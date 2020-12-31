@@ -61,3 +61,6 @@ class BaseNode:
     @staticmethod
     def get_output(input_):
         return input_
+
+    def run(self):  # pragma: no cover
+        pass  # pragma: no cover
