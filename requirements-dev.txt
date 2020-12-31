@@ -1,8 +1,5 @@
 pytest
 isort
 yapf
-pytest-isort
-pytest-yapf3
 pytest-cov
 pytest-sugar
-codecov
