@@ -4,11 +4,7 @@ from flask_restful import Resource, abort, marshal_with
 from app.fields.file import file_field, files_field
 from app.libs.auth import self_only
 from app.models.file import File
-from app.parsers.file import (
-    file_create_parser,
-    file_list_parser,
-    file_modify_parser,
-)
+from app.parsers.file import file_create_parser, file_list_parser, file_modify_parser
 
 
 class ResourceFile(Resource):
