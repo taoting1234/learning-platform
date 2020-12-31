@@ -2,5 +2,5 @@ pytest
 isort
 black
 pytest-cov
-pytest-parallels
+pytest-parallel
 pre-commit
