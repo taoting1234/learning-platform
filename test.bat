@@ -1,1 +1,0 @@
-python -X utf8 -m pytest %1
