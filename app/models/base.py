@@ -15,7 +15,7 @@ db = SQLAlchemy(query_class=BaseQuery)
 
 
 class Base(db.Model):
-    __tablename__ = ''
+    __tablename__ = ""
     __abstract__ = True
     __table_args__ = {"extend_existing": True}
 
@@ -56,18 +56,12 @@ class Base(db.Model):
                     else:
                         res = res.filter(getattr(cls, key) == value)
 
-        page = kwargs.get('page') if kwargs.get('page') else 1
-        page_size = kwargs.get('page_size') if kwargs.get('page_size') else 20
-        data = {
-            'meta': {
-                'count': res.count(),
-                'page': page,
-                'page_size': page_size
-            }
-        }
+        page = kwargs.get("page") if kwargs.get("page") else 1
+        page_size = kwargs.get("page_size") if kwargs.get("page_size") else 20
+        data = {"meta": {"count": res.count(), "page": page, "page_size": page_size}}
 
         if page_size != -1:
             res = res.offset((page - 1) * page_size).limit(page_size)
         res = res.all()
-        data['data'] = res
+        data["data"] = res
         return data

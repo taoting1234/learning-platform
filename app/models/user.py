@@ -6,11 +6,11 @@ from app.models.base import Base
 
 
 class User(UserMixin, Base):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), unique=True)
-    _password = Column('password', String(100), nullable=False)
+    _password = Column("password", String(100), nullable=False)
 
     @property
     def password(self):

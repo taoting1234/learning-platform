@@ -11,7 +11,7 @@ class ResourceUser(Resource):
     def get(self, id_):
         user = User.get_by_id(id_)
         if user is None:
-            abort(404, message='User not found')
+            abort(404, message="User not found")
         return user
 
     @login_required
@@ -20,20 +20,18 @@ class ResourceUser(Resource):
             abort(403)
         user = current_user
         args = user_modify_parser.parse_args()
-        if args['password'] and user.check_password(
-            args['old_password']
-        ) is not True:
-            abort(400, message='Old password Wrong')
+        if args["password"] and user.check_password(args["old_password"]) is not True:
+            abort(400, message="Old password Wrong")
         user.modify(**args)
-        return {'message': 'Modify user success'}
+        return {"message": "Modify user success"}
 
 
 class ResourceUserList(Resource):
     @marshal_with(user_field)
     def post(self):
         args = user_register_parser.parse_args()
-        user = User.get_by_username(args['username'])
+        user = User.get_by_username(args["username"])
         if user is not None:
-            abort(400, message='User already exist')
+            abort(400, message="User already exist")
         user = User.create(**args)
         return user, 201

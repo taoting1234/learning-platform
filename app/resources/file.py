@@ -24,19 +24,20 @@ class ResourceFile(Resource):
     def put(self, id_):
         file = File.get_by_id(id_)
         args = file_modify_parser.parse_args()
-        args['filename'] = args['filename'].lstrip('/')
-        if File.search(project_id=file.project_id,
-                       filename=args['filename'])['meta']['count']:
-            abort(400, message='File already exist')
+        args["filename"] = args["filename"].lstrip("/")
+        if File.search(project_id=file.project_id, filename=args["filename"])["meta"][
+            "count"
+        ]:
+            abort(400, message="File already exist")
         file.modify(**args)
-        return {'message': 'Modify file success'}
+        return {"message": "Modify file success"}
 
     @login_required
     @self_only(File)
     def delete(self, id_):
         file = File.get_by_id(id_)
         file.delete()
-        return '', 204
+        return "", 204
 
 
 class ResourceFileList(Resource):
@@ -45,8 +46,8 @@ class ResourceFileList(Resource):
     @self_only(File, file_list_parser)
     def get(self):
         args = file_list_parser.parse_args()
-        res = File.search(project_id=args['project_id'], page_size=-1)['data']
-        return {'files': res}
+        res = File.search(project_id=args["project_id"], page_size=-1)["data"]
+        return {"files": res}
 
     @marshal_with(file_field)
     @login_required

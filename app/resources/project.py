@@ -20,34 +20,32 @@ class ResourceProject(Resource):
     def put(self, id_):
         project = Project.get_by_id(id_)
         args = project_modify_parser.parse_args()
-        if Project.search(user_id=current_user.id,
-                          name=args['name'])['meta']['count']:
-            abort(400, message='Project already exist')
+        if Project.search(user_id=current_user.id, name=args["name"])["meta"]["count"]:
+            abort(400, message="Project already exist")
         project.modify(**args)
-        return {'message': 'Modify project success'}
+        return {"message": "Modify project success"}
 
     @login_required
     @self_only(Project)
     def delete(self, id_):
         project = Project.get_by_id(id_)
         project.delete()
-        return '', 204
+        return "", 204
 
 
 class ResourceProjectList(Resource):
     @marshal_with(projects_field)
     @login_required
     def get(self):
-        res = Project.search(user_id=current_user.id, page_size=-1)['data']
-        return {'projects': res}
+        res = Project.search(user_id=current_user.id, page_size=-1)["data"]
+        return {"projects": res}
 
     @marshal_with(project_field)
     @login_required
     def post(self):
         args = project_create_parser.parse_args()
-        if Project.search(user_id=current_user.id,
-                          name=args['name'])['meta']['count']:
-            abort(400, message='Project already exist')
+        if Project.search(user_id=current_user.id, name=args["name"])["meta"]["count"]:
+            abort(400, message="Project already exist")
         project = Project.create(user_id=current_user.id, **args)
         return project, 201
 
@@ -61,4 +59,4 @@ class ResourceProjectRun(Resource):
             project.run()
         except Exception as e:
             abort(400, message=str(e))
-        return {'message': 'Create task success'}, 201
+        return {"message": "Create task success"}, 201

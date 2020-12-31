@@ -16,9 +16,9 @@ def create_app(test=False):
     except ImportError:
         app.config.from_object("app.config_demo")
     if test:
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../test.db'
-        app.config['TESTING'] = True
-        app.config['FILE_DIRECTORY'] = './test_files'
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../test.db"
+        app.config["TESTING"] = True
+        app.config["FILE_DIRECTORY"] = "./test_files"
     register_resource(app)
     register_plugin(app)
     return app
@@ -68,17 +68,17 @@ def register_resource(app_):
     from app.resources.user import ResourceUser, ResourceUserList
 
     api = Api(catch_all_404s=True)
-    api.add_resource(ResourceSession, '/session')
-    api.add_resource(ResourceUser, '/user/<int:id_>')
-    api.add_resource(ResourceUserList, '/user')
-    api.add_resource(ResourceProject, '/project/<int:id_>')
-    api.add_resource(ResourceProjectList, '/project')
-    api.add_resource(ResourceProjectRun, '/project/<int:id_>/run')
-    api.add_resource(ResourceFile, '/file/<int:id_>')
-    api.add_resource(ResourceFileList, '/file')
-    api.add_resource(ResourceNode, '/node/<int:id_>')
-    api.add_resource(ResourceNodeList, '/node')
-    api.add_resource(ResourceNodeEdge, '/node/edge')
-    api.add_resource(ResourceNodeRun, '/node/<int:id_>/run')
+    api.add_resource(ResourceSession, "/session")
+    api.add_resource(ResourceUser, "/user/<int:id_>")
+    api.add_resource(ResourceUserList, "/user")
+    api.add_resource(ResourceProject, "/project/<int:id_>")
+    api.add_resource(ResourceProjectList, "/project")
+    api.add_resource(ResourceProjectRun, "/project/<int:id_>/run")
+    api.add_resource(ResourceFile, "/file/<int:id_>")
+    api.add_resource(ResourceFileList, "/file")
+    api.add_resource(ResourceNode, "/node/<int:id_>")
+    api.add_resource(ResourceNodeList, "/node")
+    api.add_resource(ResourceNodeEdge, "/node/edge")
+    api.add_resource(ResourceNodeRun, "/node/<int:id_>/run")
     api.init_app(app_)
     return app_

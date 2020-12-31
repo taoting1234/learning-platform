@@ -21,21 +21,21 @@ class BaseNode:
         self.input_shape = []
         self.output_shape = []
         # logger
-        self.logger = logging.Logger('node-{}'.format(id_))
+        self.logger = logging.Logger("node-{}".format(id_))
         self.logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
-            '%(asctime)s %(filename)s: %(levelname)s %(message)s'
+            "%(asctime)s %(filename)s: %(levelname)s %(message)s"
         )
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
-        file_handler = logging.FileHandler(self.join_path('log.txt'), mode='w')
+        file_handler = logging.FileHandler(self.join_path("log.txt"), mode="w")
         file_handler.setFormatter(formatter)
         self.logger.addHandler(stream_handler)
         self.logger.addHandler(file_handler)
         # input_node
         if len(in_edges) != self.input_node:
             raise Exception(
-                'node-{}({}) only allow {} input_node'.format(
+                "node-{}({}) only allow {} input_node".format(
                     self.id, self.__class__.__name__, self.input_node
                 )
             )
@@ -45,9 +45,10 @@ class BaseNode:
             setattr(self, param.name, param.value)
 
     def dictionary_path(self, id_=None):
-        return '{}/{}/node/{}'.format(
-            current_app.config['FILE_DIRECTORY'], self.project_id,
-            self.id if id_ is None else id_
+        return "{}/{}/node/{}".format(
+            current_app.config["FILE_DIRECTORY"],
+            self.project_id,
+            self.id if id_ is None else id_,
         )
 
     def join_path(self, filename, id_=None):
@@ -55,9 +56,7 @@ class BaseNode:
 
     def update(self):
         node = Node.get_by_id(self.id)
-        node.modify(
-            input_shape=self.input_shape, output_shape=self.output_shape
-        )
+        node.modify(input_shape=self.input_shape, output_shape=self.output_shape)
 
     @staticmethod
     def get_output(input_):

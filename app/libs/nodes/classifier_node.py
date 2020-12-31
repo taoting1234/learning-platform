@@ -11,33 +11,32 @@ from app.libs.parser import Parser
 class ClassifierNode(BaseNode):
     params = [
         Parser(
-            'model',
+            "model",
             type_=str,
             required=True,
-            enum=[LogisticRegression.__name__, KNeighborsClassifier.__name__]
+            enum=[LogisticRegression.__name__, KNeighborsClassifier.__name__],
         ),
-        Parser('model_kwargs', type_=dict, default={})
+        Parser("model_kwargs", type_=dict, default={}),
     ]
     input_node = 1
     input_size = [2]
 
     def run(self):
         x_train = pd.read_csv(
-            self.join_path('x_train.csv', self.in_edges[0]), header=None
+            self.join_path("x_train.csv", self.in_edges[0]), header=None
         ).to_numpy()
         x_test = pd.read_csv(
-            self.join_path('x_test.csv', self.in_edges[0]), header=None
+            self.join_path("x_test.csv", self.in_edges[0]), header=None
         ).to_numpy()
         y_train = pd.read_csv(
-            self.join_path('y_train.csv', self.in_edges[0]), header=None
+            self.join_path("y_train.csv", self.in_edges[0]), header=None
         ).to_numpy()
         y_test = pd.read_csv(
-            self.join_path('y_test.csv', self.in_edges[0]), header=None
+            self.join_path("y_test.csv", self.in_edges[0]), header=None
         ).to_numpy()
-        y_train = y_train.reshape((-1, ))
-        y_test = y_test.reshape((-1, ))
-        model = globals()[getattr(self,
-                                  'model')](**getattr(self, 'model_kwargs'))
+        y_train = y_train.reshape((-1,))
+        y_test = y_test.reshape((-1,))
+        model = globals()[getattr(self, "model")](**getattr(self, "model_kwargs"))
         model.fit(x_train, y_train)
         y_pred = model.predict(x_test)
         # 判断二分类还是多分类

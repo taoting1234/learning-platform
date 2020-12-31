@@ -10,7 +10,7 @@ from app.models.project import Project
 
 
 class File(Base):
-    __tablename__ = 'file'
+    __tablename__ = "file"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     project_id = Column(Integer, ForeignKey(Project.id), nullable=False)
@@ -26,19 +26,17 @@ class File(Base):
 
     def join_path(self, filename):
         return os.path.join(
-            '{}/{}/user/'.format(
-                current_app.config['FILE_DIRECTORY'], self.project_id
-            ), filename
+            "{}/{}/user/".format(current_app.config["FILE_DIRECTORY"], self.project_id),
+            filename,
         )
 
     @classmethod
     def create(cls, **kwargs):
-        file = kwargs['file']
-        filename = file.filename.split('/')[-1]
-        file_path = os.path.join(kwargs['prefix'], filename)
-        file_path = file_path.lstrip('/')
-        res = cls.search(project_id=kwargs['project_id'],
-                         filename=file_path)['data']
+        file = kwargs["file"]
+        filename = file.filename.split("/")[-1]
+        file_path = os.path.join(kwargs["prefix"], filename)
+        file_path = file_path.lstrip("/")
+        res = cls.search(project_id=kwargs["project_id"], filename=file_path)["data"]
         if not res:
             base = super().create(**kwargs)
         else:
@@ -53,7 +51,7 @@ class File(Base):
         old_path = self.path
         super().modify(**kwargs)
         if move_file:
-            dest_path = self.join_path(kwargs['filename'])
+            dest_path = self.join_path(kwargs["filename"])
             os.makedirs(os.path.split(dest_path)[0], exist_ok=True)
             shutil.move(old_path, dest_path)
 
@@ -63,19 +61,13 @@ class File(Base):
 
     def update_meta(self):
         size = os.path.getsize(self.path)
-        access_time = datetime.datetime.fromtimestamp(
-            os.path.getatime(self.path)
-        )
-        create_time = datetime.datetime.fromtimestamp(
-            os.path.getctime(self.path)
-        )
-        modify_time = datetime.datetime.fromtimestamp(
-            os.path.getmtime(self.path)
-        )
+        access_time = datetime.datetime.fromtimestamp(os.path.getatime(self.path))
+        create_time = datetime.datetime.fromtimestamp(os.path.getctime(self.path))
+        modify_time = datetime.datetime.fromtimestamp(os.path.getmtime(self.path))
         self.modify(
             size=size,
             access_time=access_time,
             create_time=create_time,
             modify_time=modify_time,
-            move_file=False
+            move_file=False,
         )
