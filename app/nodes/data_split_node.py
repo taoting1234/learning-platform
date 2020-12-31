@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from app.libs.nodes.base_node import BaseNode
 from app.libs.parser import Parser
+from app.nodes.base_node import BaseNode
 
 
 class DataSplitNode(BaseNode):

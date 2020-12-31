@@ -2,10 +2,11 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 
 from app.libs.metric import get_metric
-from app.libs.nodes.base_node import BaseNode
 from app.libs.parser import Parser
+from app.nodes.base_node import BaseNode
 
 
 class ClassifierNode(BaseNode):
@@ -14,7 +15,11 @@ class ClassifierNode(BaseNode):
             "model",
             type_=str,
             required=True,
-            enum=[LogisticRegression.__name__, KNeighborsClassifier.__name__],
+            enum=[
+                LogisticRegression.__name__,
+                KNeighborsClassifier.__name__,
+                SVC.__name__,
+            ],
         ),
         Parser("model_kwargs", type_=dict, default={}),
     ]

@@ -1,5 +1,5 @@
 from app.libs.global_varible import g
-from app.libs.nodes import node_mapping
+from app.nodes import node_mapping
 
 
 def change_node(node):

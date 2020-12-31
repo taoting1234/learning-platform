@@ -1,8 +1,8 @@
 import pandas as pd
 
-from app.libs.nodes.base_node import BaseNode
 from app.libs.parser import Parser
 from app.models.file import File
+from app.nodes.base_node import BaseNode
 
 
 class InputNode(BaseNode):
