@@ -12,7 +12,7 @@ class Parser:
     def check(self, raw):
         if raw is None and self.required:
             raise Exception("{}: cannot be empty".format(self.name))
-        if raw:
+        if raw is not None:
             try:
                 self.value = self.type(raw)
             except Exception:
