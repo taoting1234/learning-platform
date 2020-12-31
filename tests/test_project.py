@@ -138,7 +138,10 @@ def test_run(client):
         "/node", data={"project_id": project_id, "node_type": "input_node"}
     )
     assert res.status_code == 201
-    assert client.post("/project/{}/run".format(project_id)).status_code == 400
+    assert (
+        "Project has multiple graph"
+        in client.post("/project/{}/run".format(project_id)).json["message"]
+    )
     # 运行失败（项目有环）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -167,7 +170,10 @@ def test_run(client):
         ).status_code
         == 201
     )
-    assert client.post("/project/{}/run".format(project_id)).status_code == 400
+    assert (
+        "Graph have cycle"
+        in client.post("/project/{}/run".format(project_id)).json["message"]
+    )
     # 运行失败（项目部分有环）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -208,8 +214,14 @@ def test_run(client):
         ).status_code
         == 201
     )
-    assert client.post("/project/{}/run".format(project_id)).status_code == 400
-    assert client.post("/node/{}/run".format(node3_id)).status_code == 400
+    assert (
+        "Graph have cycle"
+        in client.post("/project/{}/run".format(project_id)).json["message"]
+    )
+    assert (
+        "Graph have cycle"
+        in client.post("/node/{}/run".format(node3_id)).json["message"]
+    )
     # 运行失败（项目有无效节点）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -224,8 +236,11 @@ def test_run(client):
         ).status_code
         == 200
     )
-    assert client.post("/project/{}/run".format(project_id)).status_code == 400
-    assert client.post("/node/{}/run".format(node_id)).status_code == 400
+    assert (
+        "not support"
+        in client.post("/project/{}/run".format(project_id)).json["message"]
+    )
+    assert "not support" in client.post("/node/{}/run".format(node_id)).json["message"]
     # 运行失败（输入数量错误）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -236,7 +251,7 @@ def test_run(client):
     assert res.status_code == 201
     node1_id = res.json["id"]
     res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "linear_regression_node"}
+        "/node", data={"project_id": project_id, "node_type": "regressor_node"}
     )
     assert res.status_code == 201
     node2_id = res.json["id"]
@@ -247,11 +262,21 @@ def test_run(client):
     assert (
         client.put(
             "/node/{}".format(node1_id),
-            data={"extra": '{"x_input_file":1, "y_input_file":1}'},
+            data={"extra": json.dumps({"x_input_file": 1, "y_input_file": 2})},
         ).status_code
         == 200
     )
-    assert client.post("/project/{}/run".format(project_id)).status_code == 400
+    assert (
+        client.put(
+            "/node/{}".format(node2_id),
+            data={"extra": json.dumps({"model": "LinearRegression"})},
+        ).status_code
+        == 200
+    )
+    assert (
+        "not support input"
+        in client.post("/project/{}/run".format(project_id)).json["message"]
+    )
     # 运行成功（运行节点报错）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
