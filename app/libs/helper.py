@@ -1,3 +1,4 @@
+from app.libs.global_varible import g
 from app.libs.nodes import node_mapping
 
 
@@ -19,7 +20,9 @@ def run_nodes(nodes, testing, thread):
     if not testing or thread:
         from flask_app import create_app
 
-        app = create_app(test=testing)
+        app = create_app(
+            test=testing, file_directory=getattr(g, "file_directory", None)
+        )
         app.app_context().push()
     for node in nodes:
         try:

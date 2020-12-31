@@ -9,16 +9,18 @@ cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
 
 
-def create_app(test=False):
+def create_app(test=False, file_directory=None):
     app = Flask(__name__)
     try:
         app.config.from_object("app.config")
     except ImportError:
         app.config.from_object("app.config_demo")
     if test:
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../test.db"
         app.config["TESTING"] = True
-        app.config["FILE_DIRECTORY"] = "./test_files"
+        app.config["FILE_DIRECTORY"] = file_directory
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../{}/.database".format(
+            app.config["FILE_DIRECTORY"]
+        )
     register_resource(app)
     register_plugin(app)
     return app

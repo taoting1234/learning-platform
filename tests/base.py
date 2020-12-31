@@ -1,4 +1,5 @@
 import os
+import random
 import shutil
 import tempfile
 
@@ -13,9 +14,9 @@ from app.models.user import User
 
 @pytest.fixture
 def client():
-    if os.path.exists("test.db"):
-        os.remove("test.db")
-    app = create_app(test=True)
+    g.file_directory = "./test_files/{}".format(str(random.randint(1000000, 9999999)))
+    os.makedirs(g.file_directory, exist_ok=True)
+    app = create_app(test=True, file_directory=g.file_directory)
     with app.test_client() as client:
         with app.app_context():
             # 测试前运行
@@ -94,7 +95,5 @@ def client():
                 for thread in g.thread_list:
                     thread.join()
                 g.thread_list = None
-            # 删除文件夹
-            shutil.rmtree(app.config["FILE_DIRECTORY"], ignore_errors=True)
-        # 删除数据库
-        os.remove("test.db")
+        # 删除文件夹
+        shutil.rmtree(app.config["FILE_DIRECTORY"], ignore_errors=True)
