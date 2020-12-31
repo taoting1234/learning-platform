@@ -1,5 +1,4 @@
 pytest
 isort
-yapf
+black
 pytest-cov
-pytest-sugar

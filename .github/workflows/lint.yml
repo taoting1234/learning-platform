@@ -23,6 +23,5 @@ jobs:
       - name: Test with isort
         run: |
           isort --check-only .
-      - name: Test with yapf
-        run: |
-          yapf -e venv -r ./ --diff
+      - name: Test with black
+        uses: psf/black@stable
