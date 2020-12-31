@@ -277,6 +277,58 @@ def test_run(client):
         "not support input"
         in client.post("/project/{}/run".format(project_id)).json["message"]
     )
+    # 运行失败（输入节点错误）
+    res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
+    assert res.status_code == 201
+    project_id = res.json["id"]
+    res = client.post(
+        "/node", data={"project_id": project_id, "node_type": "input_node"}
+    )
+    assert res.status_code == 201
+    node1_id = res.json["id"]
+    res = client.post(
+        "/node", data={"project_id": project_id, "node_type": "input_node"}
+    )
+    assert res.status_code == 201
+    node2_id = res.json["id"]
+    res = client.post(
+        "/node", data={"project_id": project_id, "node_type": "regressor_node"}
+    )
+    assert res.status_code == 201
+    node3_id = res.json["id"]
+    assert client.post(
+        "/node/edge",
+        data={"project_id": project_id, "node1_id": node1_id, "node2_id": node3_id},
+    )
+    assert client.post(
+        "/node/edge",
+        data={"project_id": project_id, "node1_id": node2_id, "node2_id": node3_id},
+    )
+    assert (
+        client.put(
+            "/node/{}".format(node1_id),
+            data={"extra": json.dumps({"x_input_file": 1, "y_input_file": 2})},
+        ).status_code
+        == 200
+    )
+    assert (
+        client.put(
+            "/node/{}".format(node2_id),
+            data={"extra": json.dumps({"x_input_file": 1, "y_input_file": 2})},
+        ).status_code
+        == 200
+    )
+    assert (
+        client.put(
+            "/node/{}".format(node3_id),
+            data={"extra": json.dumps({"model": "LinearRegression"})},
+        ).status_code
+        == 200
+    )
+    assert (
+        "only allow"
+        in client.post("/project/{}/run".format(project_id)).json["message"]
+    )
     # 运行成功（运行节点报错）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
