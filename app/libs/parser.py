@@ -10,9 +10,9 @@ class Parser:
         self.value = default
 
     def check(self, raw):
-        if self.required:
-            if raw is None:
-                raise Exception("{}: cannot be empty".format(self.name))
+        if raw is None and self.required:
+            raise Exception("{}: cannot be empty".format(self.name))
+        if raw:
             try:
                 self.value = self.type(raw)
             except Exception:
