@@ -84,7 +84,7 @@ def test_logistic_regression(client):
             node.run()
 
 
-def k_neighbors_classifier(client):
+def test_k_neighbors_classifier(client):
     model_kwargs_list = [{"n_neighbors": 3}, {"n_neighbors": 4}, {"n_neighbors": 5}]
     for file in files[: None if os.environ.get("COMPLETE_TEST") else 1]:
         for model_kwargs in model_kwargs_list[
