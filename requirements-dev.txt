@@ -2,3 +2,4 @@ pytest
 isort
 black
 pytest-cov
+pre-commit
