@@ -1,5 +1,4 @@
 import os
-import random
 import shutil
 import tempfile
 
@@ -14,7 +13,7 @@ from app.models.user import User
 
 @pytest.fixture
 def client():
-    g.file_directory = "./test_files/{}".format(str(random.randint(1000000, 9999999)))
+    g.file_directory = "./test_files"
     os.makedirs(g.file_directory, exist_ok=True)
     app = create_app(test=True, file_directory=g.file_directory)
     with app.test_client() as client:
