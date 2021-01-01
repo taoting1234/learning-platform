@@ -75,7 +75,7 @@ def test_logistic_regression(client):
             node.modify(
                 extra={"model": "LogisticRegression", "model_kwargs": model_kwargs}
             )
-            node.run()
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)
 
 
 def test_k_neighbors_classifier(client):
