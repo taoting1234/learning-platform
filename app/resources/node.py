@@ -27,7 +27,7 @@ class ResourceNode(Resource):
         node = Node.get_by_id(id_)
         args = node_modify_parser.parse_args()
         node.modify(**args)
-        return {"message": "Modify file success"}
+        return {"message": "Modify node success"}
 
     @login_required
     @self_only(Node)
