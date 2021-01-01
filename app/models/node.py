@@ -120,7 +120,7 @@ class Node(Base):
                 )
             input_ = node.get_output(input_)
         if only_check:
-            return
+            return  # pragma: no cover
         if current_app.config["TESTING"] and not current_app.config.get("THREAD"):
             run_nodes(nodes, True, False)
         else:
