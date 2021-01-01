@@ -1,3 +1,6 @@
+import pkg_resources
+from flask import current_app
+
 from .base import client
 
 
@@ -234,3 +237,33 @@ def test_edge_delete(client):
     )
     assert client.get("/node/1").json["out_edges"].count(3) == 0
     assert client.get("/node/3").json["in_edges"].count(1) == 0
+
+
+def test_csv(client):
+    # 读取csv失败（未登录）
+    assert client.get("/node/1/csv").status_code == 401
+    # 登录
+    assert (
+        client.post(
+            "/session", data={"username": "user1", "password": "123"}
+        ).status_code
+        == 201
+    )
+    # 读取csv失败（节点不存在）
+    assert client.get("/node/-1/csv").status_code == 404
+    # 读取csv失败（项目不属于你）
+    assert client.get("/node/2/csv").status_code == 403
+    # 读取csv失败（文件不存在）
+    assert (
+        "File not found"
+        in client.get("/node/1/csv", data={"filename": "x.csv"}).json["message"]
+    )
+    # 复制文件
+    with open(pkg_resources.resource_filename("tests.files", "x1.csv"), "rb") as f:
+        data = f.read()
+    with open(
+        "./{}/1/node/1/x.csv".format(current_app.config["FILE_DIRECTORY"]), "wb"
+    ) as f:
+        f.write(data)
+    # 读取csv成功
+    assert client.get("/node/1/csv", data={"filename": "x.csv"}).status_code == 200

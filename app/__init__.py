@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_restful import Api, abort
 
 from app.models.base import db
+from app.resources.node import ResourceNodeCSV
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
@@ -82,5 +83,6 @@ def register_resource(app_):
     api.add_resource(ResourceNodeList, "/node")
     api.add_resource(ResourceNodeEdge, "/node/edge")
     api.add_resource(ResourceNodeRun, "/node/<int:id_>/run")
+    api.add_resource(ResourceNodeCSV, "/node/<int:id_>/csv")
     api.init_app(app_)
     return app_

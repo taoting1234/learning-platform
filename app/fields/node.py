@@ -15,3 +15,5 @@ node_field = {
 nodes_field = {"nodes": fields.List(fields.Nested(node_field.copy()))}
 
 node_field.update({"log": fields.String(default="")})
+
+node_csv_field = {"data": fields.Raw}

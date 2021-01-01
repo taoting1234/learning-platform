@@ -39,3 +39,8 @@ node_edge_parser.add_argument(
 node_edge_parser.add_argument(
     "node2_id", type=int, required=True, help="Node id cannot be empty"
 )
+
+node_csv_parser = reqparse.RequestParser()
+node_csv_parser.add_argument(
+    "filename", type=str, required=True, help="Filename cannot be empty"
+)

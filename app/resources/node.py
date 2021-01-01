@@ -6,6 +6,7 @@ from app.libs.auth import self_only
 from app.models.node import Node
 from app.parsers.node import (
     node_create_parser,
+    node_csv_parser,
     node_edge_parser,
     node_list_parser,
     node_modify_parser,
@@ -113,3 +114,17 @@ class ResourceNodeRun(Resource):
         except Exception as e:
             abort(400, message=str(e))
         return {"message": "Create task success"}, 201
+
+
+class ResourceNodeCSV(Resource):
+    @login_required
+    @self_only(Node)
+    def get(self, id_):
+        args = node_csv_parser.parse_args()
+        node = Node.get_by_id(id_)
+        try:
+            with open(node.join_path(args["filename"])) as f:
+                res = {"data": f.readlines(10)}
+        except OSError:
+            abort(400, message="File not found")
+        return res
