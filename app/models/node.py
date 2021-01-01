@@ -105,7 +105,7 @@ class Node(Base):
                 node.modify(out_edges=out_edges)
         super().delete()
 
-    def run(self):
+    def run(self, only_check=False):
         from app.libs.helper import run_nodes
 
         nodes = self.get_nodes(self)
@@ -119,6 +119,8 @@ class Node(Base):
                     )
                 )
             input_ = node.get_output(input_)
+        if only_check is False:
+            return
         if current_app.config["TESTING"] and not current_app.config.get("THREAD"):
             run_nodes(nodes, True, False)
         else:

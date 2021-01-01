@@ -8,8 +8,6 @@ from app.models.project import Project
 
 from ..base import client
 
-files = [("x1.csv", "y1.csv")]
-
 
 def init(client, file):
     # 登录
@@ -69,37 +67,34 @@ def init(client, file):
 
 
 def test_linear_regression(client):
+    files = [("x1.csv", "y1.csv")]
     model_kwargs_list = [{}]
-    for file in files[: None if os.environ.get("COMPLETE_TEST") else 1]:
-        for model_kwargs in model_kwargs_list[
-            : None if os.environ.get("COMPLETE_TEST") else 1
-        ]:
+    for file in files:
+        for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(
                 extra={"model": "LinearRegression", "model_kwargs": model_kwargs}
             )
-            node.run()
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)
 
 
 def test_k_neighbors_regressor(client):
+    files = [("x1.csv", "y1.csv")]
     model_kwargs_list = [{"n_neighbors": 3}, {"n_neighbors": 4}, {"n_neighbors": 5}]
-    for file in files[: None if os.environ.get("COMPLETE_TEST") else 1]:
-        for model_kwargs in model_kwargs_list[
-            : None if os.environ.get("COMPLETE_TEST") else 1
-        ]:
+    for file in files:
+        for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(
                 extra={"model": "KNeighborsRegressor", "model_kwargs": model_kwargs}
             )
-            node.run()
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)
 
 
 def test_svr(client):
+    files = [("x1.csv", "y1.csv")]
     model_kwargs_list = [{}]
-    for file in files[: None if os.environ.get("COMPLETE_TEST") else 1]:
-        for model_kwargs in model_kwargs_list[
-            : None if os.environ.get("COMPLETE_TEST") else 1
-        ]:
+    for file in files:
+        for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "SVR", "model_kwargs": model_kwargs})
-            node.run()
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)

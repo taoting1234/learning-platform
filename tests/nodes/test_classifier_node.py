@@ -8,12 +8,6 @@ from app.models.project import Project
 
 from ..base import client
 
-files = [
-    ("telco_x.csv", "telco_y.csv"),
-    ("amazon_x.csv", "amazon_y.csv"),
-    ("cancer_x.csv", "cancer_y.csv"),
-]
-
 
 def init(client, file):
     # 登录
@@ -73,11 +67,10 @@ def init(client, file):
 
 
 def test_logistic_regression(client):
+    files = [("telco_x.csv", "telco_y.csv")]
     model_kwargs_list = [{"max_iter": 100}, {"max_iter": 1000}]
-    for file in files[: None if os.environ.get("COMPLETE_TEST") else 1]:
-        for model_kwargs in model_kwargs_list[
-            : None if os.environ.get("COMPLETE_TEST") else 1
-        ]:
+    for file in files:
+        for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(
                 extra={"model": "LogisticRegression", "model_kwargs": model_kwargs}
@@ -86,24 +79,25 @@ def test_logistic_regression(client):
 
 
 def test_k_neighbors_classifier(client):
+    files = [
+        ("amazon_x.csv", "amazon_y.csv"),
+        ("cancer_x.csv", "cancer_y.csv"),
+    ]
     model_kwargs_list = [{"n_neighbors": 3}, {"n_neighbors": 4}, {"n_neighbors": 5}]
-    for file in files[: None if os.environ.get("COMPLETE_TEST") else 1]:
-        for model_kwargs in model_kwargs_list[
-            : None if os.environ.get("COMPLETE_TEST") else 1
-        ]:
+    for file in files:
+        for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(
                 extra={"model": "KNeighborsClassifier", "model_kwargs": model_kwargs}
             )
-            node.run()
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)
 
 
 def test_svc(client):
+    files = [("telco_x.csv", "telco_y.csv")]
     model_kwargs_list = [{}]
-    for file in files[: None if os.environ.get("COMPLETE_TEST") else 1]:
-        for model_kwargs in model_kwargs_list[
-            : None if os.environ.get("COMPLETE_TEST") else 1
-        ]:
+    for file in files:
+        for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "SVC", "model_kwargs": model_kwargs})
-            node.run()
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)
