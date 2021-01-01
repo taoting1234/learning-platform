@@ -341,7 +341,7 @@ def test_run(client):
     assert (
         client.put(
             "/node/{}".format(node_id),
-            data=json.dumps({"extra": {"x_input_file": 1, "y_input_file": 1}}),
+            data={"extra": json.dumps({"x_input_file": 1, "y_input_file": 1})},
         ).status_code
         == 200
     )
