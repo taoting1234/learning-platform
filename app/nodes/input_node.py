@@ -19,7 +19,6 @@ class InputNode(BaseNode):
         assert self.x_input_file, "x_input_file not found"
         self.y_input_file = File.get_by_id(self.y_input_file)
         assert self.y_input_file, "y_input_file not found"
-        pass
 
     @staticmethod
     def get_output(input_):
