@@ -122,7 +122,7 @@ class Node(Base):
         if only_check:
             return  # pragma: no cover
         for node in nodes:
-            node.modify(status=1)
+            node.modify(status=1)  # 运行中
         if current_app.config["TESTING"] and not current_app.config.get("THREAD"):
             run_nodes(nodes, True, False)
         else:

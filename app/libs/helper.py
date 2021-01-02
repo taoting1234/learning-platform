@@ -30,10 +30,11 @@ def run_nodes(nodes, testing, thread):
             try:
                 node.run()
                 node.finish()
+                node.modify(status=2)  # 成功
             except Exception as e:
                 if testing and not thread:
                     raise
                 node.logger.error(e)
                 fail_flag = True
         else:
-            node.mark_failed()
+            node.modify(status=3)  # 失败
