@@ -20,7 +20,7 @@ class Node(Base):
     _output_shape = Column("output_shape", String(1000), default="[]", nullable=False)
     _in_edges = Column("in_edges", String(1000), default="[]", nullable=False)
     _out_edges = Column("out_edge", String(1000), default="[]", nullable=False)
-    status = Column(Integer, default=0, nullable=False)  # 0 未运行 1 正在运行 2 运行完成
+    status = Column(Integer, default=0, nullable=False)  # 0 未运行 1 正在运行 2 运行完成 3 运行失败
     _extra = Column("extra", String(1000), default="{}", nullable=False)
 
     @property

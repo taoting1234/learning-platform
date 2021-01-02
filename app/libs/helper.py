@@ -24,12 +24,16 @@ def run_nodes(nodes, testing, thread):
             test=testing, file_directory=getattr(g, "file_directory", None)
         )
         app.app_context().push()
+    fail_flag = False
     for node in nodes:
-        try:
-            node.run()
-        except Exception as e:
-            if testing:
-                raise
-            node.logger.error(e)  # pragma: no cover
-        finally:
-            node.update()
+        if fail_flag is False:
+            try:
+                node.run()
+                node.finish()
+            except Exception as e:
+                if testing and not thread:
+                    raise
+                node.logger.error(e)
+                fail_flag = True
+        else:
+            node.mark_failed()

@@ -54,9 +54,15 @@ class BaseNode:
     def join_path(self, filename, id_=None):
         return os.path.join(self.dictionary_path(id_), filename)
 
-    def update(self):
+    def mark_failed(self):
         node = Node.get_by_id(self.id)
-        node.modify(input_shape=self.input_shape, output_shape=self.output_shape)
+        node.modify(status=3)
+
+    def finish(self):
+        node = Node.get_by_id(self.id)
+        node.modify(
+            input_shape=self.input_shape, output_shape=self.output_shape, status=2
+        )
 
     @staticmethod
     def get_output(input_):
