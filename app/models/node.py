@@ -139,7 +139,7 @@ class Node(Base):
                 g.thread_list.append(t)
 
     @staticmethod
-    def get_nodes(node):
+    def get_nodes(node, type_=1):  # 1前序节点 2后序节点
         res = []
         nodes = [node]
         while nodes:
@@ -147,9 +147,14 @@ class Node(Base):
             if node in res:
                 raise Exception("Graph have cycle")
             res.append(node)
-            for node_id in node.in_edges:
-                nodes.append(Node.get_by_id(node_id))
-        res.reverse()
+            if type_ == 1:
+                for node_id in node.in_edges:
+                    nodes.append(Node.get_by_id(node_id))
+            else:
+                for node_id in node.out_edges:
+                    nodes.append(Node.get_by_id(node_id))
+        if type_ == 1:
+            res.reverse()
         return res
 
     @staticmethod
