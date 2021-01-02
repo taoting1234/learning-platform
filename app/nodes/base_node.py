@@ -58,7 +58,7 @@ class BaseNode:
         self.modify(input_shape=self.input_shape, output_shape=self.output_shape)
 
     def modify(self, **kwargs):
-        Node.get_by_id(self.id).modify(kwargs)
+        Node.get_by_id(self.id).modify(**kwargs)
 
     @staticmethod
     def get_output(input_):
