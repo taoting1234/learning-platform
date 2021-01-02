@@ -121,6 +121,8 @@ class Node(Base):
             input_ = node.get_output(input_)
         if only_check:
             return  # pragma: no cover
+        for node in nodes:
+            node.modify(status=1)
         if current_app.config["TESTING"] and not current_app.config.get("THREAD"):
             run_nodes(nodes, True, False)
         else:
