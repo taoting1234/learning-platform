@@ -68,7 +68,7 @@ def init(client, file):
 
 def test_logistic_regression(client):
     files = [("telco_x.csv", "telco_y.csv")]
-    model_kwargs_list = [{"max_iter": 1000}, {"max_iter": 10000}]
+    model_kwargs_list = [{"max_iter": 10000}]
     for file in files:
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
@@ -105,7 +105,7 @@ def test_svc(client):
 
 def test_linear_svc(client):
     files = [("telco_x.csv", "telco_y.csv")]
-    model_kwargs_list = [{}]
+    model_kwargs_list = [{"max_iter": 10000}]
     for file in files:
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
