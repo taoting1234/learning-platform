@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.svm import SVR
+from sklearn.svm import SVR, LinearSVR
 
 from app.libs.metric import get_metric
 from app.libs.parser import Parser
@@ -18,6 +18,7 @@ class RegressorNode(BaseNode):
                 LinearRegression.__name__,
                 KNeighborsRegressor.__name__,
                 SVR.__name__,
+                LinearSVR.__name__,
             ],
         ),
         Parser("model_kwargs", type_=dict, default={}),

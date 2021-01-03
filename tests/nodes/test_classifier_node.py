@@ -101,3 +101,13 @@ def test_svc(client):
             node = init(client, file)
             node.modify(extra={"model": "SVC", "model_kwargs": model_kwargs})
             node.run(False if os.environ.get("COMPLETE_TEST") else True)
+
+
+def test_linear_svc(client):
+    files = [("telco_x.csv", "telco_y.csv")]
+    model_kwargs_list = [{}]
+    for file in files:
+        for model_kwargs in model_kwargs_list:
+            node = init(client, file)
+            node.modify(extra={"model": "LinearSVC", "model_kwargs": model_kwargs})
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)
