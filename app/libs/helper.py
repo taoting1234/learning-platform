@@ -1,6 +1,7 @@
+from typing import List
+
 from app.libs.global_varible import g
 from app.nodes import node_mapping
-from typing import List
 
 
 def change_node(node):
@@ -44,13 +45,13 @@ def run_nodes(nodes, testing, thread):
 def change_columns(raw: str) -> List[int]:
     res = set()
     try:
-        raw = raw.replace(' ', '')
-        parts = raw.split(',')
-        while '' in parts:
-            parts.remove('')
+        raw = raw.replace(" ", "")
+        parts = raw.split(",")
+        while "" in parts:
+            parts.remove("")
         for part in parts:
-            if '-' in part:
-                l, r = part.split('-')
+            if "-" in part:
+                l, r = part.split("-")
                 l = int(l)
                 r = int(r)
                 if l == r:
@@ -61,5 +62,5 @@ def change_columns(raw: str) -> List[int]:
             else:
                 res.add(int(part))
     except ValueError:
-        assert False, 'column should be integer'
+        assert False, "column should be integer"
     return list(res)
