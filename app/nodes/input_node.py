@@ -65,5 +65,6 @@ class SplitInputNode(InputNode):
         y_df = pd.read_csv(self.y_input_file.path, header=self.header)
         self.output_shape = [x_df.shape, y_df.shape]
         # TODO UT需要，写完填充节点后删除
+        x_df = x_df.fillna(value=0)
         x_df.to_csv(self.join_path("x.csv"), index=False)
         y_df.to_csv(self.join_path("y.csv"), index=False)
