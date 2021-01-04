@@ -1,5 +1,6 @@
 import logging
 import os
+from abc import abstractmethod
 
 from flask import current_app
 
@@ -64,5 +65,6 @@ class BaseNode:
     def get_output(input_):
         return input_
 
+    @abstractmethod
     def run(self):  # pragma: no cover
         pass  # pragma: no cover

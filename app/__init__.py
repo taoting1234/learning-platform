@@ -19,9 +19,9 @@ def create_app(test=False, file_directory=None):
     if test:
         app.config["TESTING"] = True
         app.config["FILE_DIRECTORY"] = file_directory
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../{}/.database".format(
-            file_directory
-        )
+        app.config[
+            "SQLALCHEMY_DATABASE_URI"
+        ] = "sqlite:///../{}/.database?check_same_thread=False".format(file_directory)
     register_resource(app)
     register_plugin(app)
     return app

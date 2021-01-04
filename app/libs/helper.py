@@ -1,10 +1,9 @@
-from typing import List
-
 from app.libs.global_varible import g
-from app.nodes import node_mapping
 
 
 def change_node(node):
+    from app.nodes import node_mapping
+
     try:
         return node_mapping[node.node_type](
             node.id,
@@ -42,7 +41,7 @@ def run_nodes(nodes, testing, thread):
             node.modify(status=3)  # 失败
 
 
-def change_columns(raw: str) -> List[int]:
+def change_columns(raw):
     res = set()
     try:
         raw = raw.replace(" ", "")
@@ -51,14 +50,14 @@ def change_columns(raw: str) -> List[int]:
             parts.remove("")
         for part in parts:
             if "-" in part:
-                l, r = part.split("-")
-                l = int(l)
-                r = int(r)
-                if l == r:
-                    res.add(l)
+                left, right = part.split("-")
+                left = int(left)
+                right = int(right)
+                if left == right:
+                    res.add(left)
                     continue
-                sign = (r - l) // abs(r - l)
-                res.update(set(range(l, r + sign, sign)))
+                sign = (right - left) // abs(right - left)
+                res.update(set(range(left, right + sign, sign)))
             else:
                 res.add(int(part))
     except ValueError:

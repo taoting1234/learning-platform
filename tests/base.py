@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+import time
 
 import pytest
 
@@ -96,4 +97,4 @@ def client():
                     thread.join()
                 g.thread_list = None
         # 删除文件夹
-        shutil.rmtree(app.config["FILE_DIRECTORY"], ignore_errors=True)
+        shutil.rmtree(app.config["FILE_DIRECTORY"])

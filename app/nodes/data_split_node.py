@@ -18,8 +18,8 @@ class DataSplitNode(BaseNode):
         return 2
 
     def run(self):
-        x_df = pd.read_csv(self.join_path("x.csv", self.in_edges[0]), header=None)
-        y_df = pd.read_csv(self.join_path("y.csv", self.in_edges[0]), header=None)
+        x_df = pd.read_csv(self.join_path("x.csv", self.in_edges[0]))
+        y_df = pd.read_csv(self.join_path("y.csv", self.in_edges[0]))
         self.input_shape = [x_df.shape, y_df.shape]
         x_train, x_test, y_train, y_test = train_test_split(
             x_df,

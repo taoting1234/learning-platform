@@ -28,17 +28,13 @@ class RegressorNode(BaseNode):
 
     def run(self):
         x_train = pd.read_csv(
-            self.join_path("x_train.csv", self.in_edges[0]), header=None
+            self.join_path("x_train.csv", self.in_edges[0])
         ).to_numpy()
-        x_test = pd.read_csv(
-            self.join_path("x_test.csv", self.in_edges[0]), header=None
-        ).to_numpy()
+        x_test = pd.read_csv(self.join_path("x_test.csv", self.in_edges[0])).to_numpy()
         y_train = pd.read_csv(
-            self.join_path("y_train.csv", self.in_edges[0]), header=None
+            self.join_path("y_train.csv", self.in_edges[0])
         ).to_numpy()
-        y_test = pd.read_csv(
-            self.join_path("y_test.csv", self.in_edges[0]), header=None
-        ).to_numpy()
+        y_test = pd.read_csv(self.join_path("y_test.csv", self.in_edges[0])).to_numpy()
         y_train = y_train.reshape((-1,))
         y_test = y_test.reshape((-1,))
         model = globals()[getattr(self, "model")](**getattr(self, "model_kwargs"))

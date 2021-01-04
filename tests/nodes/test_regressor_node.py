@@ -31,8 +31,8 @@ def init(client, file):
     # 创建节点
     node1 = Node.create(
         project_id=project.id,
-        node_type="input_node",
-        extra={"x_input_file": file1_id, "y_input_file": file2_id},
+        node_type="split_input_node",
+        extra={"has_header": False, "x_input_file": file1_id, "y_input_file": file2_id},
     )
     node2 = Node.create(
         project_id=project.id,

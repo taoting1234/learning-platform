@@ -19,7 +19,7 @@ def test_input_node(client):
     assert res.status_code == 201
     project_id = res.json["id"]
     res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "input_node"}
+        "/node", data={"project_id": project_id, "node_type": "split_input_node"}
     )
     assert res.status_code == 201
     node_id = res.json["id"]
@@ -36,7 +36,11 @@ def test_input_node(client):
             "/node/{}".format(node_id),
             data={
                 "extra": json.dumps(
-                    {"x_input_file": file1_id, "y_input_file": file2_id}
+                    {
+                        "has_header": False,
+                        "x_input_file": file1_id,
+                        "y_input_file": file2_id,
+                    }
                 )
             },
         ).status_code
