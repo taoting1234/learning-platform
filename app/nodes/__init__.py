@@ -1,7 +1,7 @@
 from app.nodes.classifier_node import ClassifierNode
 from app.nodes.custom_node import CustomNode
 from app.nodes.data_split_node import DataSplitNode
-from app.nodes.input_node import SplitInputNode, NotSplitInputNode
+from app.nodes.input_node import NotSplitInputNode, SplitInputNode
 from app.nodes.regressor_node import RegressorNode
 
 node_mapping = {
