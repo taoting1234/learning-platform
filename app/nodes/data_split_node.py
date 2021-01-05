@@ -28,7 +28,7 @@ class DataSplitNode(BaseNode):
             random_state=getattr(self, "random_state"),
         )
         self.output_shape = [x_train.shape, x_test.shape, y_train.shape, y_test.shape]
-        x_train.to_csv(self.join_path("x_train.csv"), index=False, header=False)
-        x_test.to_csv(self.join_path("x_test.csv"), index=False, header=False)
-        y_train.to_csv(self.join_path("y_train.csv"), index=False, header=False)
-        y_test.to_csv(self.join_path("y_test.csv"), index=False, header=False)
+        x_train.to_csv(self.join_path("x_train.csv"), index=False)
+        x_test.to_csv(self.join_path("x_test.csv"), index=False)
+        y_train.to_csv(self.join_path("y_train.csv"), index=False)
+        y_test.to_csv(self.join_path("y_test.csv"), index=False)
