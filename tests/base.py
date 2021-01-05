@@ -81,7 +81,7 @@ def client():
             )
             assert (
                 client.post(
-                    "/node/edge", data={"project_id": 1, "node1_id": 3, "node2_id": 1}
+                    "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 4}
                 ).status_code
                 == 201
             )

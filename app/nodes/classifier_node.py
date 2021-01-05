@@ -1,8 +1,10 @@
 import numpy as np
 import pandas as pd
+from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC, LinearSVC
+from xgboost import XGBClassifier, XGBRFClassifier
 
 from app.libs.metric import get_metric
 from app.libs.parser import Parser
@@ -20,6 +22,9 @@ class ClassifierNode(BaseNode):
                 KNeighborsClassifier.__name__,
                 SVC.__name__,
                 LinearSVC.__name__,
+                XGBClassifier.__name__,
+                XGBRFClassifier.__name__,
+                LGBMClassifier.__name__,
             ],
         ),
         Parser("model_kwargs", type_=dict, default={}),

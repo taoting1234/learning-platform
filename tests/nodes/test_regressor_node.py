@@ -108,3 +108,33 @@ def test_linear_svr(client):
             node = init(client, file)
             node.modify(extra={"model": "LinearSVR", "model_kwargs": model_kwargs})
             node.run(False if os.environ.get("COMPLETE_TEST") else True)
+
+
+def test_xgb(client):
+    files = [("x1.csv", "y1.csv")]
+    model_kwargs_list = [{}]
+    for file in files:
+        for model_kwargs in model_kwargs_list:
+            node = init(client, file)
+            node.modify(extra={"model": "XGBRegressor", "model_kwargs": model_kwargs})
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+
+
+def test_xgb_rf(client):
+    files = [("x1.csv", "y1.csv")]
+    model_kwargs_list = [{}]
+    for file in files:
+        for model_kwargs in model_kwargs_list:
+            node = init(client, file)
+            node.modify(extra={"model": "XGBRFRegressor", "model_kwargs": model_kwargs})
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+
+
+def test_lgb(client):
+    files = [("x1.csv", "y1.csv")]
+    model_kwargs_list = [{}]
+    for file in files:
+        for model_kwargs in model_kwargs_list:
+            node = init(client, file)
+            node.modify(extra={"model": "LGBMRegressor", "model_kwargs": model_kwargs})
+            node.run(False if os.environ.get("COMPLETE_TEST") else True)
