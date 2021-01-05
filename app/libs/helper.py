@@ -42,6 +42,7 @@ def run_nodes(nodes, testing, thread):
 
 
 def change_columns(raw):
+    # TODO 支持[-1,-2]
     res = set()
     try:
         raw = raw.replace(" ", "")
