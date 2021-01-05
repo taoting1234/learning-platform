@@ -31,7 +31,7 @@ def get_metric(logger, type_, y_test, y_pred):
     for metric in metric_list[type_ - 1]:
         try:
             logger.info("{}: {}".format(metric.__name__, metric(y_test, y_pred)))
-        except ValueError:  # pragma: no cover
+        except ValueError:
             logger.info(
                 "{}: calculate error".format(metric.__name__)
             )  # pragma: no cover
