@@ -66,5 +66,5 @@ class BaseNode:
         return input_
 
     @abstractmethod
-    def run(self):  # pragma: no cover
+    def run(self):
         pass  # pragma: no cover
