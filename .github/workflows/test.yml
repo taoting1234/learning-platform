@@ -24,7 +24,7 @@ jobs:
       - name: Prepare environment
         if: matrix.os == 'macos-latest'
         run: |
-          brew intall libomp
+          brew install libomp
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
