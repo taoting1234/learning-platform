@@ -26,6 +26,6 @@ def test_parser():
 def test_change_columns():
     with pytest.raises(Exception):
         change_columns("i")
-    assert sorted(change_columns("1:3,   1 0,15:13,11:11, -2:-1")) == sorted(
+    assert sorted(change_columns("1:3,,   1 0,15:13,11:11, -2:-1")) == sorted(
         [1, 2, 3, 10, 13, 14, 15, 11, -1, -2]
     )
