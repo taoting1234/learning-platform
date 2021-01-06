@@ -1,4 +1,5 @@
 from app.libs.global_varible import g
+from app.models.node import Node
 
 
 def change_node(node):
@@ -31,14 +32,14 @@ def run_nodes(nodes, testing, thread):
             try:
                 node.run()
                 node.finish()
-                node.modify(status=2)  # 成功
+                node.modify(status=Node.Status.FINISH)  # 成功
             except Exception as e:
                 if testing and not thread:
                     raise
                 node.logger.error(e)
                 fail_flag = True
         else:
-            node.modify(status=3)  # 失败
+            node.modify(status=Node.Status.FAILED)  # 失败
 
 
 def change_columns(raw):

@@ -23,6 +23,12 @@ class Node(Base):
     status = Column(Integer, default=0, nullable=False)  # 0 未运行 1 正在运行 2 运行完成 3 运行失败
     _extra = Column("extra", String(1000), default="{}", nullable=False)
 
+    class Status:
+        NOT_RUN = 0
+        RUNNING = 1
+        FINISH = 2
+        FAILED = 3
+
     @property
     def input_shape(self):
         return json.loads(self._input_shape)
@@ -119,7 +125,7 @@ class Node(Base):
         if only_check:
             return  # pragma: no cover
         for node in nodes:
-            node.modify(status=1)  # 运行中
+            node.modify(status=Node.Status.RUNNING)  # 运行中
         if current_app.config["TESTING"] and not current_app.config.get("THREAD"):
             run_nodes(nodes, True, False)
         else:

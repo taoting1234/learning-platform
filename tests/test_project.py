@@ -138,10 +138,12 @@ def test_run(client):
         "/node", data={"project_id": project_id, "node_type": "input_node"}
     )
     assert res.status_code == 201
+    current_app.config["TESTING"] = False
     assert (
         "Project has multiple graph"
         in client.post("/project/{}/run".format(project_id)).json["message"]
     )
+    current_app.config["TESTING"] = True
     # 运行失败（项目有环）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -170,10 +172,12 @@ def test_run(client):
         ).status_code
         == 201
     )
+    current_app.config["TESTING"] = False
     assert (
         "Graph have cycle"
         in client.post("/project/{}/run".format(project_id)).json["message"]
     )
+    current_app.config["TESTING"] = True
     # 运行失败（项目部分有环）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -214,6 +218,7 @@ def test_run(client):
         ).status_code
         == 201
     )
+    current_app.config["TESTING"] = False
     assert (
         "Graph have cycle"
         in client.post("/project/{}/run".format(project_id)).json["message"]
@@ -222,6 +227,7 @@ def test_run(client):
         "Graph have cycle"
         in client.post("/node/{}/run".format(node3_id)).json["message"]
     )
+    current_app.config["TESTING"] = True
     # 运行失败（项目有无效节点）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -236,11 +242,13 @@ def test_run(client):
         ).status_code
         == 200
     )
+    current_app.config["TESTING"] = False
     assert (
         "not support"
         in client.post("/project/{}/run".format(project_id)).json["message"]
     )
     assert "not support" in client.post("/node/{}/run".format(node_id)).json["message"]
+    current_app.config["TESTING"] = True
     # 运行失败（输入数量错误）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -277,10 +285,12 @@ def test_run(client):
         ).status_code
         == 200
     )
+    current_app.config["TESTING"] = False
     assert (
         "not support input"
         in client.post("/project/{}/run".format(project_id)).json["message"]
     )
+    current_app.config["TESTING"] = True
     # 运行失败（输入节点错误）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -337,10 +347,12 @@ def test_run(client):
         ).status_code
         == 200
     )
+    current_app.config["TESTING"] = False
     assert (
         "only allow"
         in client.post("/project/{}/run".format(project_id)).json["message"]
     )
+    current_app.config["TESTING"] = True
     # 运行成功（运行节点报错）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
@@ -357,7 +369,9 @@ def test_run(client):
         ).status_code
         == 200
     )
+    current_app.config["TESTING"] = False
     assert client.post("/project/{}/run".format(project_id)).status_code == 400
+    current_app.config["TESTING"] = True
     # 运行成功
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201

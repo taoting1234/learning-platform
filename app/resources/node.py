@@ -30,7 +30,7 @@ class ResourceNode(Resource):
         node.modify(**args)
         nodes = node.get_nodes(node, 2)
         for node in nodes:
-            node.modify(status=0)
+            node.modify(status=Node.Status.NOT_RUN)
         return {"message": "Modify node success"}
 
     @login_required
