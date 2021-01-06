@@ -43,7 +43,6 @@ def run_nodes(nodes, testing, thread):
 
 
 def change_columns(raw):
-    # TODO 支持[-1,-2]
     res = set()
     try:
         raw = raw.replace(" ", "")
@@ -51,8 +50,8 @@ def change_columns(raw):
         while "" in parts:
             parts.remove("")
         for part in parts:
-            if "-" in part:
-                left, right = part.split("-")
+            if ":" in part:
+                left, right = part.split(":")
                 left = int(left)
                 right = int(right)
                 if left == right:
