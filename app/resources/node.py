@@ -1,3 +1,4 @@
+from flask import current_app
 from flask_login import login_required
 from flask_restful import Resource, abort, marshal_with
 
@@ -115,7 +116,9 @@ class ResourceNodeRun(Resource):
         try:
             node.run()
         except Exception as e:
-            abort(400, message=str(e))
+            if current_app.config["TESTING"]:
+                raise
+            abort(400, message=str(e))  # pragma: no cover
         return {"message": "Create task success"}, 201
 
 
