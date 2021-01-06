@@ -158,7 +158,7 @@ def test_edge_create(client):
     # 创建成功
     assert (
         client.post(
-            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 4}
+            "/node/edge", data={"project_id": 1, "node1_id": 3, "node2_id": 4}
         ).status_code
         == 201
     )
@@ -224,7 +224,7 @@ def test_edge_delete(client):
     # 删除边失败（边不存在）
     assert (
         client.delete(
-            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 4}
+            "/node/edge", data={"project_id": 1, "node1_id": 3, "node2_id": 4}
         ).status_code
         == 400
     )

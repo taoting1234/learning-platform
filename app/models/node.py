@@ -89,11 +89,6 @@ class Node(Base):
         )
         return base
 
-    def modify(self, **kwargs):
-        if kwargs.get("status") is None:
-            kwargs["status"] = 0
-        super().modify(**kwargs)
-
     def delete(self):
         nodes = Node.search(project_id=self.project_id, page_size=-1)["data"]
         for node in nodes:

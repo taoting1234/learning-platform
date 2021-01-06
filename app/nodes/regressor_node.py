@@ -1,7 +1,9 @@
 import pandas as pd
+from lightgbm import LGBMRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR, LinearSVR
+from xgboost import XGBRegressor, XGBRFRegressor
 
 from app.libs.metric import get_metric
 from app.libs.parser import Parser
@@ -19,6 +21,9 @@ class RegressorNode(BaseNode):
                 KNeighborsRegressor.__name__,
                 SVR.__name__,
                 LinearSVR.__name__,
+                XGBRegressor.__name__,
+                XGBRFRegressor.__name__,
+                LGBMRegressor.__name__,
             ],
         ),
         Parser("model_kwargs", type_=dict, default={}),

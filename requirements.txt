@@ -7,3 +7,5 @@ pymysql
 pandas
 sklearn
 numpy
+xgboost
+lightgbm
