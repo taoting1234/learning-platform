@@ -66,7 +66,7 @@ def test_split_input_node(client):
     )
 
 
-@pytest.mark.skip()
+@pytest.mark.skip
 def test_not_split_input_node(client):
     assert (
         client.post(
