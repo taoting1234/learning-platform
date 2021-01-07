@@ -75,7 +75,7 @@ def test_linear_regression(client):
             node.modify(
                 extra={"model": "LinearRegression", "model_kwargs": model_kwargs}
             )
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_k_neighbors_regressor(client):
@@ -87,7 +87,7 @@ def test_k_neighbors_regressor(client):
             node.modify(
                 extra={"model": "KNeighborsRegressor", "model_kwargs": model_kwargs}
             )
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_svr(client):
@@ -97,7 +97,7 @@ def test_svr(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "SVR", "model_kwargs": model_kwargs})
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_linear_svr(client):
@@ -107,7 +107,7 @@ def test_linear_svr(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "LinearSVR", "model_kwargs": model_kwargs})
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_xgb(client):
@@ -117,7 +117,7 @@ def test_xgb(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "XGBRegressor", "model_kwargs": model_kwargs})
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_xgb_rf(client):
@@ -127,7 +127,7 @@ def test_xgb_rf(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "XGBRFRegressor", "model_kwargs": model_kwargs})
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_lgb(client):
@@ -137,4 +137,4 @@ def test_lgb(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "LGBMRegressor", "model_kwargs": model_kwargs})
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
