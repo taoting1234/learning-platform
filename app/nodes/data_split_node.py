@@ -24,8 +24,8 @@ class DataSplitNode(BaseNode):
         x_train, x_test, y_train, y_test = train_test_split(
             x_df,
             y_df,
-            test_size=getattr(self, "test_ratio"),
-            random_state=getattr(self, "random_state"),
+            test_size=self.test_ratio,
+            random_state=self.random_state,
         )
         self.output_shape = [x_train.shape, x_test.shape, y_train.shape, y_test.shape]
         x_train.to_csv(self.join_path("x_train.csv"), index=False)

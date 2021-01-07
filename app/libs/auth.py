@@ -20,7 +20,7 @@ def self_only(model, parser=None):
                 if isinstance(base, Project):
                     project = base
                 if getattr(base, "project_id", None):
-                    project = Project.get_by_id(getattr(base, "project_id"))
+                    project = Project.get_by_id(base.project_id)
                 if project and project.user_id != current_user.id:
                     abort(403)
             if parser:
