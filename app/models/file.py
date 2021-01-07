@@ -48,6 +48,8 @@ class File(Base):
         return base
 
     def modify(self, **kwargs):
+        if kwargs.get("move_file") is None:
+            kwargs["move_file"] = True
         old_path = self.path
         super().modify(**kwargs)
         if kwargs["move_file"]:
