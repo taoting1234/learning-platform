@@ -83,7 +83,7 @@ def test_k_neighbors_classifier(client):
         ("amazon_x.csv", "amazon_y.csv"),
         ("cancer_x.csv", "cancer_y.csv"),
     ]
-    model_kwargs_list = [{"n_neighbors": 3}, {"n_neighbors": 4}, {"n_neighbors": 5}]
+    model_kwargs_list = [{"n_neighbors": 3}]
     for file in files:
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
