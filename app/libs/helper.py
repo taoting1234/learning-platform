@@ -62,5 +62,5 @@ def change_columns(raw):
             else:
                 res.add(int(part))
     except ValueError:
-        assert False, "column should be integer"
+        raise Exception("column should be integer")
     return list(res)
