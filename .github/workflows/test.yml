@@ -37,4 +37,4 @@ jobs:
           COMPLETE_TEST: true
       - name: Report Coverage
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8'
-        uses: codecov/codecov-action@v1.1.1
+        uses: codecov/codecov-action@v1.2.1
