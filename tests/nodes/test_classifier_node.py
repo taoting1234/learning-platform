@@ -93,16 +93,6 @@ def test_k_neighbors_classifier(client):
             node.run(not os.environ.get("COMPLETE_TEST"))
 
 
-def test_svc(client):
-    files = [("telco_x.csv", "telco_y.csv")]
-    model_kwargs_list = [{}]
-    for file in files:
-        for model_kwargs in model_kwargs_list:
-            node = init(client, file)
-            node.modify(extra={"model": "SVC", "model_kwargs": model_kwargs})
-            node.run(not os.environ.get("COMPLETE_TEST"))
-
-
 def test_linear_svc(client):
     files = [("telco_x.csv", "telco_y.csv")]
     model_kwargs_list = [{"max_iter": 10000}]
@@ -110,48 +100,4 @@ def test_linear_svc(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "LinearSVC", "model_kwargs": model_kwargs})
-            node.run(not os.environ.get("COMPLETE_TEST"))
-
-
-def test_xgb(client):
-    files = [
-        ("telco_x.csv", "telco_y.csv"),
-        ("amazon_x.csv", "amazon_y.csv"),
-        ("cancer_x.csv", "cancer_y.csv"),
-    ]
-    model_kwargs_list = [{}]
-    for file in files:
-        for model_kwargs in model_kwargs_list:
-            node = init(client, file)
-            node.modify(extra={"model": "XGBClassifier", "model_kwargs": model_kwargs})
-            node.run(not os.environ.get("COMPLETE_TEST"))
-
-
-def test_xgb_rf(client):
-    files = [
-        ("telco_x.csv", "telco_y.csv"),
-        ("amazon_x.csv", "amazon_y.csv"),
-        ("cancer_x.csv", "cancer_y.csv"),
-    ]
-    model_kwargs_list = [{}]
-    for file in files:
-        for model_kwargs in model_kwargs_list:
-            node = init(client, file)
-            node.modify(
-                extra={"model": "XGBRFClassifier", "model_kwargs": model_kwargs}
-            )
-            node.run(not os.environ.get("COMPLETE_TEST"))
-
-
-def test_lgb(client):
-    files = [
-        ("telco_x.csv", "telco_y.csv"),
-        ("amazon_x.csv", "amazon_y.csv"),
-        ("cancer_x.csv", "cancer_y.csv"),
-    ]
-    model_kwargs_list = [{}]
-    for file in files:
-        for model_kwargs in model_kwargs_list:
-            node = init(client, file)
-            node.modify(extra={"model": "LGBMClassifier", "model_kwargs": model_kwargs})
             node.run(not os.environ.get("COMPLETE_TEST"))
