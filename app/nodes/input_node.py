@@ -37,8 +37,8 @@ class NotSplitInputNode(InputNode):
 
     def run(self):
         x_df = pd.read_csv(self.x_input_file.path, header=self.header)
-        y_df = x_df[self.label_columns]
-        x_df.drop(self.label_columns, axis=1, inplace=True)
+        y_df = x_df.iloc[:, self.label_columns]
+        x_df.drop(y_df.columns, axis=1, inplace=True)
         self.output_shape = [x_df.shape, y_df.shape]
         # TODO UT需要，写完填充节点后删除
         x_df = x_df.fillna(value=0)

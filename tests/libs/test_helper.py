@@ -1,6 +1,6 @@
 import pytest
 
-from app.libs.helper import change_columns
+from app.libs.helper import change_columns, optimist_columns
 from app.libs.parser import Parser
 
 

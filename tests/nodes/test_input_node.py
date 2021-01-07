@@ -66,7 +66,6 @@ def test_split_input_node(client):
     )
 
 
-@pytest.mark.skip
 def test_not_split_input_node(client):
     assert (
         client.post(
@@ -94,7 +93,7 @@ def test_not_split_input_node(client):
                     {
                         "has_header": True,
                         "x_input_file": file_id,
-                        "label_columns": "[-1]",
+                        "label_columns": "-1",
                     }
                 )
             },
@@ -105,8 +104,8 @@ def test_not_split_input_node(client):
     # 确认是否成功
     assert client.get("/node/{}".format(node_id)).json["input_shape"] == []
     assert client.get("/node/{}".format(node_id)).json["output_shape"] == [
-        [50, 500],
-        [50, 1],
+        [1000, 41],
+        [1000, 1],
     ]
     assert os.path.exists(
         "{}/{}/node/{}/x.csv".format(
