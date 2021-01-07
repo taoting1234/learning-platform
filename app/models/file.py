@@ -47,10 +47,10 @@ class File(Base):
         base.update_meta()
         return base
 
-    def modify(self, move_file=True, **kwargs):
+    def modify(self, **kwargs):
         old_path = self.path
         super().modify(**kwargs)
-        if move_file:
+        if kwargs["move_file"]:
             dest_path = self.join_path(kwargs["filename"])
             os.makedirs(os.path.split(dest_path)[0], exist_ok=True)
             shutil.move(old_path, dest_path)
