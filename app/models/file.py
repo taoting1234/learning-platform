@@ -50,7 +50,7 @@ class File(Base):
     def modify(self, **kwargs):
         old_path = self.path
         super().modify(**kwargs)
-        if kwargs["move_file"]:
+        if kwargs.get("move_file"):
             dest_path = self.join_path(kwargs["filename"])
             os.makedirs(os.path.split(dest_path)[0], exist_ok=True)
             shutil.move(old_path, dest_path)
