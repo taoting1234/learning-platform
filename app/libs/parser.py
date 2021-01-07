@@ -17,7 +17,9 @@ class Parser:
                 self.value = self.type(raw)
             except Exception:
                 raise Exception(
-                    "{}: {} cannot decode to {}", self.name, raw, self.type.__name__
+                    "{}: {} cannot decode to {}".format(
+                        self.name, raw, self.type.__name__
+                    )
                 )
             if self.range:
                 if self.value < self.range[0] or self.value > self.range[1]:
