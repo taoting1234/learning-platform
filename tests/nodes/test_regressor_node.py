@@ -9,25 +9,20 @@ from app.models.project import Project
 from ..base import client
 
 
-def init(client, file):
+def test_regressor_node(client):
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 创建项目
     project = Project.create(name=str(random.random()), tag="", user_id=1)
     # 上传文件
-    with open(pkg_resources.resource_filename("tests.files", file[0]), "rb") as f:
-        res = client.post("/file", data={"file": f, "project_id": project.id})
-        assert res.status_code == 201
-        file1_id = res.json["id"]
-    with open(pkg_resources.resource_filename("tests.files", file[1]), "rb") as f:
-        res = client.post("/file", data={"file": f, "project_id": project.id})
-        assert res.status_code == 201
-        file2_id = res.json["id"]
+    with open(pkg_resources.resource_filename("tests.files", "x1.csv"), "rb") as f:
+        file1_id = client.post(
+            "/file", data={"file": f, "project_id": project.id}
+        ).json["id"]
+    with open(pkg_resources.resource_filename("tests.files", "y1.csv"), "rb") as f:
+        file2_id = client.post(
+            "/file", data={"file": f, "project_id": project.id}
+        ).json["id"]
     # 创建节点
     node1 = Node.create(
         project_id=project.id,
@@ -39,40 +34,27 @@ def init(client, file):
         node_type="data_split_node",
         extra={"test_ratio": 0.2, "random_state": 888},
     )
-    node3 = Node.create(project_id=project.id, node_type="regressor_node")
+    node3 = Node.create(
+        project_id=project.id,
+        node_type="regressor_node",
+        extra={"model": "LinearRegression", "model_kwargs": {}},
+    )
     # 创建边
-    assert (
-        client.post(
-            "/node/edge",
-            data={
-                "project_id": project.id,
-                "node1_id": node1.id,
-                "node2_id": node2.id,
-            },
-        ).status_code
-        == 201
+    client.post(
+        "/node/edge",
+        data={
+            "project_id": project.id,
+            "node1_id": node1.id,
+            "node2_id": node2.id,
+        },
     )
-    assert (
-        client.post(
-            "/node/edge",
-            data={
-                "project_id": project.id,
-                "node1_id": node2.id,
-                "node2_id": node3.id,
-            },
-        ).status_code
-        == 201
+    client.post(
+        "/node/edge",
+        data={
+            "project_id": project.id,
+            "node1_id": node2.id,
+            "node2_id": node3.id,
+        },
     )
-    return node3
-
-
-def test_linear_regression(client):
-    files = [("x1.csv", "y1.csv")]
-    model_kwargs_list = [{}]
-    for file in files:
-        for model_kwargs in model_kwargs_list:
-            node = init(client, file)
-            node.modify(
-                extra={"model": "LinearRegression", "model_kwargs": model_kwargs}
-            )
-            node.run(not os.environ.get("COMPLETE_TEST"))
+    # 训练
+    node3.run(not os.environ.get("COMPLETE_TEST"))
