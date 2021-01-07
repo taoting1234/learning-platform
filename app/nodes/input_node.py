@@ -15,7 +15,7 @@ class InputNode(BaseNode, ABC):
 
     def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
         super().__init__(id_, node_type, project_id, in_edges, out_edges, extra)
-        self.header = 0 if getattr(self, "has_header") else None
+        self.header = 0 if self.has_header else None
 
     @staticmethod
     def get_output(input_):
