@@ -5,7 +5,7 @@
 [![Codecov](https://codecov.io/gh/taoting1234/learning-platform/branch/master/graph/badge.svg?token=SpGXe7wkrV)](https://codecov.io/gh/taoting1234/learning-platform)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://github.com/PyCQA/isort)
-[![DeepSource](https://deepsource.io/gh/taoting1234/learning-platform.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gh/taoting1234/learning-platform/?ref=repository-badge)
+[![DeepSource](https://static.deepsource.io/deepsource-badge-light-mini.svg)](hhttps://deepsource.io/gh/taoting1234/learning-platform/?ref=repository-badge)
 
 ## 待完善功能
 
