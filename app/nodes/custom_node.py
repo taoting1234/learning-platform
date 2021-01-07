@@ -15,8 +15,8 @@ class CustomNode(BaseNode):
         for i in self.input_size:
             assert isinstance(i, int)
         self.func = {}
-        exec(getattr(self, "get_output_code"), self.func)
-        exec(getattr(self, "run_code"), self.func)
+        exec(self.get_output_code, self.func)
+        exec(self.run_code, self.func)
 
     def get_output(self, input_):
         return self.func["get_output"](input_)
