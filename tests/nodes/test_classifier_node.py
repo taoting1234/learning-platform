@@ -75,7 +75,7 @@ def test_logistic_regression(client):
             node.modify(
                 extra={"model": "LogisticRegression", "model_kwargs": model_kwargs}
             )
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_k_neighbors_classifier(client):
@@ -90,7 +90,7 @@ def test_k_neighbors_classifier(client):
             node.modify(
                 extra={"model": "KNeighborsClassifier", "model_kwargs": model_kwargs}
             )
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_svc(client):
@@ -100,7 +100,7 @@ def test_svc(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "SVC", "model_kwargs": model_kwargs})
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_linear_svc(client):
@@ -110,7 +110,7 @@ def test_linear_svc(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "LinearSVC", "model_kwargs": model_kwargs})
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_xgb(client):
@@ -124,7 +124,7 @@ def test_xgb(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "XGBClassifier", "model_kwargs": model_kwargs})
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_xgb_rf(client):
@@ -140,7 +140,7 @@ def test_xgb_rf(client):
             node.modify(
                 extra={"model": "XGBRFClassifier", "model_kwargs": model_kwargs}
             )
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
 
 
 def test_lgb(client):
@@ -154,4 +154,4 @@ def test_lgb(client):
         for model_kwargs in model_kwargs_list:
             node = init(client, file)
             node.modify(extra={"model": "LGBMClassifier", "model_kwargs": model_kwargs})
-            node.run(False if os.environ.get("COMPLETE_TEST") else True)
+            node.run(not os.environ.get("COMPLETE_TEST"))
