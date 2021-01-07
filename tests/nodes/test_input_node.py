@@ -3,7 +3,6 @@ import os
 import random
 
 import pkg_resources
-import pytest
 from flask import current_app
 
 from ..base import client
