@@ -12,24 +12,23 @@ class Parser:
     def check(self, raw):
         if raw is None and self.required:
             raise Exception("{}: cannot be empty".format(self.name))
-        if raw is not None:
-            try:
-                self.value = self.type(raw)
-            except Exception:
+        if raw is None:
+            return
+        try:
+            self.value = self.type(raw)
+        except Exception:
+            raise Exception(
+                "{}: {} cannot decode to {}".format(self.name, raw, self.type.__name__)
+            )
+        if self.range:
+            if self.value < self.range[0] or self.value > self.range[1]:
                 raise Exception(
-                    "{}: {} cannot decode to {}".format(
-                        self.name, raw, self.type.__name__
+                    "{}: {} not in range ({}, {})".format(
+                        self.name, raw, self.range[0], self.range[1]
                     )
                 )
-            if self.range:
-                if self.value < self.range[0] or self.value > self.range[1]:
-                    raise Exception(
-                        "{}: {} not in range ({}, {})".format(
-                            self.name, raw, self.range[0], self.range[1]
-                        )
-                    )
-            if self.enum:
-                if raw not in self.enum:
-                    raise Exception(
-                        "{}: {} not in enum {}".format(self.name, raw, self.enum)
-                    )
+        if self.enum:
+            if raw not in self.enum:
+                raise Exception(
+                    "{}: {} not in enum {}".format(self.name, raw, self.enum)
+                )
