@@ -1,9 +1,18 @@
 import numpy as np
 import pandas as pd
 from lightgbm import LGBMClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import (
+    BernoulliNB,
+    CategoricalNB,
+    ComplementNB,
+    GaussianNB,
+    MultinomialNB,
+)
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC, LinearSVC
+from sklearn.tree import DecisionTreeClassifier, ExtraTreeClassifier
 from xgboost import XGBClassifier, XGBRFClassifier
 
 from app.libs.metric import get_metric
@@ -26,6 +35,14 @@ class ClassifierNode(BaseNode):
                 XGBClassifier.__name__,
                 XGBRFClassifier.__name__,
                 LGBMClassifier.__name__,
+                DecisionTreeClassifier.__name__,
+                ExtraTreeClassifier.__name__,
+                RandomForestClassifier.__name__,
+                BernoulliNB.__name__,
+                CategoricalNB.__name__,
+                ComplementNB.__name__,
+                GaussianNB.__name__,
+                MultinomialNB.__name__,
             ],
         ),
         Parser(

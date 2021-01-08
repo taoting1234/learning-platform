@@ -1,8 +1,10 @@
 import pandas as pd
 from lightgbm import LGBMRegressor
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR, LinearSVR
+from sklearn.tree import ExtraTreeClassifier, ExtraTreeRegressor
 from xgboost import XGBRegressor, XGBRFRegressor
 
 from app.libs.metric import get_metric
@@ -25,6 +27,9 @@ class RegressorNode(BaseNode):
                 XGBRegressor.__name__,
                 XGBRFRegressor.__name__,
                 LGBMRegressor.__name__,
+                ExtraTreeClassifier.__name__,
+                ExtraTreeRegressor.__name__,
+                RandomForestRegressor.__name__,
             ],
         ),
         Parser(
