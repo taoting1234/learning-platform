@@ -289,7 +289,7 @@ def test_status(client):
     node1 = Node.create(
         project_id=project.id,
         node_type="not_split_input_node",
-        extra={"has_header": True, "x_input_file": file_id, "label_columns": "100"},
+        extra={"has_header": True, "input_file": file_id, "label_columns": "100"},
     )
     node2 = Node.create(
         project_id=project.id,
@@ -330,3 +330,11 @@ def test_status(client):
     assert node1.status == Node.Status.FAILED
     assert node2.status == Node.Status.FAILED
     assert node3.status == Node.Status.FAILED
+
+
+def test_description(client):
+    res = client.get("/node/description").json
+    assert isinstance(res["data"], list)
+    assert isinstance(res["data"][0], dict)
+    assert isinstance(res["data"][0]["params"], list)
+    assert isinstance(res["data"][0]["params"][0], dict)

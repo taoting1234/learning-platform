@@ -13,8 +13,9 @@ from app.nodes.base_node import BaseNode
 class RegressorNode(BaseNode):
     params = [
         Parser(
-            "model",
+            name="model",
             type_=str,
+            description="模型，sklearn中的模型类名称，例如LinearRegression",
             required=True,
             enum=[
                 LinearRegression.__name__,
@@ -26,7 +27,13 @@ class RegressorNode(BaseNode):
                 LGBMRegressor.__name__,
             ],
         ),
-        Parser("model_kwargs", type_=dict, default={}),
+        Parser(
+            name="model_kwargs",
+            type_=dict,
+            description="模型参数",
+            required=False,
+            default={},
+        ),
     ]
     input_node = 1
     input_size = [2]

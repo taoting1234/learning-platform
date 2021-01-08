@@ -8,12 +8,11 @@ from app.models.project import Project
 
 from ..base import client
 
-get_output_code = """
+code = """
+import pandas as pd
+
 def get_output(input_):
     return 1
-"""
-run_code = """
-import pandas as pd
 
 def run():
     df = pd.read_csv('./{}/{}/user/telco.csv')
@@ -44,10 +43,7 @@ def test_custom_node(client):
         extra={
             "input_node": 0,
             "input_size": [0],
-            "get_output_code": get_output_code,
-            "run_code": run_code.format(
-                current_app.config["FILE_DIRECTORY"], project.id
-            ),
+            "code": code.format(current_app.config["FILE_DIRECTORY"], project.id),
         },
     )
     node.run()

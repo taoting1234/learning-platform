@@ -17,3 +17,26 @@ nodes_field = {"nodes": fields.List(fields.Nested(node_field.copy()))}
 node_field.update({"log": fields.String(default="")})
 
 node_csv_field = {"data": fields.Raw}
+
+
+class Type(fields.Raw):
+    def format(self, value):
+        return value.__name__
+
+
+node_params_field = {
+    "name": fields.String,
+    "description": fields.String,
+    "type": Type,
+    "required": fields.Boolean,
+    "range": fields.List(fields.Integer),
+    "enum": fields.List(fields.Raw),
+    "default": fields.String,
+}
+
+node_description_field = {
+    "type": fields.String,
+    "params": fields.List(fields.Nested(node_params_field)),
+}
+
+nodes_description_field = {"data": fields.List(fields.Nested(node_description_field))}

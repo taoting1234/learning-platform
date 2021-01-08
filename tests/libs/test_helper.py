@@ -5,18 +5,20 @@ from app.libs.parser import Parser
 
 
 def test_parser():
-    parser = Parser("123", type_=int)
+    parser = Parser(name="123", type_=int, required=True, description="")
     with pytest.raises(Exception):
         parser.check("xxxx")
-    parser = Parser("123", type_=int, required=True)
+    parser = Parser(name="123", type_=int, required=True, description="")
     with pytest.raises(Exception):
         parser.check(None)
-    parser = Parser("123", type_=int, range_=(0, 10))
+    parser = Parser(
+        name="123", type_=int, required=True, description="", range_=(0, 10)
+    )
     with pytest.raises(Exception):
         parser.check(-1)
     with pytest.raises(Exception):
         parser.check(11)
-    parser = Parser("123", type_=int, enum=[0, 1])
+    parser = Parser(name="123", type_=int, required=True, description="", enum=[0, 1])
     with pytest.raises(Exception):
         parser.check(-1)
     with pytest.raises(Exception):

@@ -1,9 +1,18 @@
 class Parser:
     def __init__(
-        self, name, type_, required=False, range_=None, enum=None, default=None
+        self,
+        *,
+        name,
+        type_,
+        description,
+        required,
+        range_=None,
+        enum=None,
+        default=None
     ):
         self.name = name
         self.type = type_
+        self.description = description
         self.required = required
         self.range = range_ if range_ is not None else ()
         self.enum = enum if enum is not None else []
