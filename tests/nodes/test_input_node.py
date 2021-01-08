@@ -91,7 +91,7 @@ def test_not_split_input_node(client):
                 "extra": json.dumps(
                     {
                         "has_header": True,
-                        "x_input_file": file_id,
+                        "input_file": file_id,
                         "label_columns": "-1",
                     }
                 )
