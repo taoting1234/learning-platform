@@ -37,54 +37,31 @@ def client():
             file_path = "{}/1.test".format(tempfile.gettempdir())
             with open(file_path, "wb") as f:
                 f.write(os.urandom(128))
-            assert (
-                client.post(
-                    "/session", data={"username": "user1", "password": "123"}
-                ).status_code
-                == 201
-            )
+            client.post("/session", data={"username": "user1", "password": "123"})
             with open(file_path, "rb") as f:
-                assert (
-                    client.post("/file", data={"file": f, "project_id": 1}).status_code
-                    == 201
-                )
-            assert (
-                client.post(
-                    "/session", data={"username": "user2", "password": "123"}
-                ).status_code
-                == 201
-            )
+                client.post("/file", data={"file": f, "project_id": 1})
+            client.post("/session", data={"username": "user2", "password": "123"})
             with open(file_path, "rb") as f:
-                assert (
-                    client.post("/file", data={"file": f, "project_id": 3}).status_code
-                    == 201
-                )
-            assert client.delete("/session").status_code == 204
+                client.post("/file", data={"file": f, "project_id": 3})
+            client.delete("/session")
             # 创建节点
-            Node.create(project_id=1, node_type="input_node")
-            Node.create(project_id=3, node_type="input_node")
-            Node.create(project_id=1, node_type="input_node")
-            Node.create(project_id=1, node_type="input_node")
+            Node.create(project_id=1, node_type="123")
+            Node.create(project_id=3, node_type="123")
+            Node.create(project_id=1, node_type="123")
+            Node.create(project_id=1, node_type="123")
+            Node.create(project_id=1, node_type="123")
             # 创建边
-            assert (
-                client.post(
-                    "/session", data={"username": "user1", "password": "123"}
-                ).status_code
-                == 201
+            client.post("/session", data={"username": "user1", "password": "123"})
+            client.post(
+                "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 3}
             )
-            assert (
-                client.post(
-                    "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 3}
-                ).status_code
-                == 201
+            client.post(
+                "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 4}
             )
-            assert (
-                client.post(
-                    "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 4}
-                ).status_code
-                == 201
+            client.post(
+                "/node/edge", data={"project_id": 1, "node1_id": 5, "node2_id": 1}
             )
-            assert client.delete("/session").status_code == 204
+            client.delete("/session")
 
             # yield
             yield client
