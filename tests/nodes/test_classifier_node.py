@@ -23,7 +23,7 @@ def test_classifier_node_1(client):  # 二分类
     node1 = Node.create(
         project_id=project.id,
         node_type="not_split_input_node",
-        extra={"has_header": True, "x_input_file": file_id, "label_columns": "-1"},
+        extra={"has_header": True, "input_file": file_id, "label_columns": "-1"},
     )
     node2 = Node.create(
         project_id=project.id,

@@ -7,8 +7,14 @@ from app.nodes.base_node import BaseNode
 
 class DataSplitNode(BaseNode):
     params = [
-        Parser("test_ratio", type_=float, required=True, range_=(0, 1)),
-        Parser("random_state", type_=int),
+        Parser(
+            name="test_ratio",
+            type_=float,
+            description="测试集大小",
+            required=True,
+            range_=(0, 1),
+        ),
+        Parser(name="random_state", type_=int, description="随机数种子", required=False),
     ]
     input_node = 1
     input_size = [1]

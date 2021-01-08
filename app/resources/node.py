@@ -2,9 +2,10 @@ from flask import current_app
 from flask_login import login_required
 from flask_restful import Resource, abort, marshal_with
 
-from app.fields.node import node_field, nodes_field
+from app.fields.node import node_field, nodes_description_field, nodes_field
 from app.libs.auth import self_only
 from app.models.node import Node
+from app.nodes import node_mapping
 from app.parsers.node import (
     node_create_parser,
     node_csv_parser,
@@ -134,3 +135,15 @@ class ResourceNodeCSV(Resource):
         except OSError:
             abort(400, message="File not found")
         return res
+
+
+class ResourceNodeDescription(Resource):
+    @marshal_with(nodes_description_field)
+    def get(self):
+        res = []
+        for k, v in node_mapping.items():
+            tmp = []
+            for params in v.params:
+                tmp.append(params)
+            res.append({"type": k, "params": tmp})
+        return {"data": res}
