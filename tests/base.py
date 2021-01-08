@@ -66,11 +66,5 @@ def client():
             # yield
             yield client
 
-            # 测试后运行
-            # 等待线程结束
-            if getattr(g, "thread_list", None):
-                for thread in g.thread_list:
-                    thread.join()
-                g.thread_list = None
         # 删除文件夹
         shutil.rmtree(app.config["FILE_DIRECTORY"])

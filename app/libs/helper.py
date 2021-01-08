@@ -38,6 +38,7 @@ def run_nodes(nodes, testing, thread):
                     raise
                 node.logger.error(e)
                 fail_flag = True
+                node.modify(status=Node.Status.FAILED)  # 失败
         else:
             node.modify(status=Node.Status.FAILED)  # 失败
 

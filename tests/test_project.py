@@ -4,6 +4,8 @@ import random
 import pkg_resources
 from flask import current_app
 
+from app.libs.global_varible import g
+
 from .base import client
 
 
@@ -409,3 +411,8 @@ def test_run(client):
     # 运行成功（线程）
     current_app.config["THREAD"] = True
     assert client.post("/project/{}/run".format(project_id)).status_code == 201
+    # 等待线程结束
+    if getattr(g, "thread_list", None):
+        for thread in g.thread_list:
+            thread.join()
+        g.thread_list = None

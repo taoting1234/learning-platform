@@ -1,5 +1,11 @@
+import random
+
 import pkg_resources
 from flask import current_app
+
+from app.libs.global_varible import g
+from app.models.node import Node
+from app.models.project import Project
 
 from .base import client
 
@@ -267,3 +273,60 @@ def test_csv(client):
         f.write(data)
     # 读取csv成功
     assert client.get("/node/1/csv", data={"filename": "x.csv"}).status_code == 200
+
+
+def test_status(client):
+    # 登录
+    client.post("/session", data={"username": "user1", "password": "123"})
+    # 创建项目
+    project = Project.create(name=str(random.random()), tag="", user_id=1)
+    # 上传文件
+    with open(pkg_resources.resource_filename("tests.files", "telco.csv"), "rb") as f:
+        file_id = client.post("/file", data={"file": f, "project_id": project.id}).json[
+            "id"
+        ]
+    # 创建节点
+    node1 = Node.create(
+        project_id=project.id,
+        node_type="not_split_input_node",
+        extra={"has_header": True, "x_input_file": file_id, "label_columns": "100"},
+    )
+    node2 = Node.create(
+        project_id=project.id,
+        node_type="data_split_node",
+        extra={"test_ratio": 0.2, "random_state": 888},
+    )
+    node3 = Node.create(
+        project_id=project.id,
+        node_type="classifier_node",
+        extra={"model": "LogisticRegression", "model_kwargs": {"max_iter": 10000}},
+    )
+    # 创建边
+    client.post(
+        "/node/edge",
+        data={
+            "project_id": project.id,
+            "node1_id": node1.id,
+            "node2_id": node2.id,
+        },
+    )
+    client.post(
+        "/node/edge",
+        data={
+            "project_id": project.id,
+            "node1_id": node2.id,
+            "node2_id": node3.id,
+        },
+    )
+    # 训练
+    current_app.config["THREAD"] = True
+    node3.run()
+    # 等待线程结束
+    if getattr(g, "thread_list", None):
+        for thread in g.thread_list:
+            thread.join()
+        g.thread_list = None
+    # 查看运行状态
+    assert node1.status == Node.Status.FAILED
+    assert node2.status == Node.Status.FAILED
+    assert node3.status == Node.Status.FAILED
