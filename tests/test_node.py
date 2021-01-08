@@ -19,10 +19,10 @@ def test_get(client):
         ).status_code
         == 201
     )
-    assert client.get("/node/1").json["node_type"] == "input_node"
+    assert client.get("/node/1").json["node_type"] == "123"
     assert client.get("/node/2").status_code == 403
     assert client.get("/node/-1").status_code == 404
-    assert len(client.get("/node", data={"project_id": 1}).json["nodes"]) == 3
+    assert len(client.get("/node", data={"project_id": 1}).json["nodes"]) == 4
     assert client.get("/node", data={"project_id": -1}).status_code == 404
     assert client.get("/node", data={"project_id": 3}).status_code == 403
 
