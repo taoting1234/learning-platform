@@ -35,9 +35,10 @@ def run_nodes(nodes, testing, thread):
                 node.modify(status=Node.Status.FINISH)  # 成功
             except Exception as e:
                 if testing and not thread:
-                    raise
+                    raise  # pragma: no cover
                 node.logger.error(e)
                 fail_flag = True
+                node.modify(status=Node.Status.FAILED)  # 失败
         else:
             node.modify(status=Node.Status.FAILED)  # 失败
 

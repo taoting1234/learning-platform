@@ -117,8 +117,8 @@ class ResourceNodeRun(Resource):
             node.run()
         except Exception as e:
             if current_app.config["TESTING"]:
-                raise
-            abort(400, message=str(e))  # pragma: no cover
+                raise  # pragma: no cover
+            abort(400, message=str(e))
         return {"message": "Create task success"}, 201
 
 
