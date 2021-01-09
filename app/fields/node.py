@@ -36,6 +36,7 @@ node_params_field = {
 
 node_description_field = {
     "type": fields.String,
+    "description": fields.String,
     "params": fields.List(fields.Nested(node_params_field)),
 }
 
