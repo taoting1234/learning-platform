@@ -1,13 +1,14 @@
 import random
 
 import pkg_resources
+from flask import current_app
 
 from app.models.node import Node
 from app.models.project import Project
 
 from ..base import client
 
-code = """
+code_1 = """
 from sklearn.model_selection import train_test_split
 
 def run(input_file):
@@ -19,9 +20,18 @@ def run(input_file):
     )
     return x_train, x_test, y_train, y_test
 """
+code_2 = """
+import pandas as pd
+
+def run(input_file):
+    x = pd.read_csv('./{}/{}/user/telco.csv')
+    y = x.iloc[:, [-1]]
+    x.drop(y.columns, axis=1, inplace=True)
+    return x, y
+"""
 
 
-def test_custom_node(client):
+def test_custom_node_1(client):
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 创建项目
@@ -43,7 +53,7 @@ def test_custom_node(client):
         extra={
             "input_type": 1,
             "output_type": 2,
-            "code": code,
+            "code": code_1,
         },
     )
     # 创建边
@@ -66,4 +76,32 @@ def test_custom_node(client):
         [200, 41],
         [800, 1],
         [200, 1],
+    ]
+
+
+def test_custom_node_2(client):
+    # 登录
+    client.post("/session", data={"username": "user1", "password": "123"})
+    # 创建项目
+    project = Project.create(name=str(random.random()), tag="", user_id=1)
+    # 上传文件
+    with open(pkg_resources.resource_filename("tests.files", "telco.csv"), "rb") as f:
+        client.post("/file", data={"file": f, "project_id": project.id})
+    # 创建节点
+    node1 = Node.create(
+        project_id=project.id,
+        node_type="custom_node",
+        extra={
+            "input_type": 0,
+            "output_type": 1,
+            "code": code_2.format(current_app.config["FILE_DIRECTORY"], project.id),
+        },
+    )
+    # 运行
+    node1.run()
+    # 确认是否成功
+    assert client.get("/node/{}".format(node1.id)).json["input_shape"] == []
+    assert client.get("/node/{}".format(node1.id)).json["output_shape"] == [
+        [1000, 41],
+        [1000, 1],
     ]
