@@ -1,7 +1,16 @@
 import numpy as np
 import pandas as pd
 from lightgbm import LGBMClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import (
+    AdaBoostClassifier,
+    BaggingClassifier,
+    ExtraTreesClassifier,
+    GradientBoostingClassifier,
+    HistGradientBoostingClassifier,
+    RandomForestClassifier,
+    StackingClassifier,
+    VotingClassifier,
+)
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import (
     BernoulliNB,
@@ -44,6 +53,13 @@ class ClassifierNode(BaseNode):
                 ComplementNB.__name__,
                 GaussianNB.__name__,
                 MultinomialNB.__name__,
+                AdaBoostClassifier.__name__,
+                BaggingClassifier.__name__,
+                ExtraTreesClassifier.__name__,
+                GradientBoostingClassifier.__name__,
+                StackingClassifier.__name__,
+                VotingClassifier.__name__,
+                HistGradientBoostingClassifier.__name__,
             ],
         ),
         Parser(

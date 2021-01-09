@@ -1,6 +1,15 @@
 import pandas as pd
 from lightgbm import LGBMRegressor
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import (
+    AdaBoostRegressor,
+    BaggingRegressor,
+    ExtraTreesRegressor,
+    GradientBoostingRegressor,
+    HistGradientBoostingRegressor,
+    RandomForestRegressor,
+    StackingRegressor,
+    VotingRegressor,
+)
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR, LinearSVR
@@ -31,6 +40,13 @@ class RegressorNode(BaseNode):
                 ExtraTreeClassifier.__name__,
                 ExtraTreeRegressor.__name__,
                 RandomForestRegressor.__name__,
+                AdaBoostRegressor.__name__,
+                BaggingRegressor.__name__,
+                ExtraTreesRegressor.__name__,
+                GradientBoostingRegressor.__name__,
+                StackingRegressor.__name__,
+                VotingRegressor.__name__,
+                HistGradientBoostingRegressor.__name__,
             ],
         ),
         Parser(
