@@ -59,13 +59,13 @@ class ScalerNode(BaseNode):
         x_model.fit(x_train)
         x_train = x_model.transform(x_train)
         x_test = x_model.transform(x_test)
-        pickle.dump(x_model, open(self.join_path("x.model"), "rw"))
+        pickle.dump(x_model, open(self.join_path("x.model"), "wb"))
         if self.include_label:
             y_model = globals()[self.model](**self.model_kwargs)
             y_model.fit(y_train)
             y_train = y_model.transform(y_train)
             y_test = y_model.transform(y_test)
-            pickle.dump(y_model, open(self.join_path("y.model"), "rw"))
+            pickle.dump(y_model, open(self.join_path("y.model"), "wb"))
         self.output_shape = [x_train.shape, x_test.shape, y_train.shape, y_test.shape]
         pd.DataFrame(x_train, columns=x_columns).to_csv(
             self.join_path("x_train.csv"), index=False
