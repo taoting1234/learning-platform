@@ -13,6 +13,7 @@ from app.nodes.base_node import BaseNode
 
 
 class RegressorNode(BaseNode):
+    description = "此节点为机器学习回归节点，支持常见的回归算法"
     params = [
         Parser(
             name="model",
@@ -40,8 +41,9 @@ class RegressorNode(BaseNode):
             default={},
         ),
     ]
-    input_node = 1
-    input_size = [2]
+    input_size = 1
+    input_type = 2
+    output_type = 2
 
     def run(self):
         x_train = pd.read_csv(
@@ -52,6 +54,7 @@ class RegressorNode(BaseNode):
             self.join_path("y_train.csv", self.in_edges[0])
         ).to_numpy()
         y_test = pd.read_csv(self.join_path("y_test.csv", self.in_edges[0])).to_numpy()
+        self.input_shape = [[x_train.shape, x_test.shape, y_train.shape, y_test.shape]]
         y_train = y_train.reshape((-1,))
         y_test = y_test.reshape((-1,))
         model = globals()[self.model](**self.model_kwargs)

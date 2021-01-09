@@ -65,8 +65,10 @@ def test_data_split_node(client):
     assert client.post("/project/{}/run".format(project_id)).status_code == 201
     # 确认是否成功
     assert client.get("/node/{}".format(node2_id)).json["input_shape"] == [
-        [50, 500],
-        [50, 1],
+        [
+            [50, 500],
+            [50, 1],
+        ]
     ]
     assert client.get("/node/{}".format(node2_id)).json["output_shape"] == [
         [40, 500],
