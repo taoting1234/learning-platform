@@ -8,9 +8,11 @@ from app.models.node import Node
 
 
 class BaseNode:
+    description = ""
     params = []
-    input_node = 0  # 来源节点数量，多输入模型才会改
-    input_size = []  # 0 无数据 1 未拆分训练集测试集的数据 2 拆分训练集测试集的数据
+    input_size = 0  # 来源节点数量，多输入模型才会改
+    input_type = 0  # 1 未拆分训练集测试集的数据 2 拆分训练集测试集的数据
+    output_type = 0
 
     def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
         self.id = id_
@@ -33,11 +35,11 @@ class BaseNode:
         file_handler.setFormatter(formatter)
         self.logger.addHandler(stream_handler)
         self.logger.addHandler(file_handler)
-        # input_node
-        if len(in_edges) != self.input_node:
+        # input size
+        if self.__class__.__name__ != "CustomNode" and len(in_edges) != self.input_size:
             raise Exception(
-                "node-{}({}) only allow {} input_node".format(
-                    self.id, self.__class__.__name__, self.input_node
+                "node-{}({}) only allow {} input_size".format(
+                    self.id, self.__class__.__name__, self.input_size
                 )
             )
         # extra
@@ -60,10 +62,6 @@ class BaseNode:
 
     def modify(self, **kwargs):
         Node.get_by_id(self.id).modify(**kwargs)
-
-    @staticmethod
-    def get_output(input_):
-        return input_
 
     @abstractmethod
     def run(self):  # pragma: no cover

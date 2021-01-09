@@ -12,19 +12,17 @@ class InputNode(BaseNode, ABC):
     params = [
         Parser(name="has_header", type_=bool, description="csv是否有header", required=True)
     ]
-    input_node = 0
-    input_size = [0]
+    input_size = 0
+    input_type = 0
+    output_type = 1
 
     def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
         super().__init__(id_, node_type, project_id, in_edges, out_edges, extra)
         self.header = 0 if self.has_header else None
 
-    @staticmethod
-    def get_output(input_):
-        return 1
-
 
 class NotSplitInputNode(InputNode):
+    description = "此节点为未拆分x,y的输入节点"
     params = [
         *InputNode.params,
         Parser(name="input_file", type_=int, description="输入文件", required=True),
@@ -54,6 +52,7 @@ class NotSplitInputNode(InputNode):
 
 
 class SplitInputNode(InputNode):
+    description = "此节点为已拆分x,y的输入节点"
     params = [
         *InputNode.params,
         Parser(name="x_input_file", type_=int, description="x输入文件", required=True),

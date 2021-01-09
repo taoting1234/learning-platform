@@ -113,15 +113,15 @@ class Node(Base):
 
         nodes = self.get_nodes(self)
         nodes = self.change_nodes(nodes)
-        input_ = 0
+        input_type = 0
         for node in nodes:
-            if input_ not in node.input_size:
+            if input_type != node.input_type:
                 raise Exception(
-                    "Node{}({}) not support input {}".format(
-                        node.id, node.node_type, input_
+                    "Node{}({}) not support input type {}".format(
+                        node.id, node.node_type, input_type
                     )
                 )
-            input_ = node.get_output(input_)
+            input_type = node.output_type
         if only_check:
             return  # pragma: no cover
         for node in nodes:
