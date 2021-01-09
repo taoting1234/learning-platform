@@ -56,6 +56,7 @@ class Project(Base):
                 if run_node is None:
                     run_node = node
                 else:
-                    assert False, "Project has multiple graph"
-        assert run_node, "Graph have cycle"
+                    raise Exception("Project has multiple graph")
+        if run_node is None:
+            raise Exception("Graph have cycle")
         run_node.run()
