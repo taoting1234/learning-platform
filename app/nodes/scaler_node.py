@@ -1,7 +1,13 @@
 import pickle
 
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import (
+    MaxAbsScaler,
+    MinMaxScaler,
+    Normalizer,
+    RobustScaler,
+    StandardScaler,
+)
 
 from app.libs.parser import Parser
 from app.nodes.base_node import BaseNode
@@ -21,7 +27,13 @@ class ScalerNode(BaseNode):
             type_=str,
             description="标准化模型，sklearn中的模型类名称，例如StandardScaler",
             required=True,
-            enum=[StandardScaler.__name__],
+            enum=[
+                StandardScaler.__name__,
+                MaxAbsScaler.__name__,
+                MinMaxScaler.__name__,
+                Normalizer.__name__,
+                RobustScaler.__name__,
+            ],
         ),
         Parser(
             name="model_kwargs",
