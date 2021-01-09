@@ -7,6 +7,7 @@ from app.nodes.base_node import BaseNode
 
 
 class CustomNode(BaseNode, ABC):
+    description = "此节点为自定义节点，用户可以自行编写代码"
     params = [
         Parser(
             name="input_type",
@@ -17,7 +18,7 @@ class CustomNode(BaseNode, ABC):
         Parser(
             name="output_type",
             type_=int,
-            description="输出数据类型",
+            description="输出数据类型，1为未拆分训练集测试集的数据，2为拆分训练集测试集的数据",
             required=True,
         ),
         Parser(name="code", type_=str, description="代码", required=True),
@@ -29,7 +30,6 @@ class CustomNode(BaseNode, ABC):
         exec(self.code, self.func)
 
     def run(self):
-        # TODO 修改input_shape output_shape
         params = []
         for in_edge in self.in_edges:
             if self.input_type == 1:
