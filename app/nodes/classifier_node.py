@@ -6,7 +6,6 @@ from sklearn.ensemble import (
     BaggingClassifier,
     ExtraTreesClassifier,
     GradientBoostingClassifier,
-    HistGradientBoostingClassifier,
     RandomForestClassifier,
     StackingClassifier,
     VotingClassifier,
@@ -59,7 +58,6 @@ class ClassifierNode(BaseNode):
                 GradientBoostingClassifier.__name__,
                 StackingClassifier.__name__,
                 VotingClassifier.__name__,
-                HistGradientBoostingClassifier.__name__,
             ],
         ),
         Parser(

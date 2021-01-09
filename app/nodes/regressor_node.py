@@ -5,7 +5,6 @@ from sklearn.ensemble import (
     BaggingRegressor,
     ExtraTreesRegressor,
     GradientBoostingRegressor,
-    HistGradientBoostingRegressor,
     RandomForestRegressor,
     StackingRegressor,
     VotingRegressor,
@@ -46,7 +45,6 @@ class RegressorNode(BaseNode):
                 GradientBoostingRegressor.__name__,
                 StackingRegressor.__name__,
                 VotingRegressor.__name__,
-                HistGradientBoostingRegressor.__name__,
             ],
         ),
         Parser(
