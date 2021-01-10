@@ -22,7 +22,7 @@ def test_create(client):
     # 上传文件失败（未登录）
     with open(file_path, "rb") as f:
         assert (
-            client.post("/file", data={"file": f, "project_id": 1}).status_code == 401
+            client.post("/file", data={"file": f, "project_id": 2}).status_code == 401
         )
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
@@ -39,35 +39,28 @@ def test_create(client):
     # 上传文件成功
     with open(file_path, "rb") as f:
         assert (
-            client.post("/file", data={"file": f, "project_id": 1}).status_code == 201
+            client.post("/file", data={"file": f, "project_id": 2}).status_code == 201
         )
     assert (
-        client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
-        == "1.a"
-        or client.get("/file", data={"project_id": 1}).json["files"][1]["filename"]
+        client.get("/file", data={"project_id": 2}).json["files"][0]["filename"]
         == "1.a"
     )
-    assert os.path.exists("{}/1/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
-    size = client.get("/file", data={"project_id": 1}).json["files"][0]["size"]
+    assert os.path.exists("{}/2/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
+    size = client.get("/file", data={"project_id": 2}).json["files"][0]["size"]
     # 修改文件
     with open(file_path, "wb") as f:
         f.write(bytes("1234", encoding="utf8"))
     # 覆盖文件
     with open(file_path, "rb") as f:
         assert (
-            client.post("/file", data={"file": f, "project_id": 1}).status_code == 201
+            client.post("/file", data={"file": f, "project_id": 2}).status_code == 201
         )
     assert (
-        client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
-        == "1.a"
-        or client.get("/file", data={"project_id": 1}).json["files"][1]["filename"]
+        client.get("/file", data={"project_id": 2}).json["files"][0]["filename"]
         == "1.a"
     )
-    assert os.path.exists("{}/1/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
-    assert (
-        client.get("/file", data={"project_id": 1}).json["files"][0]["size"] > size
-        or client.get("/file", data={"project_id": 1}).json["files"][1]["size"] > size
-    )
+    assert os.path.exists("{}/2/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
+    assert client.get("/file", data={"project_id": 2}).json["files"][0]["size"] > size
 
 
 def test_modify(client):
