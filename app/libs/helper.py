@@ -1,3 +1,6 @@
+import datetime
+import os
+
 from app.libs.global_varible import g
 from app.models.node import Node
 
@@ -65,3 +68,29 @@ def change_columns(raw):
     except ValueError:
         raise Exception("column should be integer")
     return list(res)
+
+
+def get_files(path):
+    res = []
+    for filename in os.listdir(path):
+        filepath = os.path.join(path, filename)
+        if os.path.isfile(filepath):
+            res.append(
+                {
+                    "filename": filename,
+                    "type": "file",
+                    "size": os.path.getsize(filepath),
+                    "access_time": datetime.datetime.fromtimestamp(
+                        os.path.getatime(filepath)
+                    ),
+                    "create_time": datetime.datetime.fromtimestamp(
+                        os.path.getctime(filepath)
+                    ),
+                    "modify_time": datetime.datetime.fromtimestamp(
+                        os.path.getmtime(filepath)
+                    ),
+                }
+            )
+        elif os.path.isdir(filepath):
+            res.append({"filename": filename, "type": "dir"})
+    return res

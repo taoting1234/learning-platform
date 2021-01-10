@@ -7,19 +7,10 @@ from .base import client
 
 
 def test_get(client):
-    assert client.get("/file/1").status_code == 401
     assert client.get("/file", data={"project_id": 1}).status_code == 401
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
-    assert client.get("/file/1").status_code == 200
-    assert client.get("/file/2").status_code == 403
-    assert client.get("/file/3").status_code == 404
+    client.post("/session", data={"username": "user1", "password": "123"})
     assert len(client.get("/file", data={"project_id": 1}).json["files"]) == 1
-    assert client.get("/file", data={"project_id": 10}).status_code == 404
+    assert client.get("/file", data={"project_id": -1}).status_code == 404
     assert client.get("/file", data={"project_id": 3}).status_code == 403
 
 
@@ -31,19 +22,14 @@ def test_create(client):
     # 上传文件失败（未登录）
     with open(file_path, "rb") as f:
         assert (
-            client.post("/file", data={"file": f, "project_id": 1}).status_code == 401
+            client.post("/file", data={"file": f, "project_id": 2}).status_code == 401
         )
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 上传文件失败（项目不存在）
     with open(file_path, "rb") as f:
         assert (
-            client.post("/file", data={"file": f, "project_id": 10}).status_code == 404
+            client.post("/file", data={"file": f, "project_id": -1}).status_code == 404
         )
     # 上传文件失败（项目不属于你）
     with open(file_path, "rb") as f:
@@ -52,65 +38,105 @@ def test_create(client):
         )
     # 上传文件成功
     with open(file_path, "rb") as f:
-        res = client.post("/file", data={"file": f, "project_id": 1})
-        assert res.status_code == 201
-        id_ = res.json["id"]
-    assert client.get("/file/{}".format(id_)).json["filename"] == "1.a"
-    assert os.path.exists("{}/1/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
-    size = client.get("/file/{}".format(id_)).json["size"]
+        assert (
+            client.post("/file", data={"file": f, "project_id": 2}).status_code == 201
+        )
+    assert (
+        client.get("/file", data={"project_id": 2}).json["files"][0]["filename"]
+        == "1.a"
+    )
+    assert os.path.exists("{}/2/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
+    size = client.get("/file", data={"project_id": 2}).json["files"][0]["size"]
     # 修改文件
     with open(file_path, "wb") as f:
         f.write(bytes("1234", encoding="utf8"))
     # 覆盖文件
     with open(file_path, "rb") as f:
-        res = client.post("/file", data={"file": f, "project_id": 1})
-        assert res.status_code == 201
-        assert id_ == res.json["id"]
-    assert client.get("/file/{}".format(id_)).json["filename"] == "1.a"
-    assert os.path.exists("{}/1/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
-    assert client.get("/file/{}".format(id_)).json["size"] > size
+        assert (
+            client.post("/file", data={"file": f, "project_id": 2}).status_code == 201
+        )
+    assert (
+        client.get("/file", data={"project_id": 2}).json["files"][0]["filename"]
+        == "1.a"
+    )
+    assert os.path.exists("{}/2/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
+    assert client.get("/file", data={"project_id": 2}).json["files"][0]["size"] > size
 
 
 def test_modify(client):
     # 修改文件失败（未登录）
-    assert client.put("/file/1", data={"filename": "1.b"}).status_code == 401
-    # 登录
     assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
+        client.put(
+            "/file",
+            data={"old_filename": "1.a", "new_filename": "1.b", "project_id": 1},
         ).status_code
-        == 201
+        == 401
+    )
+    # 登录
+    client.post("/session", data={"username": "user1", "password": "123"})
+    # 修改文件失败（项目不属于你）
+    assert (
+        client.put(
+            "/file",
+            data={"old_filename": "1.a", "new_filename": "1.b", "project_id": 3},
+        ).status_code
+        == 403
     )
     # 修改文件失败（文件不存在）
-    assert client.put("/file/10", data={"filename": "1.b"}).status_code == 404
-    # 修改文件失败（项目不属于你）
-    assert client.put("/file/2", data={"filename": "1.b"}).status_code == 403
+    assert (
+        client.put(
+            "/file",
+            data={"old_filename": "1.aaa", "new_filename": "1.b", "project_id": 1},
+        ).status_code
+        == 404
+    )
     # 修改文件失败（目标文件已存在）
-    assert client.put("/file/1", data={"filename": "1.test"}).status_code == 400
+    assert (
+        client.put(
+            "/file",
+            data={"old_filename": "1.test", "new_filename": "1.test", "project_id": 1},
+        ).status_code
+        == 400
+    )
     # 修改文件成功
-    assert client.put("/file/1", data={"filename": "1.c"}).status_code == 200
-    assert client.get("/file/1").json["filename"] == "1.c"
+    assert (
+        client.put(
+            "/file",
+            data={"old_filename": "1.test", "new_filename": "1.c", "project_id": 1},
+        ).status_code
+        == 200
+    )
+    assert (
+        client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
+        == "1.c"
+    )
     assert os.path.exists("{}/1/user/1.c".format(current_app.config["FILE_DIRECTORY"]))
 
 
 def test_delete(client):
     # 删除文件失败（用户未登录）
-    assert client.delete("/file/1").status_code == 401
-    # 登录
     assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
+        client.delete("/file", data={"filename": "1.a", "project_id": 1}).status_code
+        == 401
     )
+    # 登录
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 删除文件失败（文件不存在）
-    assert client.delete("/file/10").status_code == 404
+    assert (
+        client.delete("/file", data={"filename": "1.aaa", "project_id": 1}).status_code
+        == 404
+    )
     # 删除文件失败（项目不属于你）
-    assert client.get("/file/2").status_code == 403
-    assert client.delete("/file/2").status_code == 403
+    assert (
+        client.delete("/file", data={"filename": "1.a", "project_id": 3}).status_code
+        == 403
+    )
     # 删除文件成功
-    assert client.delete("/file/1").status_code == 204
-    assert client.get("/file/1").status_code == 404
+    assert (
+        client.delete("/file", data={"filename": "1.test", "project_id": 1}).status_code
+        == 204
+    )
+    assert len(client.get("/file", data={"project_id": 1}).json["files"]) == 0
     assert (
         os.path.exists("{}/1/user/1.test".format(current_app.config["FILE_DIRECTORY"]))
         is False
