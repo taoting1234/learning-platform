@@ -16,14 +16,12 @@ def test_classifier_node_1(client):  # 二分类
     project = Project.create(name=str(random.random()), tag="", user_id=1)
     # 上传文件
     with open(pkg_resources.resource_filename("tests.files", "telco.csv"), "rb") as f:
-        file_id = client.post("/file", data={"file": f, "project_id": project.id}).json[
-            "id"
-        ]
+        client.post("/file", data={"file": f, "project_id": project.id})
     # 创建节点
     node1 = Node.create(
         project_id=project.id,
         node_type="not_split_input_node",
-        extra={"has_header": True, "input_file": file_id, "label_columns": "-1"},
+        extra={"has_header": True, "input_file": "telco.csv", "label_columns": "-1"},
     )
     node2 = Node.create(
         project_id=project.id,
@@ -65,20 +63,20 @@ def test_classifier_node_2(client):  # 多分类
     with open(
         pkg_resources.resource_filename("tests.files", "cancer_x.csv"), "rb"
     ) as f:
-        file1_id = client.post(
-            "/file", data={"file": f, "project_id": project.id}
-        ).json["id"]
+        client.post("/file", data={"file": f, "project_id": project.id})
     with open(
         pkg_resources.resource_filename("tests.files", "cancer_y.csv"), "rb"
     ) as f:
-        file2_id = client.post(
-            "/file", data={"file": f, "project_id": project.id}
-        ).json["id"]
+        client.post("/file", data={"file": f, "project_id": project.id})
     # 创建节点
     node1 = Node.create(
         project_id=project.id,
         node_type="split_input_node",
-        extra={"has_header": False, "x_input_file": file1_id, "y_input_file": file2_id},
+        extra={
+            "has_header": False,
+            "x_input_file": "cancer_x.csv",
+            "y_input_file": "cancer_y.csv",
+        },
     )
     node2 = Node.create(
         project_id=project.id,

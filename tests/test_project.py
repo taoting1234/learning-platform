@@ -1,5 +1,7 @@
 import json
+import os
 import random
+import tempfile
 
 import pkg_resources
 from flask import current_app
@@ -269,12 +271,21 @@ def test_run(client):
         "/node/edge",
         data={"project_id": project_id, "node1_id": node1_id, "node2_id": node2_id},
     )
+    file_path = "{}/1.test".format(tempfile.gettempdir())
+    with open(file_path, "wb") as f:
+        f.write(os.urandom(128))
+    with open(file_path, "rb") as f:
+        client.post("/file", data={"file": f, "project_id": project_id})
     assert (
         client.put(
             "/node/{}".format(node1_id),
             data={
                 "extra": json.dumps(
-                    {"has_header": False, "x_input_file": 1, "y_input_file": 2}
+                    {
+                        "has_header": False,
+                        "x_input_file": "1.test",
+                        "y_input_file": "1.test",
+                    }
                 )
             },
         ).status_code
@@ -325,18 +336,31 @@ def test_run(client):
             "/node/{}".format(node1_id),
             data={
                 "extra": json.dumps(
-                    {"has_header": False, "x_input_file": 1, "y_input_file": 2}
+                    {
+                        "has_header": False,
+                        "x_input_file": "1.test",
+                        "y_input_file": "1.test",
+                    }
                 )
             },
         ).status_code
         == 200
     )
+    file_path = "{}/1.test".format(tempfile.gettempdir())
+    with open(file_path, "wb") as f:
+        f.write(os.urandom(128))
+    with open(file_path, "rb") as f:
+        client.post("/file", data={"file": f, "project_id": project_id})
     assert (
         client.put(
             "/node/{}".format(node2_id),
             data={
                 "extra": json.dumps(
-                    {"has_header": False, "x_input_file": 1, "y_input_file": 2}
+                    {
+                        "has_header": False,
+                        "x_input_file": "1.test",
+                        "y_input_file": "1.test",
+                    }
                 )
             },
         ).status_code
@@ -384,13 +408,9 @@ def test_run(client):
     assert res.status_code == 201
     node_id = res.json["id"]
     with open(pkg_resources.resource_filename("tests.files", "x1.csv"), "rb") as f:
-        res = client.post("/file", data={"file": f, "project_id": project_id})
-        assert res.status_code == 201
-        file1_id = res.json["id"]
+        client.post("/file", data={"file": f, "project_id": project_id})
     with open(pkg_resources.resource_filename("tests.files", "y1.csv"), "rb") as f:
-        res = client.post("/file", data={"file": f, "project_id": project_id})
-        assert res.status_code == 201
-        file2_id = res.json["id"]
+        client.post("/file", data={"file": f, "project_id": project_id})
     assert (
         client.put(
             "/node/{}".format(node_id),
@@ -398,8 +418,8 @@ def test_run(client):
                 "extra": json.dumps(
                     {
                         "has_header": False,
-                        "x_input_file": file1_id,
-                        "y_input_file": file2_id,
+                        "x_input_file": "x1.csv",
+                        "y_input_file": "y1.csv",
                     }
                 )
             },

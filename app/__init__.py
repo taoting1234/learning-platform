@@ -55,7 +55,7 @@ def register_plugin(app_):
 
 
 def register_resource(app_):
-    from app.resources.file import ResourceFile, ResourceFileList
+    from app.resources.file import ResourceFile
     from app.resources.node import (
         ResourceNode,
         ResourceNodeEdge,
@@ -77,8 +77,7 @@ def register_resource(app_):
     api.add_resource(ResourceProject, "/project/<int:id_>")
     api.add_resource(ResourceProjectList, "/project")
     api.add_resource(ResourceProjectRun, "/project/<int:id_>/run")
-    api.add_resource(ResourceFile, "/file/<int:id_>")
-    api.add_resource(ResourceFileList, "/file")
+    api.add_resource(ResourceFile, "/file")
     api.add_resource(ResourceNode, "/node/<int:id_>")
     api.add_resource(ResourceNodeList, "/node")
     api.add_resource(ResourceNodeEdge, "/node/edge")

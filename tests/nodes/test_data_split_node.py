@@ -29,13 +29,9 @@ def test_data_split_node(client):
     assert res.status_code == 201
     node2_id = res.json["id"]
     with open(pkg_resources.resource_filename("tests.files", "x1.csv"), "rb") as f:
-        res = client.post("/file", data={"file": f, "project_id": project_id})
-        assert res.status_code == 201
-        file1_id = res.json["id"]
+        client.post("/file", data={"file": f, "project_id": project_id})
     with open(pkg_resources.resource_filename("tests.files", "y1.csv"), "rb") as f:
-        res = client.post("/file", data={"file": f, "project_id": project_id})
-        assert res.status_code == 201
-        file2_id = res.json["id"]
+        client.post("/file", data={"file": f, "project_id": project_id})
     assert (
         client.put(
             "/node/{}".format(node1_id),
@@ -43,8 +39,8 @@ def test_data_split_node(client):
                 "extra": json.dumps(
                     {
                         "has_header": False,
-                        "x_input_file": file1_id,
-                        "y_input_file": file2_id,
+                        "x_input_file": "x1.csv",
+                        "y_input_file": "y1.csv",
                     }
                 )
             },

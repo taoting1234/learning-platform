@@ -34,12 +34,8 @@ class Project(Base):
         return base
 
     def delete(self):
-        from app.models.file import File
         from app.models.node import Node
 
-        files = File.search(project_id=self.id, page_size=-1)["data"]
-        for file in files:
-            file.delete()
         nodes = Node.search(project_id=self.id, page_size=-1)["data"]
         for node in nodes:
             node.delete()
