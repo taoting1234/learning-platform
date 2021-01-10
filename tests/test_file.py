@@ -60,6 +60,8 @@ def test_create(client):
     assert (
         client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
         == "1.a"
+        or client.get("/file", data={"project_id": 1}).json["files"][1]["filename"]
+        == "1.a"
     )
     assert os.path.exists("{}/1/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
     assert client.get("/file", data={"project_id": 1}).json["files"][0]["size"] > size
