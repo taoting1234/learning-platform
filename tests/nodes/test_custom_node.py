@@ -11,10 +11,10 @@ from ..base import client
 code_1 = """
 from sklearn.model_selection import train_test_split
 
-def run(input_file):
+def run(input_files):
     x_train, x_test, y_train, y_test = train_test_split(
-        input_file[0][0],
-        input_file[0][1],
+        input_files[0][0],
+        input_files[0][1],
         test_size=0.2,
         random_state=888,
     )
@@ -23,7 +23,7 @@ def run(input_file):
 code_2 = """
 import pandas as pd
 
-def run(input_file):
+def run(input_files):
     x = pd.read_csv('./{}/{}/user/telco.csv')
     y = x.iloc[:, [-1]]
     x.drop(y.columns, axis=1, inplace=True)
