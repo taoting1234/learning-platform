@@ -12,6 +12,7 @@ def test_get(client):
     assert len(client.get("/file", data={"project_id": 1}).json["files"]) == 1
     assert client.get("/file", data={"project_id": -1}).status_code == 404
     assert client.get("/file", data={"project_id": 3}).status_code == 403
+    assert client.get("/file", data={"project_id": 1, "dir": "/"}).status_code == 400
 
 
 def test_create(client):
@@ -35,6 +36,14 @@ def test_create(client):
     with open(file_path, "rb") as f:
         assert (
             client.post("/file", data={"file": f, "project_id": 3}).status_code == 403
+        )
+    # 上传文件失败（文件路径错误）
+    with open(file_path, "rb") as f:
+        assert (
+            client.post(
+                "/file", data={"file": f, "project_id": 1, "dir": "/"}
+            ).status_code
+            == 400
         )
     # 上传文件成功
     with open(file_path, "rb") as f:
@@ -98,6 +107,14 @@ def test_modify(client):
         ).status_code
         == 400
     )
+    # 修改文件失败（文件路径错误）
+    assert (
+        client.put(
+            "/file",
+            data={"old_filename": "/1.test", "new_filename": "1.a", "project_id": 1},
+        ).status_code
+        == 400
+    )
     # 修改文件成功
     assert (
         client.put(
@@ -130,6 +147,13 @@ def test_delete(client):
     assert (
         client.delete("/file", data={"filename": "1.a", "project_id": 3}).status_code
         == 403
+    )
+    # 删除文件失败（文件路径错误）
+    assert (
+        client.delete(
+            "/file", data={"filename": "/1.test", "project_id": 1}
+        ).status_code
+        == 400
     )
     # 删除文件成功
     assert (
