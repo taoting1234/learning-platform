@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import List, Tuple
 
 import pandas as pd
 
@@ -40,15 +41,15 @@ class NotSplitInputNode(InputNode):
         assert self.input_file, "input_file not found"
         self.label_columns = change_columns(self.label_columns)
 
-    def run(self):
-        x_df = pd.read_csv(self.input_file.path, header=self.header)
-        y_df = x_df.iloc[:, self.label_columns]
-        x_df.drop(y_df.columns, axis=1, inplace=True)
-        self.output_shape = [x_df.shape, y_df.shape]
+    def _run(
+        self, input_files: List[List[pd.DataFrame]]
+    ) -> Tuple[pd.DataFrame] or None:
+        x = pd.read_csv(self.input_file.path, header=self.header)
+        y = x.iloc[:, self.label_columns]
+        x.drop(y.columns, axis=1, inplace=True)
         # TODO UT需要，写完填充节点后删除
-        x_df = x_df.fillna(value=0)
-        x_df.to_csv(self.join_path("x.csv"), index=False)
-        y_df.to_csv(self.join_path("y.csv"), index=False)
+        x = x.fillna(value=0)
+        return x, y
 
 
 class SplitInputNode(InputNode):
@@ -66,11 +67,11 @@ class SplitInputNode(InputNode):
         self.y_input_file = File.get_by_id(self.y_input_file)
         assert self.y_input_file, "y_input_file not found"
 
-    def run(self):
-        x_df = pd.read_csv(self.x_input_file.path, header=self.header)
-        y_df = pd.read_csv(self.y_input_file.path, header=self.header)
-        self.output_shape = [x_df.shape, y_df.shape]
+    def _run(
+        self, input_files: List[List[pd.DataFrame]]
+    ) -> Tuple[pd.DataFrame] or None:
+        x = pd.read_csv(self.x_input_file.path, header=self.header)
+        y = pd.read_csv(self.y_input_file.path, header=self.header)
         # TODO UT需要，写完填充节点后删除
-        x_df = x_df.fillna(value=0)
-        x_df.to_csv(self.join_path("x.csv"), index=False)
-        y_df.to_csv(self.join_path("y.csv"), index=False)
+        x = x.fillna(value=0)
+        return x, y
