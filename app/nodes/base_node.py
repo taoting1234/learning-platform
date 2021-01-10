@@ -68,7 +68,7 @@ class BaseNode:
     @abstractmethod
     def _run(
         self, input_files: List[List[pd.DataFrame]]
-    ) -> Tuple[pd.DataFrame] or None:
+    ) -> Tuple[pd.DataFrame] or None:  # pragma: no cover
         pass
 
     def run(self) -> None:
