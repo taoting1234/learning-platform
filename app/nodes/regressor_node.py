@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 import pandas as pd
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import (
@@ -59,16 +61,13 @@ class RegressorNode(BaseNode):
     input_type = 2
     output_type = 2
 
-    def run(self):
-        x_train = pd.read_csv(
-            self.join_path("x_train.csv", self.in_edges[0])
-        ).to_numpy()
-        x_test = pd.read_csv(self.join_path("x_test.csv", self.in_edges[0])).to_numpy()
-        y_train = pd.read_csv(
-            self.join_path("y_train.csv", self.in_edges[0])
-        ).to_numpy()
-        y_test = pd.read_csv(self.join_path("y_test.csv", self.in_edges[0])).to_numpy()
-        self.input_shape = [[x_train.shape, x_test.shape, y_train.shape, y_test.shape]]
+    def _run(
+        self, input_files: List[List[pd.DataFrame]]
+    ) -> Tuple[pd.DataFrame] or None:
+        x_train = input_files[0][0].to_numpy()
+        x_test = input_files[0][1].to_numpy()
+        y_train = input_files[0][2].to_numpy()
+        y_test = input_files[0][3].to_numpy()
         y_train = y_train.reshape((-1,))
         y_test = y_test.reshape((-1,))
         model = globals()[self.model](**self.model_kwargs)

@@ -1,4 +1,5 @@
 import pickle
+from typing import List, Tuple
 
 import pandas as pd
 from sklearn.preprocessing import (
@@ -47,12 +48,13 @@ class ScalerNode(BaseNode):
     input_type = 2
     output_type = 2
 
-    def run(self):
-        x_train = pd.read_csv(self.join_path("x_train.csv", self.in_edges[0]))
-        x_test = pd.read_csv(self.join_path("x_test.csv", self.in_edges[0]))
-        y_train = pd.read_csv(self.join_path("y_train.csv", self.in_edges[0]))
-        y_test = pd.read_csv(self.join_path("y_test.csv", self.in_edges[0]))
-        self.input_shape = [[x_train.shape, x_test.shape, y_train.shape, y_test.shape]]
+    def _run(
+        self, input_files: List[List[pd.DataFrame]]
+    ) -> Tuple[pd.DataFrame] or None:
+        x_train = input_files[0][0]
+        x_test = input_files[0][1]
+        y_train = input_files[0][2]
+        y_test = input_files[0][3]
         x_columns = x_train.columns
         y_columns = y_train.columns
         x_model = globals()[self.model](**self.model_kwargs)
@@ -66,16 +68,9 @@ class ScalerNode(BaseNode):
             y_train = y_model.transform(y_train)
             y_test = y_model.transform(y_test)
             pickle.dump(y_model, open(self.join_path("y.model"), "wb"))
-        self.output_shape = [x_train.shape, x_test.shape, y_train.shape, y_test.shape]
-        pd.DataFrame(x_train, columns=x_columns).to_csv(
-            self.join_path("x_train.csv"), index=False
-        )
-        pd.DataFrame(x_test, columns=x_columns).to_csv(
-            self.join_path("x_test.csv"), index=False
-        )
-        pd.DataFrame(y_train, columns=y_columns).to_csv(
-            self.join_path("y_train.csv"), index=False
-        )
-        pd.DataFrame(y_test, columns=y_columns).to_csv(
-            self.join_path("y_test.csv"), index=False
+        return (
+            pd.DataFrame(x_train, columns=x_columns),
+            pd.DataFrame(x_test, columns=x_columns),
+            pd.DataFrame(y_train, columns=y_columns),
+            pd.DataFrame(y_test, columns=y_columns),
         )

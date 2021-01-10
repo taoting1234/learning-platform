@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -21,18 +23,15 @@ class DataSplitNode(BaseNode):
     input_type = 1
     output_type = 2
 
-    def run(self):
-        x_df = pd.read_csv(self.join_path("x.csv", self.in_edges[0]))
-        y_df = pd.read_csv(self.join_path("y.csv", self.in_edges[0]))
-        self.input_shape = [[x_df.shape, y_df.shape]]
+    def _run(
+        self, input_files: List[List[pd.DataFrame]]
+    ) -> Tuple[pd.DataFrame] or None:
+        x = input_files[0][0]
+        y = input_files[0][1]
         x_train, x_test, y_train, y_test = train_test_split(
-            x_df,
-            y_df,
+            x,
+            y,
             test_size=self.test_ratio,
             random_state=self.random_state,
         )
-        self.output_shape = [x_train.shape, x_test.shape, y_train.shape, y_test.shape]
-        x_train.to_csv(self.join_path("x_train.csv"), index=False)
-        x_test.to_csv(self.join_path("x_test.csv"), index=False)
-        y_train.to_csv(self.join_path("y_train.csv"), index=False)
-        y_test.to_csv(self.join_path("y_test.csv"), index=False)
+        return x_train, x_test, y_train, y_test
