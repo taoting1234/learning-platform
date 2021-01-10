@@ -59,7 +59,7 @@ class RegressorNode(BaseNode):
     ]
     input_size = 1
     input_type = 2
-    output_type = 2
+    output_type = 0
 
     def _run(
         self, input_files: List[List[pd.DataFrame]]
