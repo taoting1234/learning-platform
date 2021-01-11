@@ -1,5 +1,6 @@
 import os
 import pickle
+import platform
 from abc import ABC
 from typing import List, Tuple
 
@@ -33,32 +34,42 @@ class CustomNode(BaseNode, ABC):
     def _run(
         self, input_files: List[List[pd.DataFrame]]
     ) -> Tuple[pd.DataFrame] or None:
-        with open(self.join_path("input_files.pickle"), "wb") as f:
-            pickle.dump(input_files, f)
-        with open(self.join_path("custom.py"), "w") as f:
-            f.write(self.code)
-        client = docker.from_env()
-        try:
-            client.images.get("learning-platform-node")
-        except ImageNotFound:
-            client.images.build(path=".", tag="learning-platform-node")
-        client.containers.run(
-            "learning-platform-node",
-            auto_remove=True,
-            volumes={
-                os.path.realpath(
-                    "./{}/{}/node/{}".format(
-                        current_app.config["FILE_DIRECTORY"], self.project_id, self.id
-                    )
-                ): {"bind": "/app/files/node", "mode": "rw"},
-                os.path.realpath(
-                    "./{}/{}/user".format(
-                        current_app.config["FILE_DIRECTORY"], self.project_id
-                    )
-                ): {"bind": "/app/files/user", "mode": "ro"},
-                os.path.realpath("./node_docker"): {"bind": "/app/code", "mode": "ro"},
-            },
-        )
-        with open(self.join_path("res.pickle"), "rb") as f:
-            res = pickle.load(f)
-        return res
+        if platform.system() == "Linux":  # 服务器上由docker运行
+            with open(self.join_path("input_files.pickle"), "wb") as f:
+                pickle.dump(input_files, f)
+            with open(self.join_path("custom.py"), "w") as f:
+                f.write(self.code)
+            client = docker.from_env()
+            try:
+                client.images.get("learning-platform-node")
+            except ImageNotFound:
+                client.images.build(path=".", tag="learning-platform-node")
+            client.containers.run(
+                "learning-platform-node",
+                auto_remove=True,
+                volumes={
+                    os.path.realpath(
+                        "./{}/{}/node/{}".format(
+                            current_app.config["FILE_DIRECTORY"],
+                            self.project_id,
+                            self.id,
+                        )
+                    ): {"bind": "/app/files/node", "mode": "rw"},
+                    os.path.realpath(
+                        "./{}/{}/user".format(
+                            current_app.config["FILE_DIRECTORY"], self.project_id
+                        )
+                    ): {"bind": "/app/files/user", "mode": "ro"},
+                    os.path.realpath("./node_docker"): {
+                        "bind": "/app/code",
+                        "mode": "ro",
+                    },
+                },
+            )
+            with open(self.join_path("res.pickle"), "rb") as f:
+                res = pickle.load(f)
+            return res
+        else:  # pragma: no cover
+            func = {}
+            exec(self.code, func)
+            return func["run"](input_files)
