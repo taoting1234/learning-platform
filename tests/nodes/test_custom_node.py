@@ -1,8 +1,6 @@
-import platform
 import random
 
 import pkg_resources
-from flask import current_app
 
 from app.models.node import Node
 from app.models.project import Project
@@ -25,7 +23,7 @@ code_2 = """
 import pandas as pd
 
 def run(input_files):
-    x = pd.read_csv('{}')
+    x = pd.read_csv('/app/files/user/telco.csv')
     y = x.iloc[:, [-1]]
     x.drop(y.columns, axis=1, inplace=True)
     return x, y
@@ -93,13 +91,7 @@ def test_custom_node_2(client):
         extra={
             "input_type": 0,
             "output_type": 1,
-            "code": "/app/files/user/telco.csv"
-            if platform.system() == "Linux"
-            else code_2.format(
-                "./{}/{}/user/telco.csv".format(
-                    current_app.config["FILE_DIRECTORY"], project.id
-                )
-            ),
+            "code": code_2,
         },
     )
     # 运行
