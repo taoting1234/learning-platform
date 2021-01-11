@@ -1,6 +1,5 @@
 import os
 import pickle
-import platform
 from abc import ABC
 from typing import List, Tuple
 
