@@ -24,7 +24,7 @@ code_2 = """
 import pandas as pd
 
 def run(input_files):
-    x = pd.read_csv('./{}/{}/user/telco.csv')
+    x = pd.read_csv('/app/files/user/telco.csv')
     y = x.iloc[:, [-1]]
     x.drop(y.columns, axis=1, inplace=True)
     return x, y
