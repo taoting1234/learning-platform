@@ -8,23 +8,14 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [ 3.9 ]
-        os: [ ubuntu-latest ]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Prepare environment
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew install libomp
+          python-version: 3.9
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -36,5 +27,4 @@ jobs:
         env:
           COMPLETE_TEST: true
       - name: Report Coverage
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
         uses: codecov/codecov-action@v1.2.1
