@@ -91,11 +91,15 @@ class BaseNode:
         res = self._run(params)
         if self.output_type == 1:
             assert len(res) == 2
+            for i in res:
+                assert isinstance(i, pd.DataFrame)
             res[0].to_csv(self.join_path("x.csv"), index=False)
             res[1].to_csv(self.join_path("y.csv"), index=False)
             self.output_shape = [res[0].shape, res[1].shape]
         elif self.output_type == 2:
             assert len(res) == 4
+            for i in res:
+                assert isinstance(i, pd.DataFrame)
             res[0].to_csv(self.join_path("x_train.csv"), index=False)
             res[1].to_csv(self.join_path("x_test.csv"), index=False)
             res[2].to_csv(self.join_path("y_train.csv"), index=False)
