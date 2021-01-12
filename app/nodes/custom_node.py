@@ -5,7 +5,6 @@ from typing import List, Tuple
 
 import docker
 import pandas as pd
-from docker.errors import ImageNotFound
 from flask import current_app
 
 from app.libs.parser import Parser
@@ -38,12 +37,8 @@ class CustomNode(BaseNode, ABC):
         with open(self.join_path("custom.py"), "w") as f:
             f.write(self.code)
         client = docker.from_env()
-        try:
-            client.images.get("learning-platform-node")
-        except ImageNotFound:
-            client.images.build(path=".", tag="learning-platform-node")
         client.containers.run(
-            "learning-platform-node",
+            image="taoting/learning-platform-node",
             auto_remove=True,
             volumes={
                 os.path.realpath(
