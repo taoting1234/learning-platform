@@ -5,7 +5,6 @@ from typing import List, Tuple
 
 import docker
 import pandas as pd
-from docker.errors import ImageNotFound
 from flask import current_app
 
 from app.libs.parser import Parser
