@@ -1,4 +1,3 @@
-from flasgger import swag_from
 from flask_login import current_user, login_required
 from flask_restful import Resource, abort, marshal_with
 
@@ -9,7 +8,6 @@ from app.parsers.user import user_modify_parser, user_register_parser
 
 class ResourceUser(Resource):
     @marshal_with(user_field)
-    @swag_from("../../docs/apis/user/user_get.yaml")
     def get(self, id_):
         user = User.get_by_id(id_)
         if user is None:
@@ -17,7 +15,6 @@ class ResourceUser(Resource):
         return user
 
     @login_required
-    @swag_from("../../docs/apis/user/user_put.yaml")
     def put(self, id_):
         if current_user.id != id_:
             abort(403)
@@ -31,7 +28,6 @@ class ResourceUser(Resource):
 
 class ResourceUserList(Resource):
     @marshal_with(user_field)
-    @swag_from("../../docs/apis/user/user_list_post.yaml")
     def post(self):
         args = user_register_parser.parse_args()
         user = User.get_by_username(args["username"])

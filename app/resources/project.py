@@ -1,4 +1,3 @@
-from flasgger import swag_from
 from flask import current_app
 from flask_login import current_user, login_required
 from flask_restful import Resource, abort, marshal_with
@@ -13,14 +12,12 @@ class ResourceProject(Resource):
     @marshal_with(project_field)
     @login_required
     @self_only(Project)
-    @swag_from("../../docs/apis/project/project_get.yaml")
     def get(self, id_):
         project = Project.get_by_id(id_)
         return project
 
     @login_required
     @self_only(Project)
-    @swag_from("../../docs/apis/project/project_put.yaml")
     def put(self, id_):
         project = Project.get_by_id(id_)
         args = project_modify_parser.parse_args()
@@ -31,7 +28,6 @@ class ResourceProject(Resource):
 
     @login_required
     @self_only(Project)
-    @swag_from("../../docs/apis/project/project_delete.yaml")
     def delete(self, id_):
         project = Project.get_by_id(id_)
         project.delete()
@@ -47,7 +43,6 @@ class ResourceProjectList(Resource):
 
     @marshal_with(project_field)
     @login_required
-    @swag_from("../../docs/apis/project/project_list_post.yaml")
     def post(self):
         args = project_create_parser.parse_args()
         if Project.search(user_id=current_user.id, name=args["name"])["meta"]["count"]:

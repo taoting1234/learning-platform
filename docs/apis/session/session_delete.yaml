@@ -1,5 +1,0 @@
-登出
----
-responses:
-  204:
-    description: 登出成功

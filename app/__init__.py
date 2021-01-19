@@ -1,3 +1,4 @@
+import yaml
 from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
@@ -9,7 +10,9 @@ from app.resources.node import ResourceNodeCSV, ResourceNodeDescription
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
-swagger = Swagger()
+with open("./docs/apis/swagger.yaml") as f:
+    template = yaml.safe_load(f)
+swagger = Swagger(template=template)
 
 
 def create_app(test=False, file_directory=None):
