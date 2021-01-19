@@ -1,3 +1,4 @@
+from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
 from flask_login import LoginManager
@@ -8,6 +9,7 @@ from app.resources.node import ResourceNodeCSV, ResourceNodeDescription
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
+swagger = Swagger()
 
 
 def create_app(test=False, file_directory=None):
@@ -50,6 +52,9 @@ def register_plugin(app_):
         abort(401)
 
     login_manager.init_app(app_)
+
+    # 注册swagger
+    swagger.init_app(app_)
 
     return app_
 

@@ -1,0 +1,23 @@
+登录
+---
+parameters:
+  - in: username
+    name: username
+    description: 用户名
+    required: true
+  - in: password
+    name: password
+    description: 密码
+    required: true
+responses:
+  200:
+    description: 当前登录的用户
+    schema:
+      id: User
+      properties:
+        id:
+          type: integer
+          description: 用户id
+        username:
+          type: string
+          description: 用户名
