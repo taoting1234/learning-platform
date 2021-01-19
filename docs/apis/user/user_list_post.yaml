@@ -1,0 +1,16 @@
+注册
+---
+parameters:
+  - in: formData
+    name: username
+    type: string
+    description: 用户名
+    required: true
+  - in: formData
+    name: password
+    type: string
+    description: 密码
+    required: true
+responses:
+  201:
+    description: 修改成功

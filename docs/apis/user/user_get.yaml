@@ -1,19 +1,14 @@
-登录
+获取指定的用户信息
 ---
 parameters:
-  - in: formData
-    name: username
-    type: string
-    description: 用户名
-    required: true
-  - in: formData
-    name: password
-    type: string
-    description: 密码
+  - in: path
+    name: user_id
+    type: integer
+    description: 用户id
     required: true
 responses:
   200:
-    description: 当前登录的用户
+    description: 指定的用户信息
     schema:
       id: User
       properties:
