@@ -1,0 +1,26 @@
+获取指定的项目信息
+---
+parameters:
+  - in: path
+    name: project_id
+    type: integer
+    description: 项目id
+    required: true
+responses:
+  200:
+    description: 指定的项目信息
+    schema:
+      id: Project
+      properties:
+        id:
+          type: integer
+          description: 项目id
+        name:
+          type: string
+          description: 项目名称
+        description:
+          type: string
+          description: 项目描述
+        tag:
+          type: string
+          description: 项目标签

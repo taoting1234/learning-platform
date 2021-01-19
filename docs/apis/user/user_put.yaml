@@ -15,14 +15,5 @@ parameters:
     type: string
     description: 新密码
 responses:
-  201:
-    description: 创建成功的用户
-    schema:
-      id: User
-      properties:
-        id:
-          type: integer
-          description: 用户id
-        username:
-          type: string
-          description: 用户名
+  200:
+    description: 修改成功

@@ -13,4 +13,13 @@ parameters:
     required: true
 responses:
   201:
-    description: 修改成功
+    description: 注册的用户
+    schema:
+      id: User
+      properties:
+        id:
+          type: integer
+          description: 用户id
+        username:
+          type: string
+          description: 用户名

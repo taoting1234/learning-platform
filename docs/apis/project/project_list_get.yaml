@@ -1,0 +1,20 @@
+搜索项目（未完工！！！）
+---
+parameters:
+  - in: formData
+    name: user_id
+    type: integer
+    description: 用户id
+    required: true
+responses:
+  200:
+    description: 搜索结果
+    schema:
+      id: Projects
+      properties:
+        projects:
+          type: list
+          description: 项目列表
+        meta:
+          type: list
+          description: meta信息

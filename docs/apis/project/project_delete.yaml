@@ -1,0 +1,11 @@
+删除指定的项目
+---
+parameters:
+  - in: path
+    name: project_id
+    type: integer
+    description: 项目id
+    required: true
+responses:
+  204:
+    description: 删除项目成功
