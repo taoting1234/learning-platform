@@ -1,5 +1,5 @@
 from flasgger import swag_from
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_required, login_user, logout_user
 from flask_restful import Resource, abort, marshal_with
 
 from app.fields.user import user_field
@@ -9,10 +9,9 @@ from app.parsers.session import session_parser
 
 class ResourceSession(Resource):
     @marshal_with(user_field)
+    @login_required
     @swag_from("../../docs/apis/session/session_get.yaml")
     def get(self):
-        if current_user.is_anonymous:
-            abort(404, message="Not login")
         return current_user
 
     @marshal_with(user_field)
