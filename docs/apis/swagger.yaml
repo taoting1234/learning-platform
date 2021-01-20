@@ -3,7 +3,7 @@ info:
   description: "This is learning platform backend api"
   version: "1.0.0"
   title: "Learning platform"
-host: "47.111.25.1:5555"
+host: "ml-api.newitd.com"
 basePath: "/"
 tags:
   - name: "session"
