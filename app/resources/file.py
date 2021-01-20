@@ -22,6 +22,8 @@ class ResourceFile(Resource):
     @self_only(None, file_list_parser)
     def get(self):
         args = file_list_parser.parse_args()
+        if args["dir"][0] == "/":
+            args["dir"] = args[1:]
         root_dir = os.path.realpath(
             "{}/{}/user".format(
                 current_app.config["FILE_DIRECTORY"], args["project_id"]
@@ -37,6 +39,8 @@ class ResourceFile(Resource):
     @self_only(None, file_create_parser)
     def post(self):
         args = file_create_parser.parse_args()
+        if args["dir"][0] == "/":
+            args["dir"] = args[1:]
         root_dir = os.path.realpath(
             "{}/{}/user".format(
                 current_app.config["FILE_DIRECTORY"], args["project_id"]
@@ -55,6 +59,10 @@ class ResourceFile(Resource):
     @self_only(None, file_modify_parser)
     def put(self):
         args = file_modify_parser.parse_args()
+        if args["old_filename"][0] == "/":
+            args["old_filename"] = args[1:]
+        if args["new_filename"][0] == "/":
+            args["new_filename"] = args[1:]
         root_dir = os.path.realpath(
             "{}/{}/user".format(
                 current_app.config["FILE_DIRECTORY"], args["project_id"]
@@ -79,6 +87,8 @@ class ResourceFile(Resource):
     @self_only(None, file_delete_parser)
     def delete(self):
         args = file_delete_parser.parse_args()
+        if args["filename"][0] == "/":
+            args["filename"] = args[1:]
         root_dir = os.path.realpath(
             "{}/{}/user".format(
                 current_app.config["FILE_DIRECTORY"], args["project_id"]
