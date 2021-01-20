@@ -7,39 +7,41 @@ import pkg_resources
 from flask import current_app
 
 from app.libs.global_varible import g
+from app.models.project import Project
+from app.models.user import User
 
 from .base import client
 
 
 def test_get(client):
+    User.create(username="admin", password="admin", permission=1)
+    User.create(username="user", password="user", permission=0)
+    Project.create(user_id=1, name="test")
+    Project.create(user_id=2, name="test")
+    # 未登录
     assert client.get("/project/1").status_code == 401
-    assert client.get("/project").status_code == 401
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
-    assert client.get("/project/1").json["name"] == "project1"
-    assert client.get("/project/2").json["name"] == "project2"
-    assert client.get("/project/3").status_code == 403
-    assert client.get("/project/4").status_code == 404
-    assert len(client.get("/project").json["projects"]) == 2
+    # 登录管理员
+    client.post("/session", data={"username": "admin", "password": "admin"})
+    assert client.get("/project/1").json["name"] == "test"
+    assert client.get("/project/2").json["name"] == "test"
+    assert client.get("/project/3").status_code == 404
+    # 登录普通用户
+    client.post("/session", data={"username": "user", "password": "user"})
+    assert client.get("/project/1").status_code == 403
+    assert client.get("/project/2").json["name"] == "test"
+    assert client.get("/project/3").status_code == 404
 
 
 def test_create(client):
+    User.create(username="user1", password="123")
+    Project.create(user_id=1, name="project1")
     # 创建失败（未登录）
     assert (
         client.post("/project", data={"name": "project", "tag": "123"}).status_code
         == 401
     )
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 创建失败（重名）
     assert (
         client.post("/project", data={"name": "project1", "tag": "123"}).status_code
@@ -53,21 +55,21 @@ def test_create(client):
 
 
 def test_modify(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=1, name="project1")
+    Project.create(user_id=1, name="project2")
+    Project.create(user_id=2, name="project3")
     # 修改失败（未登录）
     assert (
         client.put("/project/1", data={"name": "project3", "tag": "123"}).status_code
         == 401
     )
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 修改失败（项目不存在）
     assert (
-        client.put("/project/10", data={"name": "project3", "tag": "123"}).status_code
+        client.put("/project/-1", data={"name": "project3", "tag": "123"}).status_code
         == 404
     )
     # 修改失败（项目不属于你）
@@ -77,7 +79,7 @@ def test_modify(client):
     )
     # 修改失败（项目重名）
     assert (
-        client.put("/project/1", data={"name": "project1", "tag": "123"}).status_code
+        client.put("/project/1", data={"name": "project2", "tag": "123"}).status_code
         == 400
     )
     # 修改成功
@@ -89,18 +91,17 @@ def test_modify(client):
 
 
 def test_delete(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=1, name="project1")
+    Project.create(user_id=2, name="project2")
     # 删除失败（未登录）
     assert (
         client.delete("/project/1", data={"name": "project3", "tag": "123"}).status_code
         == 401
     )
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 删除失败（项目不存在）
     assert (
         client.delete(
@@ -110,7 +111,7 @@ def test_delete(client):
     )
     # 删除失败（项目不属于你）
     assert (
-        client.delete("/project/3", data={"name": "project3", "tag": "123"}).status_code
+        client.delete("/project/2", data={"name": "project3", "tag": "123"}).status_code
         == 403
     )
     # 删除成功
@@ -119,33 +120,23 @@ def test_delete(client):
 
 
 def test_run(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=2, name="project2")
     # 运行失败（未登录）
-    assert client.post("/project/2/run").status_code == 401
+    assert client.post("/project/1/run").status_code == 401
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 运行失败（项目不属于你）
-    assert client.post("/project/3/run").status_code == 403
+    assert client.post("/project/1/run").status_code == 403
     # 运行失败（项目有多个部分）
-    res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
-    assert res.status_code == 201
-    project_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "input_node"}
-    )
-    assert res.status_code == 201
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "input_node"}
-    )
-    assert res.status_code == 201
+    project = Project.create(user_id=1, name="123")
+    client.post("/node", data={"project_id": project.id, "node_type": "input_node"})
+    client.post("/node", data={"project_id": project.id, "node_type": "input_node"})
     current_app.config["TESTING"] = False
     assert (
         "Project has multiple graph"
-        in client.post("/project/{}/run".format(project_id)).json["message"]
+        in client.post("/project/{}/run".format(project.id)).json["message"]
     )
     current_app.config["TESTING"] = True
     # 运行失败（项目有环）

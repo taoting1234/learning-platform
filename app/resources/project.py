@@ -2,10 +2,14 @@ from flask import current_app
 from flask_login import current_user, login_required
 from flask_restful import Resource, abort, marshal_with
 
-from app.fields.project import project_field, projects_field
+from app.fields.project import project_field, project_search_field
 from app.libs.auth import self_only
 from app.models.project import Project
-from app.parsers.project import project_create_parser, project_modify_parser
+from app.parsers.project import (
+    project_create_parser,
+    project_modify_parser,
+    project_search_parser,
+)
 
 
 class ResourceProject(Resource):
@@ -35,11 +39,13 @@ class ResourceProject(Resource):
 
 
 class ResourceProjectList(Resource):
-    @marshal_with(projects_field)
+    @marshal_with(project_search_field)
     @login_required
+    @self_only(Project)
     def get(self):
-        res = Project.search(user_id=current_user.id, page_size=-1)["data"]
-        return {"projects": res}
+        args = project_search_parser.parse_args()
+        res = Project.search(**args)
+        return res
 
     @marshal_with(project_field)
     @login_required

@@ -1,5 +1,7 @@
 import os
+import random
 import shutil
+import tempfile
 
 from flask import current_app
 from sqlalchemy import Column, ForeignKey, Integer, String
@@ -56,3 +58,14 @@ class Project(Base):
         if run_node is None:
             raise Exception("Graph have cycle")
         run_node.run()
+
+    def export(self):
+        # 获取临时目录
+        temp_dir = os.path.join(tempfile.gettempdir(), str(random.random()))
+        os.makedirs(temp_dir)
+        # 导出文件
+        shutil.copytree(
+            "./{}/{}".format(current_app.config["FILE_DIRECTORY"], self.id),
+            os.path.join(temp_dir, "files"),
+        )
+        # 导出node

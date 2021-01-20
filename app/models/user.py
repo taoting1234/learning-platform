@@ -11,6 +11,7 @@ class User(UserMixin, Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), unique=True)
     _password = Column("password", String(100), nullable=False)
+    permission = Column(Integer, nullable=False, default=0)
 
     @property
     def password(self):

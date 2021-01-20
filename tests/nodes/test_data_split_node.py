@@ -5,16 +5,14 @@ import random
 import pkg_resources
 from flask import current_app
 
+from app.models.user import User
+
 from ..base import client
 
 
 def test_data_split_node(client):
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    User.create(username="user1", password="123")
+    client.post("/session", data={"username": "user1", "password": "123"})
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
     project_id = res.json["id"]

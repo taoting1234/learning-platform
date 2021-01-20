@@ -4,6 +4,7 @@ import pkg_resources
 
 from app.models.node import Node
 from app.models.project import Project
+from app.models.user import User
 
 from ..base import client
 
@@ -31,6 +32,7 @@ def run(input_files):
 
 
 def test_custom_node_1(client):
+    User.create(username="user1", password="123")
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 创建项目
@@ -77,6 +79,7 @@ def test_custom_node_1(client):
 
 
 def test_custom_node_2(client):
+    User.create(username="user1", password="123")
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 创建项目

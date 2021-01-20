@@ -5,11 +5,13 @@ import pkg_resources
 
 from app.models.node import Node
 from app.models.project import Project
+from app.models.user import User
 
 from ..base import client
 
 
 def test_classifier_node_1(client):  # 二分类
+    User.create(username="user1", password="123")
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 创建项目
@@ -55,6 +57,7 @@ def test_classifier_node_1(client):  # 二分类
 
 
 def test_classifier_node_2(client):  # 多分类
+    User.create(username="user1", password="123")
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 创建项目

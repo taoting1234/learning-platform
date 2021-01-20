@@ -1,0 +1,266 @@
+swagger: "2.0"
+info:
+  description: "This is learning platform backend api"
+  version: "1.0.0"
+  title: "Learning platform"
+host: "47.111.25.1:5555"
+basePath: "/"
+tags:
+  - name: "session"
+    description: "Session Resource"
+  - name: "user"
+    description: "User Resource"
+  - name: "project"
+    description: "Project Resource"
+schemes:
+  #  - "https"
+  - "http"
+definitions:
+  Meta:
+    type: "object"
+    properties:
+      count:
+        type: "integer"
+        description: "总数量"
+      page:
+        type: "integer"
+        description: "页数"
+      page_size:
+        type: "integer"
+        description: "每页大小"
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "用户id"
+      username:
+        type: "string"
+        description: "用户名"
+      permission:
+        type: "integer"
+        description: "用户权限"
+  UserList:
+    type: "object"
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/User"
+      meta:
+        $ref: "#/definitions/Meta"
+  Project:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      tag:
+        type: "string"
+paths:
+  /session:
+    get:
+      tags:
+        - "session"
+      summary: "获取当前登录用户"
+      responses:
+        200:
+          description: "当前登录的用户"
+          schema:
+            $ref: "#/definitions/User"
+    post:
+      tags:
+        - "session"
+      summary: "登录"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      parameters:
+        - in: "formData"
+          name: "username"
+          type: "string"
+          description: "用户名"
+          required: true
+        - in: "formData"
+          name: "password"
+          type: "string"
+          description: "密码"
+          required: true
+      responses:
+        201:
+          description: "登录成功"
+          schema:
+            $ref: "#/definitions/User"
+    delete:
+      tags:
+        - "session"
+      summary: "登出"
+      responses:
+        204:
+          description: "登出成功"
+  /user/{user_id}:
+    get:
+      tags:
+        - "user"
+      summary: "获取指定用户"
+      parameters:
+        - in: "path"
+          name: "user_id"
+          type: "integer"
+          description: "用户id"
+          required: true
+      responses:
+        200:
+          description: "指定用户"
+          schema:
+            $ref: "#/definitions/User"
+    put:
+      tags:
+        - "user"
+      summary: "修改指定用户"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      parameters:
+        - in: "path"
+          name: "user_id"
+          type: "integer"
+          description: "用户id"
+          required: true
+        - in: "formData"
+          name: "old_password"
+          type: "string"
+          description: "旧密码"
+        - in: "formData"
+          name: "password"
+          type: "string"
+          description: "新密码"
+      responses:
+        200:
+          description: "修改成功"
+  /user:
+    get:
+      tags:
+        - "user"
+      summary: "搜索用户（管理员限定）"
+      parameters:
+        - in: "query"
+          name: "username"
+          type: "string"
+          description: "用户名"
+        - in: "query"
+          name: "permission"
+          type: "integer"
+          description: "权限"
+      responses:
+        201:
+          description: "搜索结果"
+          schema:
+            $ref: "#/definitions/UserList"
+    post:
+      tags:
+        - "user"
+      summary: "注册"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      parameters:
+        - in: "formData"
+          name: "username"
+          type: "string"
+          description: "用户名"
+          required: true
+        - in: "formData"
+          name: "password"
+          type: "string"
+          description: "密码"
+          required: true
+      responses:
+        201:
+          description: "注册成功"
+          schema:
+            $ref: "#/definitions/User"
+  /project/{project_id}:
+    get:
+      tags:
+        - "project"
+      summary: "获取指定项目"
+      parameters:
+        - in: "path"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+      responses:
+        200:
+          description: "指定的项目信息"
+          schema:
+            $ref: "#/definitions/Project"
+    put:
+      tags:
+        - "project"
+      summary: "修改指定项目"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      parameters:
+        - in: "path"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "formData"
+          name: "name"
+          type: "string"
+          description: "项目名称"
+        - in: "formData"
+          name: "description"
+          type: "string"
+          description: "项目描述"
+        - in: "formData"
+          name: "tag"
+          type: "string"
+          description: "项目标签"
+      responses:
+        200:
+          description: "修改成功"
+    delete:
+      tags:
+        - "project"
+      summary: "删除指定项目"
+      parameters:
+        - in: "path"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+      responses:
+        204:
+          description: "删除成功"
+  /project:
+    post:
+      tags:
+        - "project"
+      summary: "创建项目"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      parameters:
+        - in: "formData"
+          name: "name"
+          type: "string"
+          description: "项目名称"
+          required: true
+        - in: "formData"
+          name: "description"
+          type: "string"
+          description: "项目描述"
+          required: true
+        - in: "formData"
+          name: "tag"
+          type: "string"
+          description: "项目标签"
+          required: true
+      responses:
+        201:
+          description: "创建项目成功"
+          schema:
+            $ref: "#/definitions/Project"
