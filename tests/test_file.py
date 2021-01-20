@@ -25,10 +25,10 @@ def test_get(client):
     assert client.get("/file", data={"project_id": 1}).status_code == 401
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
-    assert len(client.get("/file", data={"project_id": 1}).json["files"]) == 1
+    assert len(client.get("/file", data={"project_id": 1}).json["data"]) == 1
     assert client.get("/file", data={"project_id": -1}).status_code == 404
     assert client.get("/file", data={"project_id": 2}).status_code == 403
-    assert client.get("/file", data={"project_id": 1, "dir": "/"}).status_code == 400
+    assert client.get("/file", data={"project_id": 1, "dir": "../"}).status_code == 400
 
 
 def test_create(client):
@@ -60,7 +60,7 @@ def test_create(client):
     with open(file_path, "rb") as f:
         assert (
             client.post(
-                "/file", data={"file": f, "project_id": 1, "dir": "/"}
+                "/file", data={"file": f, "project_id": 1, "dir": "../"}
             ).status_code
             == 400
         )
@@ -69,12 +69,9 @@ def test_create(client):
         assert (
             client.post("/file", data={"file": f, "project_id": 1}).status_code == 201
         )
-    assert (
-        client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
-        == "1.a"
-    )
+    assert client.get("/file", data={"project_id": 1}).json["data"][0]["name"] == "1.a"
     assert os.path.exists("{}/1/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
-    size = client.get("/file", data={"project_id": 1}).json["files"][0]["size"]
+    size = client.get("/file", data={"project_id": 1}).json["data"][0]["size"]
     # 修改文件
     with open(file_path, "wb") as f:
         f.write(bytes("1234", encoding="utf8"))
@@ -83,12 +80,9 @@ def test_create(client):
         assert (
             client.post("/file", data={"file": f, "project_id": 1}).status_code == 201
         )
-    assert (
-        client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
-        == "1.a"
-    )
+    assert client.get("/file", data={"project_id": 1}).json["data"][0]["name"] == "1.a"
     assert os.path.exists("{}/1/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
-    assert client.get("/file", data={"project_id": 1}).json["files"][0]["size"] > size
+    assert client.get("/file", data={"project_id": 1}).json["data"][0]["size"] > size
 
 
 def test_modify(client):
@@ -148,7 +142,7 @@ def test_modify(client):
     assert (
         client.put(
             "/file",
-            data={"old_filename": "/1.test", "new_filename": "1.a", "project_id": 1},
+            data={"old_filename": "../1.test", "new_filename": "1.a", "project_id": 1},
         ).status_code
         == 400
     )
@@ -160,10 +154,7 @@ def test_modify(client):
         ).status_code
         == 200
     )
-    assert (
-        client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
-        == "1.c"
-    )
+    assert client.get("/file", data={"project_id": 1}).json["data"][0]["name"] == "1.c"
     assert os.path.exists("{}/1/user/1.c".format(current_app.config["FILE_DIRECTORY"]))
 
 
@@ -206,7 +197,7 @@ def test_delete(client):
     # 删除文件失败（文件路径错误）
     assert (
         client.delete(
-            "/file", data={"filename": "/1.test", "project_id": 1}
+            "/file", data={"filename": "../1.test", "project_id": 1}
         ).status_code
         == 400
     )
@@ -215,7 +206,7 @@ def test_delete(client):
         client.delete("/file", data={"filename": "1.test", "project_id": 1}).status_code
         == 204
     )
-    assert len(client.get("/file", data={"project_id": 1}).json["files"]) == 0
+    assert len(client.get("/file", data={"project_id": 1}).json["data"]) == 0
     assert (
         os.path.exists("{}/1/user/1.test".format(current_app.config["FILE_DIRECTORY"]))
         is False

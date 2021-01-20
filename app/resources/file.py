@@ -23,7 +23,7 @@ class ResourceFile(Resource):
     def get(self):
         args = file_list_parser.parse_args()
         if args["dir"][0] == "/":
-            args["dir"] = args[1:]
+            args["dir"] = args["dir"][1:]
         root_dir = os.path.realpath(
             "{}/{}/user".format(
                 current_app.config["FILE_DIRECTORY"], args["project_id"]
@@ -33,14 +33,14 @@ class ResourceFile(Resource):
         if os.path.commonpath([root_dir, file_dir]) != root_dir:
             abort(400)
         res = get_files(root_dir)
-        return {"files": res}
+        return {"data": res}
 
     @login_required
     @self_only(None, file_create_parser)
     def post(self):
         args = file_create_parser.parse_args()
         if args["dir"][0] == "/":
-            args["dir"] = args[1:]
+            args["dir"] = args["dir"][1:]
         root_dir = os.path.realpath(
             "{}/{}/user".format(
                 current_app.config["FILE_DIRECTORY"], args["project_id"]
@@ -60,9 +60,9 @@ class ResourceFile(Resource):
     def put(self):
         args = file_modify_parser.parse_args()
         if args["old_filename"][0] == "/":
-            args["old_filename"] = args[1:]
+            args["old_filename"] = args["old_filename"][1:]
         if args["new_filename"][0] == "/":
-            args["new_filename"] = args[1:]
+            args["new_filename"] = args["new_filename"][1:]
         root_dir = os.path.realpath(
             "{}/{}/user".format(
                 current_app.config["FILE_DIRECTORY"], args["project_id"]
@@ -88,7 +88,7 @@ class ResourceFile(Resource):
     def delete(self):
         args = file_delete_parser.parse_args()
         if args["filename"][0] == "/":
-            args["filename"] = args[1:]
+            args["filename"] = args["filename"][1:]
         root_dir = os.path.realpath(
             "{}/{}/user".format(
                 current_app.config["FILE_DIRECTORY"], args["project_id"]
