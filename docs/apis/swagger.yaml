@@ -344,6 +344,8 @@ paths:
           name: "dir"
           type: "string"
           description: "目录"
+          required: true
+          default: "/"
       responses:
         200:
           description: "指定目录的文件"
@@ -370,6 +372,8 @@ paths:
           name: "dir"
           type: "string"
           description: "目录"
+          required: true
+          default: "/"
       responses:
         201:
           description: "上传成功"
