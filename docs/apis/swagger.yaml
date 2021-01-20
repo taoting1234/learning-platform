@@ -13,8 +13,7 @@ tags:
   - name: "project"
     description: "Project Resource"
 schemes:
-  #  - "https"
-  - "http"
+  - "https"
 definitions:
   Meta:
     type: "object"
