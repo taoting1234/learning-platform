@@ -13,7 +13,7 @@ tags:
   - name: "project"
     description: "Project Resource"
   - name: "file"
-      description: "File Resource"
+    description: "File Resource"
 schemes:
   - "https"
 definitions:
@@ -91,13 +91,13 @@ definitions:
               type: "integer"
               description: "文件大小"
             access_time:
-              type: "datetime"
+              type: "string"
               description: "文件访问时间"
             create_time:
-              type: "datetime"
+              type: "string"
               description: "文件创建时间"
             modify_time:
-              type: "datetime"
+              type: "string"
               description: "文件修改时间"
 paths:
   /session:
@@ -415,6 +415,6 @@ paths:
           type: "string"
           description: "文件名"
           required: true
-        responses:
-          204:
-            description: "删除成功"
+      responses:
+        204:
+          description: "删除成功"
