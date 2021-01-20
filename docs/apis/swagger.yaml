@@ -59,6 +59,15 @@ definitions:
         type: "string"
       tag:
         type: "string"
+  ProjectList:
+    type: "object"
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/Project"
+      meta:
+        $ref: "#/definitions/Meta"
 paths:
   /session:
     get:
@@ -236,6 +245,32 @@ paths:
         204:
           description: "删除成功"
   /project:
+    get:
+      tags:
+        - "project"
+      summary: "搜索项目"
+      parameters:
+        - in: "query"
+          name: "user_id"
+          type: "string"
+          description: "用户id"
+        - in: "query"
+          name: "name"
+          type: "string"
+          description: "项目名"
+        - in: "query"
+          name: "description"
+          type: "string"
+          description: "描述"
+        - in: "query"
+          name: "tag"
+          type: "string"
+          description: "标签"
+      responses:
+        201:
+          description: "搜索结果"
+          schema:
+            $ref: "#/definitions/ProjectList"
     post:
       tags:
         - "project"

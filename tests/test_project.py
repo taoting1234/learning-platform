@@ -427,3 +427,17 @@ def test_run(client):
         for thread in g.thread_list:
             thread.join()
         g.thread_list = None
+
+
+def test_search(client):
+    User.create(username="admin", password="admin", permission=1)
+    User.create(username="user", password="user", permission=0)
+    # 未登录
+    assert client.get("/project", data={"user_id": 1}).status_code == 401
+    # 登录管理员
+    client.post("/session", data={"username": "admin", "password": "admin"})
+    assert len(client.get("/project", data={"user_id": 2}).json["data"]) == 0
+    # 登录普通用户
+    client.post("/session", data={"username": "user", "password": "user"})
+    assert client.get("/project", data={"user_id": 1}).status_code == 403
+    assert len(client.get("/project", data={"user_id": 2}).json["data"]) == 0

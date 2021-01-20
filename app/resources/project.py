@@ -41,7 +41,7 @@ class ResourceProject(Resource):
 class ResourceProjectList(Resource):
     @marshal_with(project_search_field)
     @login_required
-    @self_only(Project)
+    @self_only(Project, project_search_parser)
     def get(self):
         args = project_search_parser.parse_args()
         res = Project.search(**args)

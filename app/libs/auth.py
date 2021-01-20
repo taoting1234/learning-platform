@@ -45,7 +45,15 @@ def self_only(model, parser=None):
                         and project.user_id != current_user.id
                     ):
                         abort(403)
+                # 非管理员禁止搜索用户
                 if current_user.permission != 1 and model and issubclass(User, model):
+                    abort(403)
+                # 搜索时只能搜索自己
+                if (
+                    current_user.permission != 1
+                    and parser_args.__contains__("user_id")
+                    and parser_args["user_id"] != current_user.id
+                ):
                     abort(403)
             return func(*args, **kwargs)
 
