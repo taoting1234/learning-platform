@@ -1,14 +1,10 @@
 import os
 import shutil
-import tempfile
 
 import pytest
 
 from app import create_app
 from app.libs.global_varible import g
-from app.models.node import Node
-from app.models.project import Project
-from app.models.user import User
 
 
 @pytest.fixture
