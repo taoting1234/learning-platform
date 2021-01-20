@@ -6,40 +6,43 @@ from flask import current_app
 from app.libs.global_varible import g
 from app.models.node import Node
 from app.models.project import Project
+from app.models.user import User
 
 from .base import client
 
 
 def test_get(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=1, name="test")
+    Project.create(user_id=2, name="test")
+    Node.create(project_id=1, node_type="123")
+    Node.create(project_id=2, node_type="123")
+    # 未登录
     assert client.get("/node/1").status_code == 401
     assert client.get("/node", data={"project_id": 1}).status_code == 401
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    # 登录
+    client.post("/session", data={"username": "user1", "password": "123"})
     assert client.get("/node/1").json["node_type"] == "123"
     assert client.get("/node/2").status_code == 403
     assert client.get("/node/-1").status_code == 404
-    assert len(client.get("/node", data={"project_id": 1}).json["nodes"]) == 4
+    assert len(client.get("/node", data={"project_id": 1}).json["nodes"]) == 1
     assert client.get("/node", data={"project_id": -1}).status_code == 404
-    assert client.get("/node", data={"project_id": 3}).status_code == 403
+    assert client.get("/node", data={"project_id": 2}).status_code == 403
 
 
 def test_create(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=1, name="test")
+    Project.create(user_id=2, name="test")
     # 创建节点失败（未登录）
     assert (
         client.post("/node", data={"project_id": 1, "node_type": "123"}).status_code
         == 401
     )
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 创建节点失败（项目不存在）
     assert (
         client.post("/node", data={"project_id": -1, "node_type": "123"}).status_code
@@ -47,7 +50,7 @@ def test_create(client):
     )
     # 创建节点失败（项目不属于你）
     assert (
-        client.post("/node", data={"project_id": 3, "node_type": "123"}).status_code
+        client.post("/node", data={"project_id": 2, "node_type": "123"}).status_code
         == 403
     )
     # 创建节点成功
@@ -58,6 +61,12 @@ def test_create(client):
 
 
 def test_modify(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=1, name="test")
+    Project.create(user_id=2, name="test")
+    Node.create(project_id=1, node_type="123")
+    Node.create(project_id=2, node_type="123")
     # 修改节点失败（未登录）
     assert client.put("/node/1", data={"extra": '{"a": "b"}'}).status_code == 401
     # 登录
@@ -68,7 +77,7 @@ def test_modify(client):
         == 201
     )
     # 修改节点失败（节点不存在）
-    assert client.put("/node/-10", data={"extra": '{"a":"b"}'}).status_code == 404
+    assert client.put("/node/-1", data={"extra": '{"a":"b"}'}).status_code == 404
     # 修改节点失败（项目不属于你）
     assert client.put("/node/2", data={"extra": '{"a": "b"}'}).status_code == 403
     # 修改节点失败（无法解析json）
@@ -81,6 +90,12 @@ def test_modify(client):
 
 
 def test_delete(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=1, name="test")
+    Project.create(user_id=2, name="test")
+    Node.create(project_id=1, node_type="123")
+    Node.create(project_id=2, node_type="123")
     # 删除节点失败（未登录）
     assert client.delete("/node/1").status_code == 401
     # 登录
@@ -100,6 +115,13 @@ def test_delete(client):
 
 
 def test_edge_create(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=1, name="test")
+    Project.create(user_id=2, name="test")
+    Node.create(project_id=1, node_type="123", out_edges=[2])
+    Node.create(project_id=1, node_type="123", in_edges=[1])
+    Node.create(project_id=2, node_type="123")
     # 创建边失败（未登录）
     assert (
         client.post(
@@ -108,12 +130,7 @@ def test_edge_create(client):
         == 401
     )
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 创建边失败（项目不存在）
     assert (
         client.post(
@@ -124,55 +141,62 @@ def test_edge_create(client):
     # 创建边失败（项目不属于你）
     assert (
         client.post(
-            "/node/edge", data={"project_id": 3, "node1_id": 1, "node2_id": 3}
+            "/node/edge", data={"project_id": 2, "node1_id": 1, "node2_id": 3}
         ).status_code
         == 403
     )
     # 创建边失败（节点不存在）
     assert (
         client.post(
-            "/node/edge", data={"project_id": 2, "node1_id": 1, "node2_id": -1}
+            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": -1}
         ).status_code
         == 400
     )
     assert (
         client.post(
-            "/node/edge", data={"project_id": 2, "node1_id": -1, "node2_id": 1}
+            "/node/edge", data={"project_id": 1, "node1_id": -1, "node2_id": 1}
         ).status_code
         == 400
     )
     # 创建边失败（节点不属于该项目）
     assert (
         client.post(
-            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 2}
+            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 3}
         ).status_code
         == 403
     )
     assert (
         client.post(
-            "/node/edge", data={"project_id": 1, "node1_id": 2, "node2_id": 1}
+            "/node/edge", data={"project_id": 1, "node1_id": 3, "node2_id": 1}
         ).status_code
         == 403
     )
     # 创建边失败（边已存在）
     assert (
         client.post(
-            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 3}
+            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 2}
         ).status_code
         == 400
     )
     # 创建成功
     assert (
         client.post(
-            "/node/edge", data={"project_id": 1, "node1_id": 3, "node2_id": 4}
+            "/node/edge", data={"project_id": 1, "node1_id": 2, "node2_id": 1}
         ).status_code
         == 201
     )
-    assert client.get("/node/1").json["out_edges"].count(4) == 1
-    assert client.get("/node/4").json["in_edges"].count(1) == 1
+    assert client.get("/node/1").json["out_edges"].count(2) == 1
+    assert client.get("/node/2").json["in_edges"].count(1) == 1
 
 
 def test_edge_delete(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=1, name="test")
+    Project.create(user_id=2, name="test")
+    Node.create(project_id=1, node_type="123", out_edges=[2])
+    Node.create(project_id=1, node_type="123", in_edges=[1])
+    Node.create(project_id=2, node_type="123")
     # 删除边失败（未登录）
     assert (
         client.delete(
@@ -181,12 +205,7 @@ def test_edge_delete(client):
         == 401
     )
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 删除边失败（项目不存在）
     assert (
         client.delete(
@@ -197,64 +216,65 @@ def test_edge_delete(client):
     # 删除边失败（项目不属于你）
     assert (
         client.delete(
-            "/node/edge", data={"project_id": 3, "node1_id": 1, "node2_id": 3}
+            "/node/edge", data={"project_id": 2, "node1_id": 1, "node2_id": 3}
         ).status_code
         == 403
     )
     # 删除边失败（节点不存在）
     assert (
         client.delete(
-            "/node/edge", data={"project_id": 2, "node1_id": 1, "node2_id": -1}
+            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": -1}
         ).status_code
         == 400
     )
     assert (
         client.delete(
-            "/node/edge", data={"project_id": 2, "node1_id": -1, "node2_id": 1}
+            "/node/edge", data={"project_id": 1, "node1_id": -1, "node2_id": 1}
         ).status_code
         == 400
     )
     # 删除边失败（节点不属于该项目）
     assert (
         client.delete(
-            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 2}
+            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 3}
         ).status_code
         == 403
     )
     assert (
         client.delete(
-            "/node/edge", data={"project_id": 1, "node1_id": 2, "node2_id": 1}
+            "/node/edge", data={"project_id": 1, "node1_id": 3, "node2_id": 1}
         ).status_code
         == 403
     )
     # 删除边失败（边不存在）
     assert (
         client.delete(
-            "/node/edge", data={"project_id": 1, "node1_id": 3, "node2_id": 4}
+            "/node/edge", data={"project_id": 1, "node1_id": 2, "node2_id": 1}
         ).status_code
         == 400
     )
     # 删除成功
     assert (
         client.delete(
-            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 3}
+            "/node/edge", data={"project_id": 1, "node1_id": 1, "node2_id": 2}
         ).status_code
         == 204
     )
-    assert client.get("/node/1").json["out_edges"].count(3) == 0
-    assert client.get("/node/3").json["in_edges"].count(1) == 0
+    assert client.get("/node/1").json["out_edges"].count(2) == 0
+    assert client.get("/node/2").json["in_edges"].count(1) == 0
 
 
 def test_csv(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
+    Project.create(user_id=1, name="test")
+    Project.create(user_id=2, name="test")
+    Node.create(project_id=1, node_type="123")
+    Node.create(project_id=2, node_type="123")
     # 读取csv失败（未登录）
     assert client.get("/node/1/csv").status_code == 401
     # 登录
-    assert (
-        client.post(
-            "/session", data={"username": "user1", "password": "123"}
-        ).status_code
-        == 201
-    )
+    client.post("/session", data={"username": "user1", "password": "123"})
     # 读取csv失败（节点不存在）
     assert client.get("/node/-1/csv").status_code == 404
     # 读取csv失败（项目不属于你）
@@ -276,6 +296,7 @@ def test_csv(client):
 
 
 def test_status(client):
+    User.create(username="user1", password="123")
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 创建项目

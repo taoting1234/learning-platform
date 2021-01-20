@@ -1,13 +1,20 @@
 from flask_login import current_user, login_required
 from flask_restful import Resource, abort, marshal_with
 
-from app.fields.user import user_field
+from app.fields.user import user_field, user_search_field
+from app.libs.auth import self_only
 from app.models.user import User
-from app.parsers.user import user_modify_parser, user_register_parser
+from app.parsers.user import (
+    user_modify_parser,
+    user_register_parser,
+    user_search_parser,
+)
 
 
 class ResourceUser(Resource):
     @marshal_with(user_field)
+    @login_required
+    @self_only(User)
     def get(self, id_):
         user = User.get_by_id(id_)
         if user is None:
@@ -27,6 +34,14 @@ class ResourceUser(Resource):
 
 
 class ResourceUserList(Resource):
+    @marshal_with(user_search_field)
+    @login_required
+    @self_only(User, user_search_parser)
+    def get(self):
+        args = user_search_parser.parse_args()
+        res = User.search(**args)
+        return res
+
     @marshal_with(user_field)
     def post(self):
         args = user_register_parser.parse_args()

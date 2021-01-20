@@ -16,13 +16,39 @@ schemes:
   #  - "https"
   - "http"
 definitions:
+  Meta:
+    type: "object"
+    properties:
+      count:
+        type: "integer"
+        description: "总数量"
+      page:
+        type: "integer"
+        description: "页数"
+      page_size:
+        type: "integer"
+        description: "每页大小"
   User:
     type: "object"
     properties:
       id:
         type: "integer"
+        description: "用户id"
       username:
         type: "string"
+        description: "用户名"
+      permission:
+        type: "integer"
+        description: "用户权限"
+  UserList:
+    type: "object"
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/User"
+      meta:
+        $ref: "#/definitions/Meta"
   Project:
     type: "object"
     properties:
@@ -114,6 +140,24 @@ paths:
         200:
           description: "修改成功"
   /user:
+    get:
+      tags:
+        - "user"
+      summary: "搜索用户（管理员限定）"
+      parameters:
+        - in: "query"
+          name: "username"
+          type: "string"
+          description: "用户名"
+        - in: "query"
+          name: "permission"
+          type: "integer"
+          description: "权限"
+      responses:
+        201:
+          description: "搜索结果"
+          schema:
+            $ref: "#/definitions/UserList"
     post:
       tags:
         - "user"

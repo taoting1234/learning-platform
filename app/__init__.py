@@ -1,3 +1,4 @@
+import pkg_resources
 import yaml
 from flasgger import Swagger
 from flask import Flask
@@ -10,7 +11,7 @@ from app.resources.node import ResourceNodeCSV, ResourceNodeDescription
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
-with open("./docs/apis/swagger.yaml") as f:
+with open(pkg_resources.resource_filename("docs.apis", "swagger.yaml")) as f:
     template = yaml.safe_load(f)
 swagger = Swagger(template=template)
 

@@ -1,13 +1,27 @@
+from app.models.user import User
+
 from .base import client
 
 
 def test_get(client):
-    assert client.get("/user/1").json["username"] == "user1"
-    assert client.get("/user/2").json["username"] == "user2"
+    User.create(username="admin", password="admin", permission=1)
+    User.create(username="user", password="user", permission=0)
+    # 未登录
+    assert client.get("/user/1").status_code == 401
+    # 登录管理员
+    client.post("/session", data={"username": "admin", "password": "admin"})
+    assert client.get("/user/1").json["username"] == "admin"
+    assert client.get("/user/2").json["username"] == "user"
+    assert client.get("/user/3").status_code == 404
+    # 登录普通用户
+    client.post("/session", data={"username": "user", "password": "user"})
+    assert client.get("/user/1").status_code == 403
+    assert client.get("/user/2").json["username"] == "user"
     assert client.get("/user/3").status_code == 404
 
 
 def test_create(client):
+    User.create(username="user1", password="123")
     # 创建用户（失败）
     assert (
         client.post("/user", data={"username": "user1", "password": "123"}).status_code
@@ -28,6 +42,8 @@ def test_create(client):
 
 
 def test_modify(client):
+    User.create(username="user1", password="123")
+    User.create(username="user2", password="123")
     # 修改用户失败（未登录）
     assert client.delete("/session").status_code == 204
     assert (
@@ -85,3 +101,16 @@ def test_modify(client):
         ).status_code
         == 201
     )
+
+
+def test_search(client):
+    User.create(username="admin", password="admin", permission=1)
+    User.create(username="user", password="user", permission=0)
+    # 未登录
+    assert client.get("/user", data={"permission": 1}).status_code == 401
+    # 登录管理员
+    client.post("/session", data={"username": "admin", "password": "admin"})
+    assert len(client.get("/user", data={"permission": 1}).json["data"]) == 1
+    # 登录普通用户
+    client.post("/session", data={"username": "user", "password": "user"})
+    assert client.get("/user", data={"permission": 1}).status_code == 403

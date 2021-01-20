@@ -1,5 +1,7 @@
 from flask_restful import fields
 
+from app.fields.search import meta_field
+
 project_field = {
     "id": fields.Integer,
     "name": fields.String,
@@ -7,4 +9,7 @@ project_field = {
     "tag": fields.String,
 }
 
-projects_field = {"projects": fields.List(fields.Nested(project_field))}
+project_search_field = {
+    "data": fields.List(fields.Nested(project_field)),
+    "meta": fields.Nested(meta_field),
+}

@@ -4,11 +4,13 @@ import pkg_resources
 
 from app.models.node import Node
 from app.models.project import Project
+from app.models.user import User
 
 from ..base import client
 
 
 def test_scaler_node(client):
+    User.create(username="user1", password="123")
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 创建项目
