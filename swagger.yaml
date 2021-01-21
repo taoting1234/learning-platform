@@ -14,6 +14,8 @@ tags:
     description: "Project Resource"
   - name: "file"
     description: "File Resource"
+  - name: "node"
+    description: "Node Resource"
 schemes:
   - "https"
 definitions:
@@ -99,6 +101,83 @@ definitions:
             modify_time:
               type: "string"
               description: "文件修改时间"
+  Node:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "节点id"
+      project_id:
+        type: "integer"
+        description: "项目id"
+      node_type:
+        type: "string"
+        description: "节点类型"
+      input_shape:
+        type: "string"
+        description: "输入大小"
+      output_shape:
+        type: "string"
+        description: "输出大小"
+      in_edges:
+        type: "string"
+        description: "入度"
+      out_edges:
+        type: "string"
+        description: "出度"
+      status:
+        type: "integer"
+        description: "运行状态"
+      extra:
+        type: "string"
+        description: "额外信息"
+  NodeList:
+    type: "object"
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/Node"
+  CSV:
+    type: "object"
+    properties:
+      data:
+        type: "string"
+        description: "csv数据"
+  NodeDescription:
+    type: "object"
+    properties:
+      type:
+        type: "string"
+        description: "类型"
+      description:
+        type: "string"
+        description: "描述"
+      params:
+        type: "array"
+        items:
+          properties:
+            name:
+              type: "string"
+              description: "名称"
+            description:
+              type: "string"
+              description: "描述"
+            type:
+              type: "string"
+              description: "类型"
+            required:
+              type: "boolean"
+              description: "是否必填"
+            range:
+              type: "string"
+              description: "范围"
+            enum:
+              type: "string"
+              description: "枚举"
+            default:
+              type: "string"
+              description: "默认值"
 paths:
   /session:
     get:
@@ -329,6 +408,20 @@ paths:
           description: "创建项目成功"
           schema:
             $ref: "#/definitions/Project"
+  /project/{project_id}/run:
+    post:
+      tags:
+        - "project"
+      summary: "运行指定项目"
+      parameters:
+        - in: "path"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+      responses:
+        201:
+          description: "创建任务成功"
   /file:
     get:
       tags:
@@ -422,3 +515,190 @@ paths:
       responses:
         204:
           description: "删除成功"
+  /node/{node_id}:
+    get:
+      tags:
+        - "node"
+      summary: "获取指定节点"
+      parameters:
+        - in: "path"
+          name: "node_id"
+          type: "integer"
+          description: "节点id"
+          required: true
+      responses:
+        200:
+          description: "指定的节点信息"
+          schema:
+            $ref: "#/definitions/Node"
+    put:
+      tags:
+        - "node"
+      summary: "修改指定节点"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "path"
+          name: "node_id"
+          type: "integer"
+          description: "节点id"
+          required: true
+        - in: "formData"
+          name: "extra"
+          type: "string"
+          description: "节点额外信息"
+          required: true
+      responses:
+        200:
+          description: "节点修改成功"
+    delete:
+      tags:
+        - "node"
+      summary: "删除指定节点"
+      parameters:
+        - in: "path"
+          name: "node_id"
+          type: "integer"
+          description: "节点id"
+          required: true
+      responses:
+        204:
+          description: "节点删除成功"
+  /node:
+    get:
+      tags:
+        - "node"
+      summary: "获取指定项目下的所有节点"
+      parameters:
+        - in: "query"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+      responses:
+        200:
+          description: "节点列表"
+          schema:
+            $ref: "#/definitions/NodeList"
+    post:
+      tags:
+        - "node"
+      summary: "创建节点"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "formData"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "formData"
+          name: "node_type"
+          type: "string"
+          description: "节点类型"
+          required: true
+      responses:
+        201:
+          description: "创建成功"
+          schema:
+            $ref: "#/definitions/Node"
+  /node/edge:
+    post:
+      tags:
+        - "node"
+      summary: "创建边"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "formData"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "formData"
+          name: "node1_id"
+          type: "integer"
+          description: "节点1id"
+          required: true
+        - in: "formData"
+          name: "node2_id"
+          type: "integer"
+          description: "节点2id"
+          required: true
+      responses:
+        201:
+          description: "创建边成功"
+    delete:
+      tags:
+        - "node"
+      summary: "删除边"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "formData"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "formData"
+          name: "node1_id"
+          type: "integer"
+          description: "节点1id"
+          required: true
+        - in: "formData"
+          name: "node2_id"
+          type: "integer"
+          description: "节点2id"
+          required: true
+      responses:
+        204:
+          description: "删除边成功"
+  /node/{node_id}/run:
+    post:
+      tags:
+        - "node"
+      summary: "运行指定节点"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "path"
+          name: "node_id"
+          type: "integer"
+          description: "节点id"
+          required: true
+      responses:
+        201:
+          description: "创建任务成功"
+  /node/{node_id}/csv:
+    get:
+      tags:
+        - "node"
+      summary: "获取指定节点的csv"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "path"
+          name: "node_id"
+          type: "integer"
+          description: "节点id"
+          required: true
+        - in: "formData"
+          name: "filename"
+          type: "string"
+          description: "文件名"
+          required: true
+      responses:
+        201:
+          description: "csv数据"
+          schema:
+            $ref: "#/definitions/CSV"
+  /node/description:
+    get:
+      tags:
+        - "node"
+      summary: "获取节点信息"
+      responses:
+        200:
+          description: "节点信息"
+          schema:
+            $ref: "#/definitions/NodeDescription"
