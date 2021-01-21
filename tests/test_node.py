@@ -352,6 +352,11 @@ def test_status(client):
 
 
 def test_description(client):
+    User.create(username="123", password="123")
+    # 未登录
+    assert client.get("/node/description").status_code == 401
+    # 登录
+    client.post("/session", data={"username": "123", "password": "123"})
     res = client.get("/node/description").json
     assert isinstance(res["data"], list)
     assert isinstance(res["data"][0], dict)

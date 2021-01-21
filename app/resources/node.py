@@ -138,6 +138,7 @@ class ResourceNodeCSV(Resource):
 
 
 class ResourceNodeDescription(Resource):
+    @login_required
     @marshal_with(nodes_description_field)
     def get(self):
         res = []
