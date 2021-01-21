@@ -22,9 +22,9 @@ def test_split_input_node(client):
     assert res.status_code == 201
     node_id = res.json["id"]
     with open(pkg_resources.resource_filename("tests.files", "x1.csv"), "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     with open(pkg_resources.resource_filename("tests.files", "y1.csv"), "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     assert (
         client.put(
             "/node/{}".format(node_id),
@@ -71,7 +71,7 @@ def test_not_split_input_node(client):
     assert res.status_code == 201
     node_id = res.json["id"]
     with open(pkg_resources.resource_filename("tests.files", "telco.csv"), "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     assert (
         client.put(
             "/node/{}".format(node_id),

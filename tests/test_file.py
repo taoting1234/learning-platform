@@ -19,16 +19,29 @@ def test_get(client):
         f.write(os.urandom(128))
     client.post("/session", data={"username": "user1", "password": "123"})
     with open(file_path, "rb") as f:
-        client.post("/file", data={"file": f, "project_id": 1})
+        client.post("/file", data={"file": f, "project_id": 1, "dir": "/"})
     client.delete("/session")
     # 未登录
     assert client.get("/file", data={"project_id": 1}).status_code == 401
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
-    assert len(client.get("/file", data={"project_id": 1}).json["files"]) == 1
-    assert client.get("/file", data={"project_id": -1}).status_code == 404
-    assert client.get("/file", data={"project_id": 2}).status_code == 403
-    assert client.get("/file", data={"project_id": 1, "dir": "/"}).status_code == 400
+    assert (
+        len(client.get("/file", data={"project_id": 1, "dir": "/"}).json["data"]) == 1
+    )
+    assert (
+        client.get("/file", data={"project_id": 1, "dir": "/abc"}).json["message"]
+        == "Path not found"
+    )
+    assert (
+        client.get("/file", data={"project_id": 1, "dir": "/1.test"}).json["message"]
+        == "Path not a directory"
+    )
+    assert client.get("/file", data={"project_id": -1, "dir": "/"}).status_code == 404
+    assert client.get("/file", data={"project_id": 2, "dir": "/"}).status_code == 403
+    assert (
+        client.get("/file", data={"project_id": 1, "dir": "/../"}).json["message"]
+        == "Path not belong you"
+    )
 
 
 def test_create(client):
@@ -49,46 +62,63 @@ def test_create(client):
     # 上传文件失败（项目不存在）
     with open(file_path, "rb") as f:
         assert (
-            client.post("/file", data={"file": f, "project_id": -1}).status_code == 404
+            client.post(
+                "/file", data={"file": f, "project_id": -1, "dir": "/"}
+            ).status_code
+            == 404
         )
     # 上传文件失败（项目不属于你）
     with open(file_path, "rb") as f:
         assert (
-            client.post("/file", data={"file": f, "project_id": 2}).status_code == 403
+            client.post(
+                "/file", data={"file": f, "project_id": 2, "dir": "/"}
+            ).status_code
+            == 403
         )
     # 上传文件失败（文件路径错误）
     with open(file_path, "rb") as f:
         assert (
             client.post(
-                "/file", data={"file": f, "project_id": 1, "dir": "/"}
+                "/file", data={"file": f, "project_id": 1, "dir": "/../"}
             ).status_code
             == 400
         )
     # 上传文件成功
     with open(file_path, "rb") as f:
         assert (
-            client.post("/file", data={"file": f, "project_id": 1}).status_code == 201
+            client.post(
+                "/file", data={"file": f, "project_id": 1, "dir": "/"}
+            ).status_code
+            == 201
         )
     assert (
-        client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
+        client.get("/file", data={"project_id": 1, "dir": "/"}).json["data"][0]["name"]
         == "1.a"
     )
     assert os.path.exists("{}/1/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
-    size = client.get("/file", data={"project_id": 1}).json["files"][0]["size"]
+    size = client.get("/file", data={"project_id": 1, "dir": "/"}).json["data"][0][
+        "size"
+    ]
     # 修改文件
     with open(file_path, "wb") as f:
         f.write(bytes("1234", encoding="utf8"))
     # 覆盖文件
     with open(file_path, "rb") as f:
         assert (
-            client.post("/file", data={"file": f, "project_id": 1}).status_code == 201
+            client.post(
+                "/file", data={"file": f, "project_id": 1, "dir": "/"}
+            ).status_code
+            == 201
         )
     assert (
-        client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
+        client.get("/file", data={"project_id": 1, "dir": "/"}).json["data"][0]["name"]
         == "1.a"
     )
     assert os.path.exists("{}/1/user/1.a".format(current_app.config["FILE_DIRECTORY"]))
-    assert client.get("/file", data={"project_id": 1}).json["files"][0]["size"] > size
+    assert (
+        client.get("/file", data={"project_id": 1, "dir": "/"}).json["data"][0]["size"]
+        > size
+    )
 
 
 def test_modify(client):
@@ -101,7 +131,7 @@ def test_modify(client):
         f.write(os.urandom(128))
     client.post("/session", data={"username": "user1", "password": "123"})
     with open(file_path, "rb") as f:
-        client.post("/file", data={"file": f, "project_id": 1})
+        client.post("/file", data={"file": f, "project_id": 1, "dir": "/"})
     client.delete("/session")
     file_path = "{}/1.test".format(tempfile.gettempdir())
     with open(file_path, "wb") as f:
@@ -124,7 +154,7 @@ def test_modify(client):
     assert (
         client.put(
             "/file",
-            data={"old_filename": "1.a", "new_filename": "1.b", "project_id": 2},
+            data={"old_filename": "/1.a", "new_filename": "/1.b", "project_id": 2},
         ).status_code
         == 403
     )
@@ -132,7 +162,7 @@ def test_modify(client):
     assert (
         client.put(
             "/file",
-            data={"old_filename": "1.aaa", "new_filename": "1.b", "project_id": 1},
+            data={"old_filename": "/1.aaa", "new_filename": "/1.b", "project_id": 1},
         ).status_code
         == 404
     )
@@ -140,7 +170,11 @@ def test_modify(client):
     assert (
         client.put(
             "/file",
-            data={"old_filename": "1.test", "new_filename": "1.test", "project_id": 1},
+            data={
+                "old_filename": "/1.test",
+                "new_filename": "/1.test",
+                "project_id": 1,
+            },
         ).status_code
         == 400
     )
@@ -148,7 +182,11 @@ def test_modify(client):
     assert (
         client.put(
             "/file",
-            data={"old_filename": "/1.test", "new_filename": "1.a", "project_id": 1},
+            data={
+                "old_filename": "/../1.test",
+                "new_filename": "/1.a",
+                "project_id": 1,
+            },
         ).status_code
         == 400
     )
@@ -156,12 +194,12 @@ def test_modify(client):
     assert (
         client.put(
             "/file",
-            data={"old_filename": "1.test", "new_filename": "1.c", "project_id": 1},
+            data={"old_filename": "/1.test", "new_filename": "/1.c", "project_id": 1},
         ).status_code
         == 200
     )
     assert (
-        client.get("/file", data={"project_id": 1}).json["files"][0]["filename"]
+        client.get("/file", data={"project_id": 1, "dir": "/"}).json["data"][0]["name"]
         == "1.c"
     )
     assert os.path.exists("{}/1/user/1.c".format(current_app.config["FILE_DIRECTORY"]))
@@ -177,14 +215,14 @@ def test_delete(client):
         f.write(os.urandom(128))
     client.post("/session", data={"username": "user1", "password": "123"})
     with open(file_path, "rb") as f:
-        client.post("/file", data={"file": f, "project_id": 1})
+        client.post("/file", data={"file": f, "project_id": 1, "dir": "/"})
     client.delete("/session")
     file_path = "{}/1.test".format(tempfile.gettempdir())
     with open(file_path, "wb") as f:
         f.write(os.urandom(128))
     client.post("/session", data={"username": "user2", "password": "123"})
     with open(file_path, "rb") as f:
-        client.post("/file", data={"file": f, "project_id": 2})
+        client.post("/file", data={"file": f, "project_id": 2, "dir": "/"})
     client.delete("/session")
     # 删除文件失败（用户未登录）
     assert (
@@ -195,27 +233,31 @@ def test_delete(client):
     client.post("/session", data={"username": "user1", "password": "123"})
     # 删除文件失败（文件不存在）
     assert (
-        client.delete("/file", data={"filename": "1.aaa", "project_id": 1}).status_code
+        client.delete("/file", data={"filename": "/1.aaa", "project_id": 1}).status_code
         == 404
     )
     # 删除文件失败（项目不属于你）
     assert (
-        client.delete("/file", data={"filename": "1.a", "project_id": 2}).status_code
+        client.delete("/file", data={"filename": "/1.a", "project_id": 2}).status_code
         == 403
     )
     # 删除文件失败（文件路径错误）
     assert (
         client.delete(
-            "/file", data={"filename": "/1.test", "project_id": 1}
+            "/file", data={"filename": "/../1.test", "project_id": 1}
         ).status_code
         == 400
     )
     # 删除文件成功
     assert (
-        client.delete("/file", data={"filename": "1.test", "project_id": 1}).status_code
+        client.delete(
+            "/file", data={"filename": "/1.test", "project_id": 1}
+        ).status_code
         == 204
     )
-    assert len(client.get("/file", data={"project_id": 1}).json["files"]) == 0
+    assert (
+        len(client.get("/file", data={"project_id": 1, "dir": "/"}).json["data"]) == 0
+    )
     assert (
         os.path.exists("{}/1/user/1.test".format(current_app.config["FILE_DIRECTORY"]))
         is False

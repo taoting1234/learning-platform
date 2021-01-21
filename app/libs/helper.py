@@ -77,7 +77,7 @@ def get_files(path):
         if os.path.isfile(filepath):
             res.append(
                 {
-                    "filename": filename,
+                    "name": filename,
                     "type": "file",
                     "size": os.path.getsize(filepath),
                     "access_time": datetime.datetime.fromtimestamp(
@@ -92,5 +92,5 @@ def get_files(path):
                 }
             )
         elif os.path.isdir(filepath):
-            res.append({"filename": filename, "type": "dir"})
+            res.append({"name": filename, "type": "dir"})
     return res

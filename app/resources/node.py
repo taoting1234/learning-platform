@@ -2,7 +2,12 @@ from flask import current_app
 from flask_login import login_required
 from flask_restful import Resource, abort, marshal_with
 
-from app.fields.node import node_field, nodes_description_field, nodes_field
+from app.fields.node import (
+    node_csv_field,
+    node_field,
+    nodes_description_field,
+    nodes_field,
+)
 from app.libs.auth import self_only
 from app.models.node import Node
 from app.nodes import node_mapping
@@ -125,6 +130,7 @@ class ResourceNodeRun(Resource):
 
 class ResourceNodeCSV(Resource):
     @login_required
+    @marshal_with(node_csv_field)
     @self_only(Node)
     def get(self, id_):
         args = node_csv_parser.parse_args()
@@ -138,6 +144,7 @@ class ResourceNodeCSV(Resource):
 
 
 class ResourceNodeDescription(Resource):
+    @login_required
     @marshal_with(nodes_description_field)
     def get(self):
         res = []

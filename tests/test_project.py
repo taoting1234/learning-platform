@@ -266,7 +266,7 @@ def test_run(client):
     with open(file_path, "wb") as f:
         f.write(os.urandom(128))
     with open(file_path, "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     assert (
         client.put(
             "/node/{}".format(node1_id),
@@ -341,7 +341,7 @@ def test_run(client):
     with open(file_path, "wb") as f:
         f.write(os.urandom(128))
     with open(file_path, "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     assert (
         client.put(
             "/node/{}".format(node2_id),
@@ -399,9 +399,9 @@ def test_run(client):
     assert res.status_code == 201
     node_id = res.json["id"]
     with open(pkg_resources.resource_filename("tests.files", "x1.csv"), "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     with open(pkg_resources.resource_filename("tests.files", "y1.csv"), "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     assert (
         client.put(
             "/node/{}".format(node_id),
@@ -423,7 +423,19 @@ def test_run(client):
     current_app.config["THREAD"] = True
     assert client.post("/project/{}/run".format(project_id)).status_code == 201
     # 等待线程结束
-    if getattr(g, "thread_list", None):
-        for thread in g.thread_list:
-            thread.join()
-        g.thread_list = None
+    for thread in getattr(g, "thread_list", []):
+        thread.join()
+
+
+def test_search(client):
+    User.create(username="admin", password="admin", permission=1)
+    User.create(username="user", password="user", permission=0)
+    # 未登录
+    assert client.get("/project", data={"user_id": 1}).status_code == 401
+    # 登录管理员
+    client.post("/session", data={"username": "admin", "password": "admin"})
+    assert len(client.get("/project", data={"user_id": 2}).json["data"]) == 0
+    # 登录普通用户
+    client.post("/session", data={"username": "user", "password": "user"})
+    assert client.get("/project", data={"user_id": 1}).status_code == 403
+    assert len(client.get("/project", data={"user_id": 2}).json["data"]) == 0
