@@ -423,10 +423,8 @@ def test_run(client):
     current_app.config["THREAD"] = True
     assert client.post("/project/{}/run".format(project_id)).status_code == 201
     # 等待线程结束
-    if getattr(g, "thread_list", None):
-        for thread in g.thread_list:
-            thread.join()
-        g.thread_list = None
+    for thread in g.getattr(g, "thread_list", []):
+        thread.join()
 
 
 def test_search(client):
