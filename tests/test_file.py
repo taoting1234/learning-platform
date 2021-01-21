@@ -28,10 +28,20 @@ def test_get(client):
     assert (
         len(client.get("/file", data={"project_id": 1, "dir": "/"}).json["data"]) == 1
     )
-    assert client.get("/file", data={"project_id": 1, "dir": "/abc"}).status_code == 400
+    assert (
+        client.get("/file", data={"project_id": 1, "dir": "/abc"}).json["message"]
+        == "Path not found"
+    )
+    assert (
+        client.get("/file", data={"project_id": 1, "dir": "/1.test"}).json["message"]
+        == "Path not a directory"
+    )
     assert client.get("/file", data={"project_id": -1, "dir": "/"}).status_code == 404
     assert client.get("/file", data={"project_id": 2, "dir": "/"}).status_code == 403
-    assert client.get("/file", data={"project_id": 1, "dir": "../"}).status_code == 400
+    assert (
+        client.get("/file", data={"project_id": 1, "dir": "/../"}).json["message"]
+        == "Path not belong you"
+    )
 
 
 def test_create(client):

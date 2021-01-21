@@ -29,9 +29,11 @@ class ResourceFile(Resource):
         )
         file_dir = os.path.realpath(os.path.join(root_dir, args["dir"]))
         if os.path.commonpath([root_dir, file_dir]) != root_dir:
-            abort(400)
+            abort(400, message="Path not belong you")
         if not os.path.exists(file_dir):
             abort(400, message="Path not found")
+        if not os.path.isdir(file_dir):
+            abort(400, message="Path not a directory")
         res = get_files(file_dir)
         return {"data": res}
 
