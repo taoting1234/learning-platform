@@ -266,7 +266,7 @@ def test_run(client):
     with open(file_path, "wb") as f:
         f.write(os.urandom(128))
     with open(file_path, "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     assert (
         client.put(
             "/node/{}".format(node1_id),
@@ -341,7 +341,7 @@ def test_run(client):
     with open(file_path, "wb") as f:
         f.write(os.urandom(128))
     with open(file_path, "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     assert (
         client.put(
             "/node/{}".format(node2_id),
@@ -399,9 +399,9 @@ def test_run(client):
     assert res.status_code == 201
     node_id = res.json["id"]
     with open(pkg_resources.resource_filename("tests.files", "x1.csv"), "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     with open(pkg_resources.resource_filename("tests.files", "y1.csv"), "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project_id})
+        client.post("/file", data={"file": f, "project_id": project_id, "dir": "/"})
     assert (
         client.put(
             "/node/{}".format(node_id),
@@ -423,7 +423,7 @@ def test_run(client):
     current_app.config["THREAD"] = True
     assert client.post("/project/{}/run".format(project_id)).status_code == 201
     # 等待线程结束
-    for thread in g.getattr(g, "thread_list", []):
+    for thread in getattr(g, "thread_list", []):
         thread.join()
 
 

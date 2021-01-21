@@ -303,7 +303,7 @@ def test_status(client):
     project = Project.create(name=str(random.random()), tag="", user_id=1)
     # 上传文件
     with open(pkg_resources.resource_filename("tests.files", "telco.csv"), "rb") as f:
-        client.post("/file", data={"file": f, "project_id": project.id})
+        client.post("/file", data={"file": f, "project_id": project.id, "dir": "/"})
     # 创建节点
     node1 = Node.create(
         project_id=project.id,
