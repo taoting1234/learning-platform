@@ -50,7 +50,7 @@ class ResourceFile(Resource):
         filename = file.filename.split("/")[-1]
         filepath = os.path.realpath(os.path.join(root_dir, args["dir"], filename))
         if os.path.commonpath([root_dir, filepath]) != root_dir:
-            abort(400)
+            abort(400, message="Path not belong you")
         os.makedirs(os.path.split(filepath)[0], exist_ok=True)
         file.save(filepath)
         return {"message": "Upload file success"}, 201
@@ -70,7 +70,7 @@ class ResourceFile(Resource):
             os.path.commonpath([root_dir, old_filepath]) != root_dir
             or os.path.commonpath([root_dir, new_filepath]) != root_dir
         ):
-            abort(400)
+            abort(400, message="Path not belong you")
         if not os.path.exists(old_filepath):
             abort(404, message="File not found")
         if os.path.exists(new_filepath):
@@ -90,7 +90,7 @@ class ResourceFile(Resource):
         )
         filepath = os.path.realpath(os.path.join(root_dir, args["filename"]))
         if os.path.commonpath([root_dir, filepath]) != root_dir:
-            abort(400)
+            abort(400, message="Path not belong you")
         if not os.path.exists(filepath):
             abort(404, message="File not found")
         os.remove(filepath)
