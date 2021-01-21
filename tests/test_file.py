@@ -25,9 +25,12 @@ def test_get(client):
     assert client.get("/file", data={"project_id": 1}).status_code == 401
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
-    assert len(client.get("/file", data={"project_id": 1}).json["data"]) == 1
-    assert client.get("/file", data={"project_id": -1}).status_code == 404
-    assert client.get("/file", data={"project_id": 2}).status_code == 403
+    assert (
+        len(client.get("/file", data={"project_id": 1, "dir": "/"}).json["data"]) == 1
+    )
+    assert client.get("/file", data={"project_id": 1, "dir": "/abc"}).status_code == 400
+    assert client.get("/file", data={"project_id": -1, "dir": "/"}).status_code == 404
+    assert client.get("/file", data={"project_id": 2, "dir": "/"}).status_code == 403
     assert client.get("/file", data={"project_id": 1, "dir": "../"}).status_code == 400
 
 
