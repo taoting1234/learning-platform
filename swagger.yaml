@@ -515,6 +515,47 @@ paths:
       responses:
         204:
           description: "删除成功"
+  /file/directory:
+    post:
+      tags:
+        - "file"
+      summary: "创建文件夹"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "formData"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "formData"
+          name: "dir"
+          type: "string"
+          description: "目录"
+          required: true
+      responses:
+        201:
+          description: "创建成功"
+    delete:
+      tags:
+        - "file"
+      summary: "删除文件夹"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "formData"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "formData"
+          name: "dir"
+          type: "string"
+          description: "目录"
+          required: true
+      responses:
+        204:
+          description: "删除成功"
   /node/{node_id}:
     get:
       tags:
