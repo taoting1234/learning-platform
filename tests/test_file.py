@@ -248,6 +248,11 @@ def test_delete(client):
         ).status_code
         == 400
     )
+    # 删除文件失败（路径不是文件）
+    assert (
+        client.delete("/file", data={"filename": "/", "project_id": 1}).status_code
+        == 400
+    )
     # 删除文件成功
     assert (
         client.delete(

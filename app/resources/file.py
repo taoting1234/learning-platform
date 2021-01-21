@@ -94,6 +94,8 @@ class ResourceFile(Resource):
             abort(400, message="Path not belong you")
         if not os.path.exists(filepath):
             abort(404, message="File not found")
+        if not os.path.isfile(filepath):
+            abort(400, message="Path not file")
         os.remove(filepath)
         return "", 204
 
