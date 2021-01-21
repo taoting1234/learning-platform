@@ -10,4 +10,3 @@ numpy
 xgboost
 lightgbm
 docker
-flasgger
