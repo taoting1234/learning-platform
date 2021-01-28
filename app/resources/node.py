@@ -149,8 +149,8 @@ class ResourceNodeDescription(Resource):
     def get(self):
         res = []
         for k, v in node_mapping.items():
-            tmp = []
-            for params in v.params:
-                tmp.append(params)
-            res.append({"type": k, "params": tmp, **v.__dict__})
+            tmp = {}
+            for name in dir(v):
+                tmp[name] = getattr(v, name, None)
+            res.append({"type": k, **tmp})
         return {"data": res}
