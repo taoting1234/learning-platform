@@ -10,6 +10,7 @@ from app.models.node import Node
 
 
 class BaseNode:
+    name = ""
     description = ""
     params = []
     input_size = 0  # 来源节点数量，多输入模型才会改

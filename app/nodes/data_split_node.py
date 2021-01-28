@@ -8,6 +8,7 @@ from app.nodes.base_node import BaseNode
 
 
 class DataSplitNode(BaseNode):
+    name = "数据切分节点"
     description = "此节点为数据切分节点，可以将数据切分为训练数据和测试数据"
     params = [
         Parser(

@@ -12,6 +12,7 @@ from app.nodes.base_node import BaseNode
 
 
 class CustomNode(BaseNode, ABC):
+    name = "自定义节点"
     description = "此节点为自定义节点，用户可以自行编写代码"
     params = [
         Parser(

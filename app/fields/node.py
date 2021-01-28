@@ -36,6 +36,7 @@ node_params_field = {
 
 node_description_field = {
     "type": fields.String,
+    "name": fields.String,
     "description": fields.String,
     "input_size": fields.Integer,
     "input_type": fields.Integer,

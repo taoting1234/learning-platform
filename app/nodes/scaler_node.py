@@ -15,6 +15,7 @@ from app.nodes.base_node import BaseNode
 
 
 class ScalerNode(BaseNode):
+    name = "标准化节点"
     description = "此节点是标准化节点，支持常见的标准化算法"
     params = [
         Parser(
