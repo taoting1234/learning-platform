@@ -152,5 +152,5 @@ class ResourceNodeDescription(Resource):
             tmp = []
             for params in v.params:
                 tmp.append(params)
-            res.append({"type": k, "params": tmp})
+            res.append({"type": k, "params": tmp, **v.__dict__})
         return {"data": res}
