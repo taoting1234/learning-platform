@@ -12,6 +12,8 @@ from app.models.node import Node
 class BaseNode:
     name = ""
     description = ""
+    group = ""
+    icon = ""
     params = []
     input_size = 0  # 来源节点数量，多输入模型才会改
     input_type = 0  # 0无数据 1 未拆分训练集测试集的数据 2 拆分训练集测试集的数据

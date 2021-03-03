@@ -11,6 +11,7 @@ from app.nodes.base_node import BaseNode
 
 
 class InputNode(BaseNode, ABC):
+    group = "input"
     params = [
         Parser(name="has_header", type_=bool, description="csv是否有header", required=True)
     ]
@@ -32,6 +33,7 @@ class InputNode(BaseNode, ABC):
 class NotSplitInputNode(InputNode):
     name = "csv输入节点1"
     description = "此节点为未拆分x,y的csv输入节点"
+    icon = ""
     params = [
         *InputNode.params,
         Parser(name="input_file", type_=str, description="输入文件", required=True),
@@ -69,6 +71,7 @@ class NotSplitInputNode(InputNode):
 class SplitInputNode(InputNode):
     name = "csv输入节点2"
     description = "此节点为已拆分x,y的csv输入节点"
+    icon = ""
     params = [
         *InputNode.params,
         Parser(name="x_input_file", type_=str, description="x输入文件", required=True),

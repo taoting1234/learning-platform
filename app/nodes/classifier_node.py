@@ -33,6 +33,8 @@ from app.nodes.base_node import BaseNode
 class ClassifierNode(BaseNode):
     name = "机器学习分类节点"
     description = "此节点为机器学习分类节点，支持常见的分类算法"
+    group = "train"
+    icon = ""
     params = [
         Parser(
             name="model",
