@@ -18,7 +18,7 @@ class ScalerNode(BaseNode):
     name = "标准化节点"
     description = "此节点是标准化节点，支持常见的标准化算法"
     group = "processing"
-    icon = ""
+    icon = "el-icon-s-data"
     params = [
         Parser(
             name="include_label",

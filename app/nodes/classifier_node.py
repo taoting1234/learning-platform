@@ -34,7 +34,7 @@ class ClassifierNode(BaseNode):
     name = "机器学习分类节点"
     description = "此节点为机器学习分类节点，支持常见的分类算法"
     group = "train"
-    icon = ""
+    icon = "el-icon-s-operation"
     params = [
         Parser(
             name="model",
