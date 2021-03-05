@@ -34,9 +34,10 @@ class ResourceNode(Resource):
         node = Node.get_by_id(id_)
         args = node_modify_parser.parse_args()
         node.modify(**args)
-        nodes = node.get_nodes(node, 2)
-        for node in nodes:
-            node.modify(status=Node.Status.NOT_RUN)
+        # 巨大的bug
+        # nodes = node.get_nodes(node, 2)
+        # for node in nodes:
+        #     node.modify(status=Node.Status.NOT_RUN)
         return {"message": "Modify node success"}
 
     @login_required
