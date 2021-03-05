@@ -10,6 +10,15 @@ from flask import current_app
 from app.libs.parser import Parser
 from app.nodes.base_node import BaseNode
 
+default_code = """
+def run(input_files: list) -> list:
+    x = input_files[0][0]
+    y = input_files[0][1]
+    print(x.describe())
+    print(y.describe())
+    return x, y
+"""
+
 
 class CustomNode(BaseNode, ABC):
     name = "自定义节点"
@@ -20,18 +29,24 @@ class CustomNode(BaseNode, ABC):
         Parser(
             name="input_type",
             type_=int,
-            description="输入数据类型，0为无数据，1为未拆分训练集测试集的数据，2为拆分训练集测试集的数据",
+            description="输入数据类型",
             required=True,
-            enum=[0, 1, 2],
+            enum=[(0, "无数据"), (1, "未拆分训练集测试集的数据"), (2, "拆分训练集测试集的数据")],
         ),
         Parser(
             name="output_type",
             type_=int,
-            description="输出数据类型，1为未拆分训练集测试集的数据，2为拆分训练集测试集的数据",
+            description="输出数据类型",
             required=True,
-            enum=[1, 2],
+            enum=[(1, "未拆分训练集测试集的数据"), (2, "拆分训练集测试集的数据")],
         ),
-        Parser(name="code", type_=str, description="代码", required=True),
+        Parser(
+            name="code",
+            type_=str,
+            description="代码",
+            required=True,
+            default=default_code,
+        ),
     ]
 
     def _run(

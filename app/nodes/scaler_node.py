@@ -32,11 +32,11 @@ class ScalerNode(BaseNode):
             description="标准化模型，sklearn中的模型类名称，例如StandardScaler",
             required=True,
             enum=[
-                StandardScaler.__name__,
-                MaxAbsScaler.__name__,
-                MinMaxScaler.__name__,
-                Normalizer.__name__,
-                RobustScaler.__name__,
+                (StandardScaler.__name__, ""),
+                (MaxAbsScaler.__name__, ""),
+                (MinMaxScaler.__name__, ""),
+                (Normalizer.__name__, ""),
+                (RobustScaler.__name__, ""),
             ],
         ),
         Parser(

@@ -37,7 +37,7 @@ class Parser:
                     )
                 )
         if self.enum:
-            if raw not in self.enum:
+            if raw not in [i[0] for i in self.enum]:
                 raise Exception(
                     "{}: {} not in enum {}".format(self.name, raw, self.enum)
                 )
