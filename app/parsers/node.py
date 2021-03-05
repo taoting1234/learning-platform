@@ -42,5 +42,9 @@ node_edge_parser.add_argument(
 
 node_csv_parser = reqparse.RequestParser()
 node_csv_parser.add_argument(
-    "filename", type=str, required=True, help="Filename cannot be empty"
+    "filename",
+    type=str,
+    required=True,
+    help="Filename cannot be empty",
 )
+node_csv_parser.add_argument("summary", type=bool)

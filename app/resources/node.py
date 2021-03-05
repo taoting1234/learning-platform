@@ -1,3 +1,6 @@
+from io import StringIO
+
+import pandas as pd
 from flask import current_app
 from flask_login import login_required
 from flask_restful import Resource, abort, marshal_with
@@ -137,11 +140,16 @@ class ResourceNodeCSV(Resource):
         args = node_csv_parser.parse_args()
         node = Node.get_by_id(id_)
         try:
-            with open(node.join_path(args["filename"])) as f:
-                res = {"data": "\n".join(f.readlines()[: 100 + 1])}
+            df = pd.read_csv(node.join_path(args["filename"]))
+            if args["summary"]:
+                data = df.describe()
+            else:
+                data = df.head(100)
+            s_io = StringIO()
+            data.to_csv(s_io)
+            return {"data": s_io.getvalue()}
         except OSError:
             abort(400, message="File not found")
-        return res
 
 
 class ResourceNodeDescription(Resource):
