@@ -22,12 +22,14 @@ class CustomNode(BaseNode, ABC):
             type_=int,
             description="输入数据类型，0为无数据，1为未拆分训练集测试集的数据，2为拆分训练集测试集的数据",
             required=True,
+            enum=[0, 1, 2],
         ),
         Parser(
             name="output_type",
             type_=int,
             description="输出数据类型，1为未拆分训练集测试集的数据，2为拆分训练集测试集的数据",
             required=True,
+            enum=[1, 2],
         ),
         Parser(name="code", type_=str, description="代码", required=True),
     ]
