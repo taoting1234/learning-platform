@@ -138,7 +138,7 @@ class ResourceNodeCSV(Resource):
         node = Node.get_by_id(id_)
         try:
             with open(node.join_path(args["filename"])) as f:
-                res = {"data": f.read()}
+                res = {"data": "\n".join(f.readlines()[: 100 + 1])}
         except OSError:
             abort(400, message="File not found")
         return res
