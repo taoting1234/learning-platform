@@ -12,9 +12,7 @@ user_register_parser.add_argument(
 user_register_parser.add_argument(
     "organization", type=str, required=True, help="Organization cannot be empty"
 )
-user_register_parser.add_argument(
-    "captcha", type=str, required=True, help="Captcha cannot be empty"
-)
+user_register_parser.add_argument("captcha", type=str)
 
 user_modify_parser = reqparse.RequestParser()
 user_modify_parser.add_argument("organization", type=str)
@@ -26,3 +24,5 @@ user_modify_parser.add_argument("block", type=int)
 user_search_parser = search_parser.copy()
 user_search_parser.add_argument("username", type=str)
 user_search_parser.add_argument("permission", type=int)
+user_search_parser.add_argument("page", type=str)
+user_search_parser.add_argument("page_size", type=int)
