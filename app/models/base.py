@@ -56,8 +56,8 @@ class Base(db.Model):
                     else:
                         res = res.filter(getattr(cls, key) == value)
 
-        page = kwargs.get("page") if kwargs.get("page") else 1
-        page_size = kwargs.get("page_size") if kwargs.get("page_size") else 20
+        page = int(kwargs.get("page")) if kwargs.get("page") else 1
+        page_size = int(kwargs.get("page_size")) if kwargs.get("page_size") else 20
         data = {"meta": {"count": res.count(), "page": page, "page_size": page_size}}
 
         if page_size != -1:
