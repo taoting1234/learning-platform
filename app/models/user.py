@@ -10,7 +10,7 @@ class User(UserMixin, Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), unique=True)
-    organization = Column(String(100), nullable=False)
+    organization = Column(String(100), nullable=False, default="无组织")
     _password = Column("password", String(100), nullable=False)
     permission = Column(Integer, nullable=False, default=0)
     block = Column(Integer, nullable=False, default=0)
