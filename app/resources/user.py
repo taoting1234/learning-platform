@@ -23,12 +23,18 @@ class ResourceUser(Resource):
 
     @login_required
     def put(self, id_):
-        if current_user.id != id_:
+        if not current_user.permission and current_user.id != id_:
             abort(403)
-        user = current_user
+        user = User.get_by_id(id_)
         args = user_modify_parser.parse_args()
-        if args["password"] and user.check_password(args["old_password"]) is not True:
+        if (
+            not current_user.permission
+            and args["password"]
+            and user.check_password(args["old_password"]) is not True
+        ):
             abort(400, message="Old password Wrong")
+        if not current_user.permission and (args["block"] or args["permission"]):
+            abort(403)
         user.modify(**args)
         return {"message": "Modify user success"}
 

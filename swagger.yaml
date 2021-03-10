@@ -254,6 +254,18 @@ paths:
           name: "password"
           type: "string"
           description: "新密码"
+        - in: "formData"
+          name: "organization"
+          type: "string"
+          description: "组织"
+        - in: "formData"
+          name: "permission"
+          type: "integer"
+          description: "权限"
+        - in: "formData"
+          name: "block"
+          type: "integer"
+          description: "禁用"
       responses:
         200:
           description: "修改成功"
