@@ -21,6 +21,8 @@ class ResourceSession(Resource):
         user = User.get_by_username(args["username"])
         if user is None or user.check_password(args["password"]) is not True:
             abort(400, message="Username or password wrong")
+        if user.block:
+            abort(403, message="User is blocked")
         login_user(user)
         return user, 201
 
