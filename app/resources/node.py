@@ -142,7 +142,7 @@ class ResourceNodeCSV(Resource):
         try:
             df = pd.read_csv(node.join_path(args["filename"]))
             if args["summary"]:
-                data = df.describe()
+                data = df.describe(percentiles=[0.1 * (i + 1) for i in range(10)])
             else:
                 data = df.head(100)
             s_io = StringIO()
