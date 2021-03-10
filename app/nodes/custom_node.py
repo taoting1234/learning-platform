@@ -11,7 +11,7 @@ from app.libs.parser import Parser
 from app.nodes.base_node import BaseNode
 
 default_code = """
-def run(input_files: list) -> list:
+def run(input_files: List[List[pd.DataFrame]]) -> Tuple[pd.DataFrame]:
     x = input_files[0][0]
     y = input_files[0][1]
     print(x.describe())
