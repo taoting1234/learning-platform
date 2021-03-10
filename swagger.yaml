@@ -298,6 +298,14 @@ paths:
           name: "permission"
           type: "integer"
           description: "权限"
+        - in: "query"
+          name: "page"
+          type: "integer"
+          description: "页码"
+        - in: "query"
+          name: "page_size"
+          type: "integer"
+          description: "每页大小"
       responses:
         201:
           description: "搜索结果"
