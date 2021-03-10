@@ -19,7 +19,6 @@ class ResourceSession(Resource):
         user = User.get_by_username(args["username"])
         if (
             not current_app.config["TESTING"]
-            and not user.permission
             and args["captcha"].lower() != session.get("captcha", "").lower()
         ):
             abort(400, message="Captcha wrong")
