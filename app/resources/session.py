@@ -21,6 +21,7 @@ class ResourceSession(Resource):
             not current_app.config["TESTING"]
             and args["captcha"].lower() != session.get("captcha", "").lower()
         ):
+            session["captcha"] = ""
             abort(400, message="Captcha wrong")
         if user is None or user.check_password(args["password"]) is not True:
             abort(400, message="Username or password wrong")

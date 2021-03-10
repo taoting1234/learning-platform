@@ -56,6 +56,7 @@ class ResourceUserList(Resource):
             not current_app.config["TESTING"]
             and args["captcha"].lower() != session.get("captcha", "").lower()
         ):
+            session["captcha"] = ""
             abort(400, message="Captcha wrong")
         user = User.get_by_username(args["username"])
         if user is not None:
