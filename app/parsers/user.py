@@ -9,9 +9,7 @@ user_register_parser.add_argument(
 user_register_parser.add_argument(
     "password", type=str, required=True, help="Password cannot be empty"
 )
-user_register_parser.add_argument(
-    "organization", type=str, required=True, help="Organization cannot be empty"
-)
+user_register_parser.add_argument("organization", type=str)
 user_register_parser.add_argument("captcha", type=str)
 
 user_modify_parser = reqparse.RequestParser()
