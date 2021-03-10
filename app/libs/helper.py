@@ -1,5 +1,7 @@
 import datetime
 import os
+import random
+import string
 
 from app.libs.global_varible import g
 from app.models.node import Node
@@ -94,3 +96,7 @@ def get_files(path):
         elif os.path.isdir(filepath):
             res.append({"name": filename, "type": "dir"})
     return res
+
+
+def get_random_string(length):
+    return "".join(random.sample(string.ascii_letters + string.digits, length))

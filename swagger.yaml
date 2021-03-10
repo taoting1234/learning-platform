@@ -8,6 +8,8 @@ basePath: "/"
 tags:
   - name: "session"
     description: "Session Resource"
+  - name: "captcha"
+    description: "Captcha Resource"
   - name: "user"
     description: "User Resource"
   - name: "project"
@@ -206,6 +208,11 @@ paths:
           type: "string"
           description: "密码"
           required: true
+        - in: "formData"
+          name: "captcha"
+          type: "string"
+          description: "验证码"
+          required: true
       responses:
         201:
           description: "登录成功"
@@ -218,6 +225,14 @@ paths:
       responses:
         204:
           description: "登出成功"
+  /captcha:
+    get:
+      tags:
+        - "captcha"
+      summary: "获取验证码"
+      responses:
+        200:
+          description: "图片验证码"
   /user/{user_id}:
     get:
       tags:
@@ -304,6 +319,16 @@ paths:
           name: "password"
           type: "string"
           description: "密码"
+          required: true
+        - in: "formData"
+          name: "organization"
+          type: "string"
+          description: "机构"
+          required: true
+        - in: "formData"
+          name: "captcha"
+          type: "string"
+          description: "验证码"
           required: true
       responses:
         201:

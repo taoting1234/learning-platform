@@ -1,3 +1,4 @@
+from flask import session
 from flask_login import current_user, login_required
 from flask_restful import Resource, abort, marshal_with
 
@@ -51,6 +52,8 @@ class ResourceUserList(Resource):
     @marshal_with(user_field)
     def post(self):
         args = user_register_parser.parse_args()
+        if args["captcha"].lower() != session.get("captcha", "").lower():
+            abort(400, message="Captcha wrong")
         user = User.get_by_username(args["username"])
         if user is not None:
             abort(400, message="User already exist")

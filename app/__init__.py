@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_restful import Api, abort
 
 from app.models.base import db
+from app.resources.captcha import ResourceCaptcha
 from app.resources.node import ResourceNodeCSV, ResourceNodeDescription
 
 cors = CORS(supports_credentials=True)
@@ -72,6 +73,7 @@ def register_resource(app_):
 
     api = Api(catch_all_404s=True)
     api.add_resource(ResourceSession, "/session")
+    api.add_resource(ResourceCaptcha, "/captcha")
     api.add_resource(ResourceUser, "/user/<int:id_>")
     api.add_resource(ResourceUserList, "/user")
     api.add_resource(ResourceProject, "/project/<int:id_>")
