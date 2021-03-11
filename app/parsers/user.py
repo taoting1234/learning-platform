@@ -11,6 +11,7 @@ user_register_parser.add_argument(
 )
 user_register_parser.add_argument("organization", type=str)
 user_register_parser.add_argument("captcha", type=str)
+user_register_parser.add_argument("code", type=str)
 
 user_modify_parser = reqparse.RequestParser()
 user_modify_parser.add_argument("organization", type=str)

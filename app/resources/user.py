@@ -4,6 +4,7 @@ from flask_restful import Resource, abort, marshal_with
 
 from app.fields.user import user_field, user_search_field
 from app.libs.auth import self_only
+from app.models.invitation_code import InvitationCode
 from app.models.user import User
 from app.parsers.user import (
     user_modify_parser,
@@ -58,6 +59,11 @@ class ResourceUserList(Resource):
         ):
             session["captcha"] = ""
             abort(400, message="Captcha wrong")
+        if (
+            not current_app.config["TESTING"]
+            and InvitationCode.check_and_use_code(args["code"]) is False
+        ):
+            abort(400, message="Invitation code wrong")
         user = User.get_by_username(args["username"])
         if user is not None:
             abort(400, message="User already exist")

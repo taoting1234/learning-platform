@@ -10,6 +10,8 @@ tags:
     description: "Session Resource"
   - name: "captcha"
     description: "Captcha Resource"
+  - name: "invitation code"
+    description: "Invitation Code Resource"
   - name: "user"
     description: "User Resource"
   - name: "project"
@@ -33,6 +35,27 @@ definitions:
       page_size:
         type: "integer"
         description: "每页大小"
+  InvitationCode:
+    type: "object"
+    properties:
+      invitation_code:
+        type: "string"
+        description: "邀请码"
+      user_id:
+        type: "integer"
+        description: "用户id"
+      is_used:
+        type: "boolean"
+        description: "是否使用"
+  InvitationCodeList:
+    type: "object"
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/InvitationCode"
+      meta:
+        $ref: "#/definitions/Meta"
   User:
     type: "object"
     properties:
@@ -233,6 +256,40 @@ paths:
       responses:
         200:
           description: "图片验证码"
+  /invitation_code:
+    get:
+      tags:
+        - "invitation code"
+      summary: "搜索邀请码"
+      parameters:
+        - in: "query"
+          name: "user_id"
+          type: "integer"
+          description: "用户id"
+        - in: "query"
+          name: "code"
+          type: "string"
+          description: "邀请码"
+        - in: "query"
+          name: "is_used"
+          type: "boolean"
+          description: "是否使用"
+      responses:
+        200:
+          description: "搜索结果"
+          schema:
+            $ref: "#/definitions/InvitationCodeList"
+    post:
+      tags:
+        - "invitation code"
+      summary: "生成邀请码"
+      consumes:
+        - "multipart/form-data"
+      responses:
+        201:
+          description: "生成成功"
+          schema:
+            $ref: "#/definitions/InvitationCode"
   /user/{user_id}:
     get:
       tags:
@@ -307,7 +364,7 @@ paths:
           type: "integer"
           description: "每页大小"
       responses:
-        201:
+        200:
           description: "搜索结果"
           schema:
             $ref: "#/definitions/UserList"
@@ -337,6 +394,11 @@ paths:
           name: "captcha"
           type: "string"
           description: "验证码"
+          required: true
+        - in: "formData"
+          name: "code"
+          type: "string"
+          description: "邀请码"
           required: true
       responses:
         201:
