@@ -696,6 +696,25 @@ paths:
       responses:
         204:
           description: "删除成功"
+  /file/download:
+    get:
+      tags:
+        - "file"
+      summary: "下载文件"
+      parameters:
+        - in: "params"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "params"
+          name: "filename"
+          type: "string"
+          description: "文件名"
+          required: true
+      responses:
+        200:
+          description: "文件内容"
   /node/{node_id}:
     get:
       tags:
