@@ -138,3 +138,7 @@ class ResourceFileDirectory(Resource):
             abort(400, message="Path not directory")
         shutil.rmtree(file_dir)
         return "", 204
+
+
+class ResourceFileDownload(Resource):
+    pass

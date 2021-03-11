@@ -4,9 +4,6 @@ from flask_login import LoginManager
 from flask_restful import Api, abort
 
 from app.models.base import db
-from app.resources.captcha import ResourceCaptcha
-from app.resources.invitation_code import ResourceInvitationCode
-from app.resources.node import ResourceNodeCSV, ResourceNodeDescription
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
@@ -57,9 +54,13 @@ def register_plugin(app_):
 
 
 def register_resource(app_):
+    from app.resources.captcha import ResourceCaptcha
     from app.resources.file import ResourceFile, ResourceFileDirectory
+    from app.resources.invitation_code import ResourceInvitationCode
     from app.resources.node import (
         ResourceNode,
+        ResourceNodeCSV,
+        ResourceNodeDescription,
         ResourceNodeEdge,
         ResourceNodeList,
         ResourceNodeRun,
@@ -71,6 +72,11 @@ def register_resource(app_):
     )
     from app.resources.session import ResourceSession
     from app.resources.user import ResourceUser, ResourceUserList
+    from app.resources.user_node import (
+        ResourceUserNode,
+        ResourceUserNodeImport,
+        ResourceUserNodeList,
+    )
 
     api = Api(catch_all_404s=True)
     api.add_resource(ResourceSession, "/session")
@@ -89,5 +95,8 @@ def register_resource(app_):
     api.add_resource(ResourceNodeRun, "/node/<int:id_>/run")
     api.add_resource(ResourceNodeCSV, "/node/<int:id_>/csv")
     api.add_resource(ResourceNodeDescription, "/node/description")
+    api.add_resource(ResourceUserNode, "/user_node/<int:id_>")
+    api.add_resource(ResourceUserNodeList, "/user_node")
+    api.add_resource(ResourceUserNodeImport, "/user_node/import")
     api.init_app(app_)
     return app_
