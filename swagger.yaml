@@ -702,12 +702,12 @@ paths:
         - "file"
       summary: "下载文件"
       parameters:
-        - in: "params"
+        - in: "query"
           name: "project_id"
           type: "integer"
           description: "项目id"
           required: true
-        - in: "params"
+        - in: "query"
           name: "filename"
           type: "string"
           description: "文件名"
