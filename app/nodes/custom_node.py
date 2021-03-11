@@ -57,7 +57,7 @@ class CustomNode(BaseNode, ABC):
         with open(self.join_path("custom.py"), "w") as f:
             f.write(self.code)
         client = docker.from_env()
-        client.containers.run(
+        r = client.containers.run(
             image="taoting/learning-platform-node",
             auto_remove=True,
             volumes={
@@ -79,6 +79,7 @@ class CustomNode(BaseNode, ABC):
                 },
             },
         )
+        print(r.decode())
         with open(self.join_path("res.pickle"), "rb") as f:
             res = pickle.load(f)
         return res
