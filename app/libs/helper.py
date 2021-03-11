@@ -2,6 +2,8 @@ import datetime
 import os
 import random
 import string
+import sys
+import traceback
 
 from app.libs.global_varible import g
 from app.models.node import Node
@@ -34,16 +36,23 @@ def run_nodes(nodes, testing, thread):
     fail_flag = False
     for node in nodes:
         if fail_flag is False:
+            old_stdout = sys.stdout
+            sys.stdout = open(node.join_path("log.txt"), "w")
+            print("node-{}({}) run start".format(node.id, node.node_type))
             try:
                 node.run()
                 node.finish()
                 node.modify(status=Node.Status.FINISH)  # 成功
+                print("node-{}({}) run success".format(node.id, node.node_type))
             except Exception as e:
                 if testing and not thread:
                     raise  # pragma: no cover
-                node.logger.error(e)
+                print(traceback.format_exc())
                 fail_flag = True
                 node.modify(status=Node.Status.FAILED)  # 失败
+                print("node-{}({}) run failed".format(node.id, node.node_type))
+            print("node-{}({}) run finish".format(node.id, node.node_type))
+            sys.stdout = old_stdout
         else:
             node.modify(status=Node.Status.FAILED)  # 失败
 

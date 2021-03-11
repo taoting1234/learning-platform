@@ -1,6 +1,4 @@
-import logging
 import os
-import sys
 from abc import abstractmethod
 from typing import List, Tuple
 
@@ -80,10 +78,7 @@ class BaseNode:
                 self.input_shape.append(
                     [x_train.shape, x_test.shape, y_train.shape, y_test.shape]
                 )
-        old_stdout = sys.stdout
-        sys.stdout = open(self.join_path("log.txt"), "w")
         res = self._run(params)
-        sys.stdout = old_stdout
         if self.output_type == 1:
             assert len(res) == 2
             for i in res:
