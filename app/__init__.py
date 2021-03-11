@@ -55,7 +55,11 @@ def register_plugin(app_):
 
 def register_resource(app_):
     from app.resources.captcha import ResourceCaptcha
-    from app.resources.file import ResourceFile, ResourceFileDirectory
+    from app.resources.file import (
+        ResourceFile,
+        ResourceFileDirectory,
+        ResourceFileDownload,
+    )
     from app.resources.invitation_code import ResourceInvitationCode
     from app.resources.node import (
         ResourceNode,
@@ -89,6 +93,7 @@ def register_resource(app_):
     api.add_resource(ResourceProjectRun, "/project/<int:id_>/run")
     api.add_resource(ResourceFile, "/file")
     api.add_resource(ResourceFileDirectory, "/file/directory")
+    api.add_resource(ResourceFileDownload, "/file/download")
     api.add_resource(ResourceNode, "/node/<int:id_>")
     api.add_resource(ResourceNodeList, "/node")
     api.add_resource(ResourceNodeEdge, "/node/edge")

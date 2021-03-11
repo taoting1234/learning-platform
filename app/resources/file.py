@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from flask import current_app
+from flask import Response, current_app
 from flask_login import login_required
 from flask_restful import Resource, abort, marshal_with
 
@@ -141,4 +141,22 @@ class ResourceFileDirectory(Resource):
 
 
 class ResourceFileDownload(Resource):
-    pass
+    @login_required
+    @self_only(None, file_delete_parser)
+    def get(self):
+        args = file_delete_parser.parse_args()
+        root_dir = os.path.realpath(
+            "{}/{}/user".format(
+                current_app.config["FILE_DIRECTORY"], args["project_id"]
+            )
+        )
+        filepath = os.path.realpath(os.path.join(root_dir, args["filename"]))
+        if os.path.commonpath([root_dir, filepath]) != root_dir:
+            abort(400, message="Path not belong you")
+        if not os.path.exists(filepath):
+            abort(404, message="File not found")
+        if not os.path.isfile(filepath):
+            abort(400, message="Path not file")
+        with open(filepath, "rb") as f:
+            data = f.read()
+        return Response(data, mimetype="application/octet-stream")
