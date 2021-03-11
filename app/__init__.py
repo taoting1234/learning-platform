@@ -88,7 +88,7 @@ def register_resource(app_):
     api = Api(catch_all_404s=True)
     api.add_resource(ResourceSession, "/session")
     api.add_resource(ResourceCaptcha, "/captcha")
-    api.add_resource(ResourceInvitationCode, "/invitation_code/<int:id>")
+    api.add_resource(ResourceInvitationCode, "/invitation_code/<int:id_>")
     api.add_resource(ResourceInvitationCodeList, "/invitation_code")
     api.add_resource(ResourceUser, "/user/<int:id_>")
     api.add_resource(ResourceUserList, "/user")
