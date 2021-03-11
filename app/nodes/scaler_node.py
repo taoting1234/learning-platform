@@ -29,12 +29,12 @@ class ScalerNode(BaseNode):
         Parser(
             name="model",
             type_=str,
-            description="标准化模型，sklearn中的模型类名称，例如StandardScaler",
+            description="标准化模型",
             required=True,
             enum=[
-                (StandardScaler.__name__, ""),
-                (MaxAbsScaler.__name__, ""),
-                (MinMaxScaler.__name__, ""),
+                (StandardScaler.__name__, "标准差归一化"),
+                (MaxAbsScaler.__name__, "最大绝对值归一化"),
+                (MinMaxScaler.__name__, "最大最小值归一化"),
                 (Normalizer.__name__, ""),
                 (RobustScaler.__name__, ""),
             ],
