@@ -1,5 +1,5 @@
 from flask_login import login_required
-from flask_restful import Resource, marshal_with
+from flask_restful import Resource, abort, marshal_with
 
 from app.fields.user_node import user_node_field, user_nodes_field
 from app.libs.auth import self_only
@@ -45,6 +45,8 @@ class ResourceUserNodeList(Resource):
     def post(self):
         args = user_node_create_parser.parse_args()
         node = Node.get_by_id(args["node_id"])
+        if node is None:
+            abort(400, message="Node not found")
         extra = node.extra
         extra.__delitem__("x")
         extra.__delitem__("y")
