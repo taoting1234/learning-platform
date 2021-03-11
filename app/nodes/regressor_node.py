@@ -25,7 +25,7 @@ from app.nodes.base_node import BaseNode
 class RegressorNode(BaseNode):
     name = "机器学习回归节点"
     description = "此节点为机器学习回归节点，支持常见的回归算法"
-    group = "train"
+    group = "模型节点"
     icon = "el-icon-s-marketing"
     params = [
         Parser(

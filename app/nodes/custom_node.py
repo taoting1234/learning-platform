@@ -23,7 +23,7 @@ def run(input_files: List[List[pd.DataFrame]]) -> Tuple[pd.DataFrame]:
 class CustomNode(BaseNode, ABC):
     name = "自定义节点"
     description = "此节点为自定义节点，用户可以自行编写代码"
-    group = "custom"
+    group = "自定义节点"
     icon = "el-icon-question"
     params = [
         Parser(
