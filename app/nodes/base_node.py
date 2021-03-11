@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from abc import abstractmethod
 from typing import List, Tuple
 
@@ -28,18 +29,6 @@ class BaseNode:
         # shape
         self.input_shape = []
         self.output_shape = []
-        # logger
-        self.logger = logging.Logger("node-{}".format(id_))
-        self.logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter(
-            "%(asctime)s %(filename)s: %(levelname)s %(message)s"
-        )
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-        file_handler = logging.FileHandler(self.join_path("log.txt"), mode="w")
-        file_handler.setFormatter(formatter)
-        self.logger.addHandler(stream_handler)
-        self.logger.addHandler(file_handler)
         # input size
         if self.__class__.__name__ != "CustomNode" and len(in_edges) != self.input_size:
             raise Exception(
@@ -91,7 +80,10 @@ class BaseNode:
                 self.input_shape.append(
                     [x_train.shape, x_test.shape, y_train.shape, y_test.shape]
                 )
+        old_stdout = sys.stdout
+        sys.stdout = open(self.join_path("log.txt"), "w")
         res = self._run(params)
+        sys.stdout = old_stdout
         if self.output_type == 1:
             assert len(res) == 2
             for i in res:

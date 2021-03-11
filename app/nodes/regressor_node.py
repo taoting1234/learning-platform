@@ -76,4 +76,4 @@ class RegressorNode(BaseNode):
         model = globals()[self.model](**self.model_kwargs)
         model.fit(x_train, y_train)
         y_pred = model.predict(x_test)
-        get_metric(self.logger, 1, y_test, y_pred)
+        get_metric(1, y_test, y_pred)

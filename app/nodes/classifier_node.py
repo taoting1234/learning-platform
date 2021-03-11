@@ -91,6 +91,6 @@ class ClassifierNode(BaseNode):
         y_pred = model.predict(x_test)
         # 判断二分类还是多分类
         if len(np.unique(y_test, return_counts=True)[0]) == 2:
-            get_metric(self.logger, 2, y_test, y_pred)
+            get_metric(2, y_test, y_pred)
         else:
-            get_metric(self.logger, 3, y_test, y_pred)
+            get_metric(3, y_test, y_pred)
