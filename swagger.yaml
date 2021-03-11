@@ -289,6 +289,20 @@ paths:
       responses:
         200:
           description: "图片验证码"
+  /invitation_code/{code_id}:
+    delete:
+      tags:
+        - "invitation code"
+      summary: "删除邀请码"
+      parameters:
+        - in: "path"
+          name: "code_id"
+          type: "integer"
+          description: "邀请码id"
+          required: true
+      responses:
+        204:
+          description: "删除成功"
   /invitation_code:
     get:
       tags:
