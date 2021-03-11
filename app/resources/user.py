@@ -59,13 +59,13 @@ class ResourceUserList(Resource):
         ):
             session["captcha"] = ""
             abort(400, message="Captcha wrong")
+        user = User.get_by_username(args["username"])
+        if user is not None:
+            abort(400, message="User already exist")
         if (
             not current_app.config["TESTING"]
             and InvitationCode.check_and_use_code(args["code"]) is False
         ):
             abort(400, message="Invitation code wrong")
-        user = User.get_by_username(args["username"])
-        if user is not None:
-            abort(400, message="User already exist")
         user = User.create(**args)
         return user, 201
