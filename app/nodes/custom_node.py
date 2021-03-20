@@ -6,7 +6,6 @@ from typing import List, Tuple
 import docker
 import pandas as pd
 from flask import current_app
-from requests import ReadTimeout
 
 from app.libs.parser import Parser
 from app.nodes.base_node import BaseNode
@@ -81,8 +80,9 @@ class CustomNode(BaseNode, ABC):
             },
         )
         try:
-            container.wait(timeout=30)
-        except ReadTimeout:
+            container.wait(timeout=10)
+        except Exception:
+            print("运行超时，kill")
             container.kill(signal=9)
         print(container.logs().decode())
         container.remove()
