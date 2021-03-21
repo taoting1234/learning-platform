@@ -16,14 +16,14 @@ class ResourceSession(Resource):
     @marshal_with(user_field)
     def post(self):
         args = session_parser.parse_args()
-        user = User.get_by_username(args["username"])
         if current_app.config["TESTING"] is False:
             if (
-                args["captcha"] is None
+                not args["captcha"]
                 or args["captcha"].lower() != session.get("captcha", "").lower()
             ):
                 session["captcha"] = ""
                 abort(400, message="Captcha wrong")
+        user = User.get_by_username(args["username"])
         if user is None or user.check_password(args["password"]) is not True:
             abort(400, message="Username or password wrong")
         if user.block:

@@ -1,3 +1,6 @@
+from flask import current_app, session
+
+from app.models.invitation_code import InvitationCode
 from app.models.user import User
 
 from .base import client
@@ -22,15 +25,69 @@ def test_get(client):
 
 def test_create(client):
     User.create(username="user1", password="123")
-    # 创建用户（失败）
+    client.post("/session", data={"username": "user1", "password": "123"})
+    code = InvitationCode.create().code
+    current_app.config["TESTING"] = False
+    # 验证码错误
+    assert client.get("/captcha").status_code == 200
     assert (
-        client.post("/user", data={"username": "user1", "password": "123"}).status_code
-        == 400
+        "Captcha wrong"
+        in client.post(
+            "/user",
+            data={
+                "username": "user1",
+                "password": "123",
+                "organization": "123",
+                "captcha": "",
+                "code": "",
+            },
+        ).json["message"]
     )
-    # 创建用户（成功）
-    res = client.post("/user", data={"username": "user", "password": "user"})
+    # 用户已存在
+    assert client.get("/captcha").status_code == 200
+    assert (
+        "User already exist"
+        in client.post(
+            "/user",
+            data={
+                "username": "user1",
+                "password": "123",
+                "organization": "123",
+                "captcha": session["captcha"],
+                "code": "",
+            },
+        ).json["message"]
+    )
+    # 邀请码错误
+    assert client.get("/captcha").status_code == 200
+    assert (
+        "User already exist"
+        in client.post(
+            "/user",
+            data={
+                "username": "user1",
+                "password": "123",
+                "organization": "123",
+                "captcha": session["captcha"],
+                "code": "",
+            },
+        ).json["message"]
+    )
+    # 创建用户成功
+    assert client.get("/captcha").status_code == 200
+    res = client.post(
+        "/user",
+        data={
+            "username": "user",
+            "password": "user",
+            "organization": "123",
+            "captcha": session["captcha"],
+            "code": code,
+        },
+    )
     assert res.status_code == 201
     id_ = res.json["id"]
+    current_app.config["TESTING"] = True
     # 登录
     assert (
         client.post(

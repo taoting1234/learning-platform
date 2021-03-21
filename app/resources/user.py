@@ -53,19 +53,17 @@ class ResourceUserList(Resource):
     @marshal_with(user_field)
     def post(self):
         args = user_register_parser.parse_args()
-        if (
-            not current_app.config["TESTING"]
-            and args["captcha"].lower() != session.get("captcha", "").lower()
-        ):
-            session["captcha"] = ""
-            abort(400, message="Captcha wrong")
+        if current_app.config["TESTING"] is False:
+            if (
+                not args["captcha"]
+                or args["captcha"].lower() != session.get("captcha", "").lower()
+            ):
+                session["captcha"] = ""
+                abort(400, message="Captcha wrong")
         user = User.get_by_username(args["username"])
         if user is not None:
             abort(400, message="User already exist")
-        if (
-            not current_app.config["TESTING"]
-            and InvitationCode.check_and_use_code(args["code"]) is False
-        ):
+        if InvitationCode.check_and_use_code(args["code"]) is False:
             abort(400, message="Invitation code wrong")
         user = User.create(**args)
         return user, 201
