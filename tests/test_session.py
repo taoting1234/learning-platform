@@ -1,4 +1,4 @@
-from flask import session
+from flask import current_app, session
 
 from app.models.user import User
 
@@ -6,6 +6,7 @@ from .base import client
 
 
 def test_session(client):
+    current_app.config["TESTING"] = False
     # 创建用户
     User.create(username="123", password="123")
     User.create(username="1234", password="1234", block=True)
@@ -63,3 +64,4 @@ def test_session(client):
     # 登出
     assert client.delete("/session").status_code == 204
     assert client.get("/session").status_code == 401
+    current_app.config["TESTING"] = True
