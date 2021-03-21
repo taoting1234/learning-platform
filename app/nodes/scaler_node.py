@@ -2,13 +2,7 @@ import pickle
 from typing import List, Tuple
 
 import pandas as pd
-from sklearn.preprocessing import (
-    MaxAbsScaler,
-    MinMaxScaler,
-    Normalizer,
-    RobustScaler,
-    StandardScaler,
-)
+from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, Normalizer, StandardScaler
 
 from app.libs.parser import Parser
 from app.nodes.base_node import BaseNode
@@ -32,11 +26,30 @@ class ScalerNode(BaseNode):
             description="标准化模型",
             required=True,
             enum=[
-                (StandardScaler.__name__, "标准差归一化"),
-                (MaxAbsScaler.__name__, "最大绝对值归一化"),
-                (MinMaxScaler.__name__, "最大最小值归一化"),
-                (Normalizer.__name__, ""),
-                (RobustScaler.__name__, ""),
+                (
+                    StandardScaler.__name__,
+                    "标准差标准化",
+                    "https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html",
+                    [],
+                ),
+                (
+                    MaxAbsScaler.__name__,
+                    "最大绝对值标准化",
+                    "https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MaxAbsScaler.html",
+                    [],
+                ),
+                (
+                    MinMaxScaler.__name__,
+                    "最大最小值标准化",
+                    "https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html",
+                    [],
+                ),
+                (
+                    Normalizer.__name__,
+                    "归一化",
+                    "https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.Normalizer.html",
+                    [("norm", "", "l2")],
+                ),
             ],
         ),
         Parser(
