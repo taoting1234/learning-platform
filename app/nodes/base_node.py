@@ -59,7 +59,7 @@ class BaseNode:
     def _run(
         self, input_files: List[List[pd.DataFrame]]
     ) -> Tuple[pd.DataFrame] or None:  # pragma: no cover
-        pass
+        raise NotImplementedError
 
     def run(self) -> None:
         params = []
