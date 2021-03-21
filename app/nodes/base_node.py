@@ -1,4 +1,3 @@
-import logging
 import os
 from abc import abstractmethod
 from typing import List, Tuple
@@ -10,7 +9,10 @@ from app.models.node import Node
 
 
 class BaseNode:
+    name = ""
     description = ""
+    group = ""
+    icon = ""
     params = []
     input_size = 0  # 来源节点数量，多输入模型才会改
     input_type = 0  # 0无数据 1 未拆分训练集测试集的数据 2 拆分训练集测试集的数据
@@ -25,18 +27,6 @@ class BaseNode:
         # shape
         self.input_shape = []
         self.output_shape = []
-        # logger
-        self.logger = logging.Logger("node-{}".format(id_))
-        self.logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter(
-            "%(asctime)s %(filename)s: %(levelname)s %(message)s"
-        )
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-        file_handler = logging.FileHandler(self.join_path("log.txt"), mode="w")
-        file_handler.setFormatter(formatter)
-        self.logger.addHandler(stream_handler)
-        self.logger.addHandler(file_handler)
         # input size
         if self.__class__.__name__ != "CustomNode" and len(in_edges) != self.input_size:
             raise Exception(
@@ -69,7 +59,7 @@ class BaseNode:
     def _run(
         self, input_files: List[List[pd.DataFrame]]
     ) -> Tuple[pd.DataFrame] or None:  # pragma: no cover
-        pass
+        raise NotImplementedError
 
     def run(self) -> None:
         params = []

@@ -248,6 +248,11 @@ def test_delete(client):
         ).status_code
         == 400
     )
+    # 删除文件失败（路径不是文件）
+    assert (
+        client.delete("/file", data={"filename": "/", "project_id": 1}).status_code
+        == 400
+    )
     # 删除文件成功
     assert (
         client.delete(
@@ -260,5 +265,105 @@ def test_delete(client):
     )
     assert (
         os.path.exists("{}/1/user/1.test".format(current_app.config["FILE_DIRECTORY"]))
+        is False
+    )
+
+
+def test_directory_create(client):
+    User.create(username="123", password="123")
+    Project.create(user_id=1, name="123")
+    # 未登录
+    assert (
+        client.post(
+            "/file/directory", data={"project_id": 1, "dir": "/abc"}
+        ).status_code
+        == 401
+    )
+    # 登录
+    client.post("/session", data={"username": "123", "password": "123"})
+    # 创建失败（路径错误）
+    assert (
+        client.post("/file/directory", data={"project_id": 1, "dir": "/../abc"}).json[
+            "message"
+        ]
+        == "Path not belong you"
+    )
+    # 创建失败（路径已存在）
+    assert (
+        client.post("/file/directory", data={"project_id": 1, "dir": "/"}).json[
+            "message"
+        ]
+        == "Path already exist"
+    )
+    # 创建成功
+    assert (
+        client.post(
+            "/file/directory", data={"project_id": 1, "dir": "/abc"}
+        ).status_code
+        == 201
+    )
+    assert os.path.exists("{}/1/user/abc".format(current_app.config["FILE_DIRECTORY"]))
+
+
+def test_directory_delete(client):
+    User.create(username="123", password="123")
+    Project.create(user_id=1, name="123")
+    # 未登录
+    assert (
+        client.delete(
+            "/file/directory", data={"project_id": 1, "dir": "/abc"}
+        ).status_code
+        == 401
+    )
+    # 登录
+    client.post("/session", data={"username": "123", "password": "123"})
+    # 删除失败（删除根目录）
+    assert (
+        client.delete("/file/directory", data={"project_id": 1, "dir": "/"}).json[
+            "message"
+        ]
+        == "Path is root directory"
+    )
+    # 删除失败（路径错误）
+    assert (
+        client.delete("/file/directory", data={"project_id": 1, "dir": "/../"}).json[
+            "message"
+        ]
+        == "Path not belong you"
+    )
+    # 删除失败（路径不存在）
+    assert (
+        client.delete("/file/directory", data={"project_id": 1, "dir": "/abc"}).json[
+            "message"
+        ]
+        == "Path not found"
+    )
+    # 删除失败（路径非文件夹）
+    file_path = "{}/1.test".format(tempfile.gettempdir())
+    with open(file_path, "wb") as f:
+        f.write(os.urandom(128))
+    with open(file_path, "rb") as f:
+        client.post("/file", data={"file": f, "project_id": 1, "dir": "/"})
+    assert (
+        client.delete("/file/directory", data={"project_id": 1, "dir": "/1.test"}).json[
+            "message"
+        ]
+        == "Path not directory"
+    )
+    # 删除成功
+    assert (
+        client.post(
+            "/file/directory", data={"project_id": 1, "dir": "/abc"}
+        ).status_code
+        == 201
+    )
+    assert (
+        client.delete(
+            "/file/directory", data={"project_id": 1, "dir": "/abc"}
+        ).status_code
+        == 204
+    )
+    assert (
+        os.path.exists("{}/1/user/abc".format(current_app.config["FILE_DIRECTORY"]))
         is False
     )

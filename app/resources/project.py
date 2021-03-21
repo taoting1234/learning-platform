@@ -25,8 +25,6 @@ class ResourceProject(Resource):
     def put(self, id_):
         project = Project.get_by_id(id_)
         args = project_modify_parser.parse_args()
-        if Project.search(user_id=current_user.id, name=args["name"])["meta"]["count"]:
-            abort(400, message="Project already exist")
         project.modify(**args)
         return {"message": "Modify project success"}
 

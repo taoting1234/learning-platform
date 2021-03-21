@@ -50,3 +50,11 @@ file_delete_parser.add_argument(
 file_delete_parser.add_argument(
     "filename", type=file_path, required=True, help="Filename cannot be empty"
 )
+
+file_directory_parser = reqparse.RequestParser()
+file_directory_parser.add_argument(
+    "project_id", type=int, required=True, help="Project id cannot be empty"
+)
+file_directory_parser.add_argument(
+    "dir", type=file_path, required=True, help="Dir cannot be empty"
+)

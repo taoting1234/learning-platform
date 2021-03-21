@@ -8,6 +8,10 @@ basePath: "/"
 tags:
   - name: "session"
     description: "Session Resource"
+  - name: "captcha"
+    description: "Captcha Resource"
+  - name: "invitation code"
+    description: "Invitation Code Resource"
   - name: "user"
     description: "User Resource"
   - name: "project"
@@ -16,6 +20,8 @@ tags:
     description: "File Resource"
   - name: "node"
     description: "Node Resource"
+  - name: "user node"
+    description: "User Node Resource"
 schemes:
   - "https"
 definitions:
@@ -31,6 +37,27 @@ definitions:
       page_size:
         type: "integer"
         description: "每页大小"
+  InvitationCode:
+    type: "object"
+    properties:
+      invitation_code:
+        type: "string"
+        description: "邀请码"
+      user_id:
+        type: "integer"
+        description: "用户id"
+      is_used:
+        type: "boolean"
+        description: "是否使用"
+  InvitationCodeList:
+    type: "object"
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/InvitationCode"
+      meta:
+        $ref: "#/definitions/Meta"
   User:
     type: "object"
     properties:
@@ -178,6 +205,37 @@ definitions:
             default:
               type: "string"
               description: "默认值"
+  UserNode:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "节点id"
+      user_id:
+        type: "integer"
+        description: "用户id"
+      name:
+        type: "string"
+        description: "节点名称"
+      description:
+        type: "string"
+        description: "节点描述"
+      code:
+        type: "string"
+        description: "节点分享码"
+      node_type:
+        type: "string"
+        description: "节点类型"
+      extra:
+        type: "string"
+        description: "额外信息"
+  UserNodeList:
+    type: "object"
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/UserNode"
 paths:
   /session:
     get:
@@ -206,6 +264,11 @@ paths:
           type: "string"
           description: "密码"
           required: true
+        - in: "formData"
+          name: "captcha"
+          type: "string"
+          description: "验证码"
+          required: true
       responses:
         201:
           description: "登录成功"
@@ -218,6 +281,62 @@ paths:
       responses:
         204:
           description: "登出成功"
+  /captcha:
+    get:
+      tags:
+        - "captcha"
+      summary: "获取验证码"
+      responses:
+        200:
+          description: "图片验证码"
+  /invitation_code/{code_id}:
+    delete:
+      tags:
+        - "invitation code"
+      summary: "删除邀请码"
+      parameters:
+        - in: "path"
+          name: "code_id"
+          type: "integer"
+          description: "邀请码id"
+          required: true
+      responses:
+        204:
+          description: "删除成功"
+  /invitation_code:
+    get:
+      tags:
+        - "invitation code"
+      summary: "搜索邀请码"
+      parameters:
+        - in: "query"
+          name: "user_id"
+          type: "integer"
+          description: "用户id"
+        - in: "query"
+          name: "code"
+          type: "string"
+          description: "邀请码"
+        - in: "query"
+          name: "is_used"
+          type: "boolean"
+          description: "是否使用"
+      responses:
+        200:
+          description: "搜索结果"
+          schema:
+            $ref: "#/definitions/InvitationCodeList"
+    post:
+      tags:
+        - "invitation code"
+      summary: "生成邀请码"
+      consumes:
+        - "multipart/form-data"
+      responses:
+        201:
+          description: "生成成功"
+          schema:
+            $ref: "#/definitions/InvitationCode"
   /user/{user_id}:
     get:
       tags:
@@ -254,6 +373,18 @@ paths:
           name: "password"
           type: "string"
           description: "新密码"
+        - in: "formData"
+          name: "organization"
+          type: "string"
+          description: "组织"
+        - in: "formData"
+          name: "permission"
+          type: "integer"
+          description: "权限"
+        - in: "formData"
+          name: "block"
+          type: "integer"
+          description: "禁用"
       responses:
         200:
           description: "修改成功"
@@ -271,8 +402,16 @@ paths:
           name: "permission"
           type: "integer"
           description: "权限"
+        - in: "query"
+          name: "page"
+          type: "integer"
+          description: "页码"
+        - in: "query"
+          name: "page_size"
+          type: "integer"
+          description: "每页大小"
       responses:
-        201:
+        200:
           description: "搜索结果"
           schema:
             $ref: "#/definitions/UserList"
@@ -292,6 +431,21 @@ paths:
           name: "password"
           type: "string"
           description: "密码"
+          required: true
+        - in: "formData"
+          name: "organization"
+          type: "string"
+          description: "机构"
+          required: true
+        - in: "formData"
+          name: "captcha"
+          type: "string"
+          description: "验证码"
+          required: true
+        - in: "formData"
+          name: "code"
+          type: "string"
+          description: "邀请码"
           required: true
       responses:
         201:
@@ -515,6 +669,66 @@ paths:
       responses:
         204:
           description: "删除成功"
+  /file/directory:
+    post:
+      tags:
+        - "file"
+      summary: "创建文件夹"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "formData"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "formData"
+          name: "dir"
+          type: "string"
+          description: "目录"
+          required: true
+      responses:
+        201:
+          description: "创建成功"
+    delete:
+      tags:
+        - "file"
+      summary: "删除文件夹"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "formData"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "formData"
+          name: "dir"
+          type: "string"
+          description: "目录"
+          required: true
+      responses:
+        204:
+          description: "删除成功"
+  /file/download:
+    get:
+      tags:
+        - "file"
+      summary: "下载文件"
+      parameters:
+        - in: "query"
+          name: "project_id"
+          type: "integer"
+          description: "项目id"
+          required: true
+        - in: "query"
+          name: "filename"
+          type: "string"
+          description: "文件名"
+          required: true
+      responses:
+        200:
+          description: "文件内容"
   /node/{node_id}:
     get:
       tags:
@@ -702,3 +916,105 @@ paths:
           description: "节点信息"
           schema:
             $ref: "#/definitions/NodeDescription"
+  /user_node/{node_id}:
+    put:
+      tags:
+        - "user node"
+      summary: "修改指定节点"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "path"
+          name: "node_id"
+          type: "integer"
+          description: "节点id"
+          required: true
+        - in: "formData"
+          name: "name"
+          type: "string"
+          description: "节点名称"
+        - in: "formData"
+          name: "description"
+          type: "string"
+          description: "节点描述"
+        - in: "formData"
+          name: "reset_code"
+          type: "boolean"
+          description: "重置节点分享码"
+      responses:
+        200:
+          description: "节点修改成功"
+    delete:
+      tags:
+        - "user node"
+      summary: "删除指定节点"
+      parameters:
+        - in: "path"
+          name: "node_id"
+          type: "integer"
+          description: "节点id"
+          required: true
+      responses:
+        204:
+          description: "节点删除成功"
+  /user_node:
+    get:
+      tags:
+        - "user node"
+      summary: "获取指定用户下的所有节点"
+      parameters:
+        - in: "query"
+          name: "user_id"
+          type: "integer"
+          description: "用户id"
+          required: true
+      responses:
+        200:
+          description: "节点列表"
+          schema:
+            $ref: "#/definitions/UserNodeList"
+    post:
+      tags:
+        - "user node"
+      summary: "创建节点"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "formData"
+          name: "name"
+          type: "string"
+          description: "节点名称"
+          required: true
+        - in: "formData"
+          name: "description"
+          type: "string"
+          description: "节点描述"
+          required: true
+        - in: "formData"
+          name: "node_id"
+          type: "integer"
+          description: "节点id"
+          required: true
+      responses:
+        201:
+          description: "创建成功"
+          schema:
+            $ref: "#/definitions/UserNode"
+  /user_node/import:
+    post:
+      tags:
+        - "user node"
+      summary: "导入节点"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - in: "formData"
+          name: "code"
+          type: "string"
+          description: "节点分享码"
+          required: true
+      responses:
+        201:
+          description: "创建成功"
+          schema:
+            $ref: "#/definitions/UserNode"

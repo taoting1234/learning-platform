@@ -16,7 +16,7 @@ nodes_field = {"nodes": fields.List(fields.Nested(node_field.copy()))}
 
 node_field.update({"log": fields.String(default="")})
 
-node_csv_field = {"data": fields.Raw}
+node_csv_field = {"data": fields.String}
 
 
 class Type(fields.Raw):
@@ -36,7 +36,13 @@ node_params_field = {
 
 node_description_field = {
     "type": fields.String,
+    "name": fields.String,
     "description": fields.String,
+    "group": fields.String,
+    "icon": fields.String,
+    "input_size": fields.Integer,
+    "input_type": fields.Integer,
+    "output_type": fields.Integer,
     "params": fields.List(fields.Nested(node_params_field)),
 }
 

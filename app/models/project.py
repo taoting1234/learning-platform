@@ -19,20 +19,16 @@ class Project(Base):
     description = Column(String(1000))
     tag = Column(String(100))
 
+    @property
+    def base_dir(self):
+        return "{}/{}".format(current_app.config["FILE_DIRECTORY"], self.id)
+
     @classmethod
     def create(cls, **kwargs):
         base = super().create(**kwargs)
-        os.makedirs(
-            "{}/{}".format(current_app.config["FILE_DIRECTORY"], base.id), exist_ok=True
-        )
-        os.makedirs(
-            "{}/{}/user".format(current_app.config["FILE_DIRECTORY"], base.id),
-            exist_ok=True,
-        )
-        os.makedirs(
-            "{}/{}/node".format(current_app.config["FILE_DIRECTORY"], base.id),
-            exist_ok=True,
-        )
+        os.makedirs(base.base_dir)
+        os.makedirs(base.base_dir + "/user")
+        os.makedirs(base.base_dir + "/node")
         return base
 
     def delete(self):
@@ -41,7 +37,7 @@ class Project(Base):
         nodes = Node.search(project_id=self.id, page_size=-1)["data"]
         for node in nodes:
             node.delete()
-        shutil.rmtree("{}/{}".format(current_app.config["FILE_DIRECTORY"], self.id))
+        shutil.rmtree(self.base_dir)
         super().delete()
 
     def run(self):
@@ -60,12 +56,10 @@ class Project(Base):
         run_node.run()
 
     def export(self):
+        # TODO 导出项目
         # 获取临时目录
         temp_dir = os.path.join(tempfile.gettempdir(), str(random.random()))
         os.makedirs(temp_dir)
         # 导出文件
-        shutil.copytree(
-            "./{}/{}".format(current_app.config["FILE_DIRECTORY"], self.id),
-            os.path.join(temp_dir, "files"),
-        )
+        shutil.copytree(self.base_dir, os.path.join(temp_dir, "files"))
         # 导出node

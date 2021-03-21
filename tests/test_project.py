@@ -77,11 +77,6 @@ def test_modify(client):
         client.put("/project/3", data={"name": "project3", "tag": "123"}).status_code
         == 403
     )
-    # 修改失败（项目重名）
-    assert (
-        client.put("/project/1", data={"name": "project2", "tag": "123"}).status_code
-        == 400
-    )
     # 修改成功
     assert (
         client.put("/project/1", data={"name": "project3", "tag": "123"}).status_code

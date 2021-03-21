@@ -1,5 +1,9 @@
 import datetime
 import os
+import random
+import string
+import sys
+import traceback
 
 from app.libs.global_varible import g
 from app.models.node import Node
@@ -31,19 +35,27 @@ def run_nodes(nodes, testing, thread):
         app.app_context().push()
     fail_flag = False
     for node in nodes:
+        old_stdout = sys.stdout
+        sys.stdout = open(node.join_path("log.txt"), "w")
+        print("node-{}({}) run start".format(node.id, node.node_type))
         if fail_flag is False:
             try:
                 node.run()
                 node.finish()
                 node.modify(status=Node.Status.FINISH)  # 成功
+                print("node-{}({}) run success".format(node.id, node.node_type))
             except Exception as e:
                 if testing and not thread:
                     raise  # pragma: no cover
-                node.logger.error(e)
+                print(traceback.format_exc())
                 fail_flag = True
                 node.modify(status=Node.Status.FAILED)  # 失败
+                print("node-{}({}) run failed: 节点运行出错".format(node.id, node.node_type))
         else:
+            print("node-{}({}) run failed: 前序节点运行出错".format(node.id, node.node_type))
             node.modify(status=Node.Status.FAILED)  # 失败
+        print("node-{}({}) run finish".format(node.id, node.node_type))
+        sys.stdout = old_stdout
 
 
 def change_columns(raw):
@@ -94,3 +106,7 @@ def get_files(path):
         elif os.path.isdir(filepath):
             res.append({"name": filename, "type": "dir"})
     return res
+
+
+def get_random_string(length):
+    return "".join(random.sample(string.ascii_letters + string.digits, length))
