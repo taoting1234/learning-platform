@@ -7,4 +7,6 @@ session_parser.add_argument(
 session_parser.add_argument(
     "password", type=str, required=True, help="Password cannot be empty"
 )
-session_parser.add_argument("captcha", type=str)
+session_parser.add_argument(
+    "captcha", type=str, required=True, help="Captcha cannot be empty"
+)
