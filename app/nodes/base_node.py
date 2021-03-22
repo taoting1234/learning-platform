@@ -18,7 +18,7 @@ class BaseNode:
     input_size = 0  # 来源节点数量，多输入模型才会改
     input_type = 0  # 0无数据 1 未拆分训练集测试集的数据 2 拆分训练集测试集的数据
     output_type = 0
-    checked_params = dict()  # 参数列表
+    checked_params = {}  # 参数列表
 
     def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
         self.id = id_
