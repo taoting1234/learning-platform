@@ -106,9 +106,9 @@ class BaseNode:
         print(container.logs().decode())
         container.remove()
         # 解析输出
-        with open(self.join_path("res.pickle"), "rb") as f:
-            res = pickle.load(f)
         if self.output_type == 1:
+            with open(self.join_path("res.pickle"), "rb") as f:
+                res = pickle.load(f)
             assert len(res) == 2
             for i in res:
                 assert isinstance(i, pd.DataFrame)
@@ -116,6 +116,8 @@ class BaseNode:
             res[1].to_csv(self.join_path("y.csv"), index=False)
             self.output_shape = [res[0].shape, res[1].shape]
         elif self.output_type == 2:
+            with open(self.join_path("res.pickle"), "rb") as f:
+                res = pickle.load(f)
             assert len(res) == 4
             for i in res:
                 assert isinstance(i, pd.DataFrame)
