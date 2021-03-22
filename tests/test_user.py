@@ -61,12 +61,12 @@ def test_create(client):
     # 邀请码错误
     assert client.get("/captcha").status_code == 200
     assert (
-        "User already exist"
+        "Invitation code wrong"
         in client.post(
             "/user",
             data={
-                "username": "user1",
-                "password": "123",
+                "username": "user",
+                "password": "user",
                 "organization": "123",
                 "captcha": session["captcha"],
                 "code": "",
