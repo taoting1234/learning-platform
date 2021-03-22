@@ -57,7 +57,7 @@ def run_nodes(nodes, testing, thread):
         print("node-{}({}) run finish".format(node.id, node.node_type))
         sys.stdout.close()
         sys.stdout = old_stdout
-        with open(node.join_path("log.txt"), "w") as f:
+        with open(node.join_path("log.txt"), "r") as f:
             print(f.read())
 
 
