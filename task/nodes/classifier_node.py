@@ -4,6 +4,13 @@ from .metric import get_metric
 
 
 def run(input_files, kwargs):
+    from lightgbm import LGBMClassifier
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.neighbors import KNeighborsClassifier
+    from sklearn.svm import SVC
+    from xgboost import XGBClassifier
+
     x_train = input_files[0][0].to_numpy()
     x_test = input_files[0][1].to_numpy()
     y_train = input_files[0][2].to_numpy()
