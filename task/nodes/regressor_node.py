@@ -5,7 +5,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR
 from xgboost import XGBRegressor
 
-from ..metric import get_metric
+from .metric import get_metric
 
 
 def run(input_files, kwargs):

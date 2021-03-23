@@ -1,12 +1,6 @@
 import numpy as np
-from lightgbm import LGBMClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
-from xgboost import XGBClassifier
 
-from ..metric import get_metric
+from .metric import get_metric
 
 
 def run(input_files, kwargs):
