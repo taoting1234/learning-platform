@@ -1,4 +1,7 @@
 import numpy as np
+from lightgbm import LGBMClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
@@ -12,6 +15,9 @@ from sklearn.metrics import (
     recall_score,
     roc_auc_score,
 )
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from xgboost import XGBClassifier
 
 
 def get_metric(type_, y_test, y_pred):
@@ -37,13 +43,6 @@ def get_metric(type_, y_test, y_pred):
 
 
 def run(input_files, kwargs):
-    from lightgbm import LGBMClassifier
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.neighbors import KNeighborsClassifier
-    from sklearn.svm import SVC
-    from xgboost import XGBClassifier
-
     x_train = input_files[0][0].to_numpy()
     x_test = input_files[0][1].to_numpy()
     y_train = input_files[0][2].to_numpy()
