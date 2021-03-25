@@ -1,8 +1,5 @@
 import os
-from abc import ABC
-from typing import List, Tuple
 
-import pandas as pd
 from flask import current_app
 
 from app.libs.helper import change_columns
@@ -10,7 +7,7 @@ from app.libs.parser import Parser
 from app.nodes.base_node import BaseNode
 
 
-class InputNode(BaseNode, ABC):
+class InputNode(BaseNode):
     group = "输入节点"
     icon = "el-icon-upload"
     params = [
@@ -28,10 +25,12 @@ class InputNode(BaseNode, ABC):
 
     def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
         super().__init__(id_, node_type, project_id, in_edges, out_edges, extra)
+        self.checked_params["header"] = 0 if self.has_header else None
         self.header = 0 if self.has_header else None
 
 
 class NotSplitInputNode(InputNode):
+    target = "nodes/not_split_input_node.py"
     name = "CSV输入节点1"
     description = "此节点为未拆分x,y的csv输入节点"
     params = [
@@ -47,6 +46,7 @@ class NotSplitInputNode(InputNode):
 
     def __init__(self, id_, node_type, project_id, in_edges, out_edges, extra):
         super().__init__(id_, node_type, project_id, in_edges, out_edges, extra)
+        self.checked_params["label_columns"] = change_columns(self.label_columns)
         self.label_columns = change_columns(self.label_columns)
         self.input_file = os.path.realpath(
             os.path.join(self.user_root_dir, self.input_file)
@@ -57,18 +57,9 @@ class NotSplitInputNode(InputNode):
         ), "file not found！"
         assert os.path.exists(self.input_file), "file not found！"
 
-    def _run(
-        self, input_files: List[List[pd.DataFrame]]
-    ) -> Tuple[pd.DataFrame] or None:
-        x = pd.read_csv(self.input_file, header=self.header)
-        y = x.iloc[:, self.label_columns]
-        x.drop(y.columns, axis=1, inplace=True)
-        # TODO UT需要，写完填充节点后删除
-        x = x.fillna(value=0)
-        return x, y
-
 
 class SplitInputNode(InputNode):
+    target = "nodes/split_input_node.py"
     name = "CSV输入节点2"
     description = "此节点为已拆分x,y的csv输入节点"
     params = [
@@ -95,12 +86,3 @@ class SplitInputNode(InputNode):
             == self.user_root_dir
         ), "y_file not found！"
         assert os.path.exists(self.y_input_file), "y_file not found！"
-
-    def _run(
-        self, input_files: List[List[pd.DataFrame]]
-    ) -> Tuple[pd.DataFrame] or None:
-        x = pd.read_csv(self.x_input_file, header=self.header)
-        y = pd.read_csv(self.y_input_file, header=self.header)
-        # TODO UT需要，写完填充节点后删除
-        x = x.fillna(value=0)
-        return x, y

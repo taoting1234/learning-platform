@@ -1,7 +1,3 @@
-from typing import List, Tuple
-
-import numpy as np
-import pandas as pd
 from lightgbm import LGBMClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -9,12 +5,12 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
 
-from app.libs.metric import get_metric
 from app.libs.parser import Parser
 from app.nodes.base_node import BaseNode
 
 
 class ClassifierNode(BaseNode):
+    target = "nodes/classifier_node.py"
     name = "机器学习分类节点"
     description = "此节点为机器学习分类节点，支持常见的分类算法"
     group = "模型节点"
@@ -88,21 +84,3 @@ class ClassifierNode(BaseNode):
     input_size = 1
     input_type = 2
     output_type = 0
-
-    def _run(
-        self, input_files: List[List[pd.DataFrame]]
-    ) -> Tuple[pd.DataFrame] or None:
-        x_train = input_files[0][0].to_numpy()
-        x_test = input_files[0][1].to_numpy()
-        y_train = input_files[0][2].to_numpy()
-        y_test = input_files[0][3].to_numpy()
-        y_train = y_train.reshape((-1,))
-        y_test = y_test.reshape((-1,))
-        model = globals()[self.model](**self.model_kwargs)
-        model.fit(x_train, y_train)
-        y_pred = model.predict(x_test)
-        # 判断二分类还是多分类
-        if len(np.unique(y_test, return_counts=True)[0]) == 2:
-            get_metric(2, y_test, y_pred)
-        else:
-            get_metric(3, y_test, y_pred)

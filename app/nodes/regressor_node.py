@@ -1,6 +1,3 @@
-from typing import List, Tuple
-
-import pandas as pd
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
@@ -8,12 +5,12 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR
 from xgboost import XGBRegressor
 
-from app.libs.metric import get_metric
 from app.libs.parser import Parser
 from app.nodes.base_node import BaseNode
 
 
 class RegressorNode(BaseNode):
+    target = "nodes/regressor_node.py"
     name = "机器学习回归节点"
     description = "此节点为机器学习回归节点，支持常见的回归算法"
     group = "模型节点"
@@ -82,17 +79,3 @@ class RegressorNode(BaseNode):
     input_size = 1
     input_type = 2
     output_type = 0
-
-    def _run(
-        self, input_files: List[List[pd.DataFrame]]
-    ) -> Tuple[pd.DataFrame] or None:
-        x_train = input_files[0][0].to_numpy()
-        x_test = input_files[0][1].to_numpy()
-        y_train = input_files[0][2].to_numpy()
-        y_test = input_files[0][3].to_numpy()
-        y_train = y_train.reshape((-1,))
-        y_test = y_test.reshape((-1,))
-        model = globals()[self.model](**self.model_kwargs)
-        model.fit(x_train, y_train)
-        y_pred = model.predict(x_test)
-        get_metric(1, y_test, y_pred)

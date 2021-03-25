@@ -55,6 +55,7 @@ def run_nodes(nodes, testing, thread):
             print("node-{}({}) run failed: 前序节点运行出错".format(node.id, node.node_type))
             node.modify(status=Node.Status.FAILED)  # 失败
         print("node-{}({}) run finish".format(node.id, node.node_type))
+        sys.stdout.close()
         sys.stdout = old_stdout
 
 
