@@ -23,7 +23,7 @@ def test_classifier_node_1(client):  # 二分类
     node1 = Node.create(
         project_id=project.id,
         node_type="not_split_input_node",
-        extra={"has_header": True, "input_file": "telco.csv", "label_columns": "-1"},
+        extra={"has_header": True, "input_file": "/telco.csv", "label_columns": "-1"},
     )
     node2 = Node.create(
         project_id=project.id,
@@ -77,8 +77,8 @@ def test_classifier_node_2(client):  # 多分类
         node_type="split_input_node",
         extra={
             "has_header": False,
-            "x_input_file": "cancer_x.csv",
-            "y_input_file": "cancer_y.csv",
+            "x_input_file": "/cancer_x.csv",
+            "y_input_file": "/cancer_y.csv",
         },
     )
     node2 = Node.create(

@@ -2,47 +2,14 @@ import numpy as np
 from lightgbm import LGBMClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    accuracy_score,
-    average_precision_score,
-    f1_score,
-    log_loss,
-    mean_absolute_error,
-    mean_squared_error,
-    median_absolute_error,
-    precision_score,
-    r2_score,
-    recall_score,
-    roc_auc_score,
-)
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
 
-
-def get_metric(type_, y_test, y_pred):
-    metric_list = [
-        [mean_absolute_error, mean_squared_error, median_absolute_error, r2_score],
-        [
-            accuracy_score,
-            average_precision_score,
-            f1_score,
-            log_loss,
-            precision_score,
-            recall_score,
-            roc_auc_score,
-        ],
-        [accuracy_score],
-    ]
-    # 1 回归 2 二分类 3 多分类
-    for metric in metric_list[type_ - 1]:
-        try:
-            print("{}: {}".format(metric.__name__, metric(y_test, y_pred)))
-        except ValueError:  # pragma: no cover
-            print("{}: calculate error".format(metric.__name__))
+from ..helper import get_metric
 
 
-def run(input_files, kwargs):
+def run(input_files, **kwargs):
     x_train = input_files[0][0].to_numpy()
     x_test = input_files[0][1].to_numpy()
     y_train = input_files[0][2].to_numpy()

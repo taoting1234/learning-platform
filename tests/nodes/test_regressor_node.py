@@ -25,7 +25,11 @@ def test_regressor_node(client):
     node1 = Node.create(
         project_id=project.id,
         node_type="split_input_node",
-        extra={"has_header": False, "x_input_file": "x1.csv", "y_input_file": "y1.csv"},
+        extra={
+            "has_header": False,
+            "x_input_file": "/x1.csv",
+            "y_input_file": "/y1.csv",
+        },
     )
     node2 = Node.create(
         project_id=project.id,

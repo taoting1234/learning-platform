@@ -5,7 +5,7 @@ from app.nodes.base_node import BaseNode
 
 
 class ScalerNode(BaseNode):
-    target = "nodes/scaler_node.py"
+    target = "nodes.scaler_node"
     name = "标准化节点"
     description = "此节点是标准化节点，支持常见的标准化算法"
     group = "数据预处理节点"

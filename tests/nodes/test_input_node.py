@@ -32,8 +32,8 @@ def test_split_input_node(client):
                 "extra": json.dumps(
                     {
                         "has_header": False,
-                        "x_input_file": "x1.csv",
-                        "y_input_file": "y1.csv",
+                        "x_input_file": "/x1.csv",
+                        "y_input_file": "/y1.csv",
                     }
                 )
             },
@@ -79,7 +79,7 @@ def test_not_split_input_node(client):
                 "extra": json.dumps(
                     {
                         "has_header": True,
-                        "input_file": "telco.csv",
+                        "input_file": "/telco.csv",
                         "label_columns": "-1",
                     }
                 )

@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def run(input_files, kwargs):
+def run(input_files, **kwargs):
     x = pd.read_csv(
         "/app/files/user/{}".format(kwargs["input_file"]), header=kwargs["header"]
     )
