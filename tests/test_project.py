@@ -269,8 +269,8 @@ def test_run(client):
                 "extra": json.dumps(
                     {
                         "has_header": False,
-                        "x_input_file": "1.test",
-                        "y_input_file": "1.test",
+                        "x_input_file": "/1.test",
+                        "y_input_file": "/1.test",
                     }
                 )
             },
@@ -324,8 +324,8 @@ def test_run(client):
                 "extra": json.dumps(
                     {
                         "has_header": False,
-                        "x_input_file": "1.test",
-                        "y_input_file": "1.test",
+                        "x_input_file": "/.test",
+                        "y_input_file": "/1.test",
                     }
                 )
             },
@@ -344,8 +344,8 @@ def test_run(client):
                 "extra": json.dumps(
                     {
                         "has_header": False,
-                        "x_input_file": "1.test",
-                        "y_input_file": "1.test",
+                        "x_input_file": "/1.test",
+                        "y_input_file": "/1.test",
                     }
                 )
             },
@@ -404,8 +404,8 @@ def test_run(client):
                 "extra": json.dumps(
                     {
                         "has_header": False,
-                        "x_input_file": "x1.csv",
-                        "y_input_file": "y1.csv",
+                        "x_input_file": "/x1.csv",
+                        "y_input_file": "/y1.csv",
                     }
                 )
             },

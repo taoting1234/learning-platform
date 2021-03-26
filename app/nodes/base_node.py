@@ -40,17 +40,22 @@ class BaseNode:
         for param in self.params:
             param.check(extra.get(param.name))
             self.checked_params[param.name] = param.value
-            setattr(self, param.name, param.value)
 
-    def dictionary_path(self, id_=None):
+    def node_dir(self, id_=None):
         return "{}/{}/node/{}".format(
             current_app.config["FILE_DIRECTORY"],
             self.project_id,
             self.id if id_ is None else id_,
         )
 
+    @property
+    def user_dir(self):
+        return os.path.realpath(
+            "{}/{}/user".format(current_app.config["FILE_DIRECTORY"], self.project_id)
+        )
+
     def join_path(self, filename, id_=None):
-        return os.path.join(self.dictionary_path(id_), filename)
+        return os.path.join(self.node_dir(id_), filename)
 
     def finish(self):
         self.modify(input_shape=self.input_shape, output_shape=self.output_shape)
@@ -89,15 +94,16 @@ class BaseNode:
                 self.id,
             )
         )
-        user_file_path = os.path.realpath(
-            "./{}/{}/user".format(current_app.config["FILE_DIRECTORY"], self.project_id)
-        )
-        code_path = os.path.realpath("./task")
+        user_file_path = self.user_dir
+        code_path = os.path.realpath("task")
         volumes = {
             current_node_path: {"bind": "/app/files/node", "mode": "rw"},
             user_file_path: {"bind": "/app/files/user", "mode": "rw"},
             code_path: {"bind": "/app/code", "mode": "ro"},
         }
+        if self.__class__.__name__ == "CustomNode":
+            user_code_dir = self.checked_params["directory"] + "/"  # 防止被覆盖
+            volumes[user_code_dir] = {"bind": "/app/user_code", "mode": "ro"}
         client = docker.from_env()
         container = client.containers.run(
             detach=True, image="taoting/learning-platform-node", volumes=volumes

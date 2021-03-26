@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, Normalizer, StandardScaler
 
 
-def run(input_files, kwargs):
+def run(input_files, **kwargs):
     x_train = input_files[0][0]
     x_test = input_files[0][1]
     y_train = input_files[0][2]

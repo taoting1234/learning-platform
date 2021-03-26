@@ -308,7 +308,7 @@ def test_status(client):
     node1 = Node.create(
         project_id=project.id,
         node_type="not_split_input_node",
-        extra={"has_header": True, "input_file": "telco.csv", "label_columns": "100"},
+        extra={"has_header": True, "input_file": "/telco.csv", "label_columns": "100"},
     )
     node2 = Node.create(
         project_id=project.id,

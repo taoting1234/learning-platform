@@ -35,8 +35,9 @@ def run_nodes(nodes, testing, thread):
         app.app_context().push()
     fail_flag = False
     for node in nodes:
-        old_stdout = sys.stdout
-        sys.stdout = open(node.join_path("log.txt"), "w")
+        if not testing:
+            old_stdout = sys.stdout
+            sys.stdout = open(node.join_path("log.txt"), "w")
         print("node-{}({}) run start".format(node.id, node.node_type))
         if fail_flag is False:
             try:
@@ -44,7 +45,7 @@ def run_nodes(nodes, testing, thread):
                 node.finish()
                 node.modify(status=Node.Status.FINISH)  # 成功
                 print("node-{}({}) run success".format(node.id, node.node_type))
-            except Exception as e:
+            except Exception:
                 if testing and not thread:
                     raise  # pragma: no cover
                 print(traceback.format_exc())
@@ -55,8 +56,9 @@ def run_nodes(nodes, testing, thread):
             print("node-{}({}) run failed: 前序节点运行出错".format(node.id, node.node_type))
             node.modify(status=Node.Status.FAILED)  # 失败
         print("node-{}({}) run finish".format(node.id, node.node_type))
-        sys.stdout.close()
-        sys.stdout = old_stdout
+        if not testing:
+            sys.stdout.close()
+            sys.stdout = old_stdout
 
 
 def change_columns(raw):

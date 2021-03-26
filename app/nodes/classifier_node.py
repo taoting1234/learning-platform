@@ -10,7 +10,7 @@ from app.nodes.base_node import BaseNode
 
 
 class ClassifierNode(BaseNode):
-    target = "nodes/classifier_node.py"
+    target = "nodes.classifier_node"
     name = "机器学习分类节点"
     description = "此节点为机器学习分类节点，支持常见的分类算法"
     group = "模型节点"

@@ -1,4 +1,5 @@
 import random
+import tempfile
 
 import pkg_resources
 
@@ -11,7 +12,7 @@ from ..base import client
 code_1 = """
 from sklearn.model_selection import train_test_split
 
-def run(input_files, kwargs):
+def run(input_files, **kwargs):
     x_train, x_test, y_train, y_test = train_test_split(
         input_files[0][0],
         input_files[0][1],
@@ -23,7 +24,7 @@ def run(input_files, kwargs):
 code_2 = """
 import pandas as pd
 
-def run(input_files, kwargs):
+def run(input_files, **kwargs):
     x = pd.read_csv('/app/files/user/telco.csv')
     y = x.iloc[:, [-1]]
     x.drop(y.columns, axis=1, inplace=True)
@@ -40,11 +41,16 @@ def test_custom_node_1(client):
     # 上传文件
     with open(pkg_resources.resource_filename("tests.files", "telco.csv"), "rb") as f:
         client.post("/file", data={"file": f, "project_id": project.id, "dir": "/"})
+    file_path = "{}/main.py".format(tempfile.gettempdir())
+    with open(file_path, "w") as f:
+        f.write(code_1)
+    with open(file_path, "rb") as f:
+        client.post("/file", data={"file": f, "project_id": project.id, "dir": "/"})
     # 创建节点
     node1 = Node.create(
         project_id=project.id,
         node_type="not_split_input_node",
-        extra={"has_header": True, "input_file": "telco.csv", "label_columns": "-1"},
+        extra={"has_header": True, "input_file": "/telco.csv", "label_columns": "-1"},
     )
     node2 = Node.create(
         project_id=project.id,
@@ -52,7 +58,8 @@ def test_custom_node_1(client):
         extra={
             "input_type": 1,
             "output_type": 2,
-            "code": code_1,
+            "directory": "/",
+            "target_file": "main",
         },
     )
     # 创建边
@@ -87,6 +94,11 @@ def test_custom_node_2(client):
     # 上传文件
     with open(pkg_resources.resource_filename("tests.files", "telco.csv"), "rb") as f:
         client.post("/file", data={"file": f, "project_id": project.id, "dir": "/"})
+    file_path = "{}/main.py".format(tempfile.gettempdir())
+    with open(file_path, "w") as f:
+        f.write(code_2)
+    with open(file_path, "rb") as f:
+        client.post("/file", data={"file": f, "project_id": project.id, "dir": "/"})
     # 创建节点
     node1 = Node.create(
         project_id=project.id,
@@ -94,7 +106,8 @@ def test_custom_node_2(client):
         extra={
             "input_type": 0,
             "output_type": 1,
-            "code": code_2,
+            "directory": "/",
+            "target_file": "main",
         },
     )
     # 运行

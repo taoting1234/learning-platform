@@ -37,8 +37,8 @@ def test_data_split_node(client):
                 "extra": json.dumps(
                     {
                         "has_header": False,
-                        "x_input_file": "x1.csv",
-                        "y_input_file": "y1.csv",
+                        "x_input_file": "/x1.csv",
+                        "y_input_file": "/y1.csv",
                     }
                 )
             },
