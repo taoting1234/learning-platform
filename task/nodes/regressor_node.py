@@ -1,11 +1,11 @@
+import importlib
+
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR
 from xgboost import XGBRegressor
-
-from ..helper import get_metric
 
 
 def run(input_files, **kwargs):
@@ -18,4 +18,5 @@ def run(input_files, **kwargs):
     model = globals()[kwargs["model"]](kwargs["model_kwargs"])
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
-    get_metric(1, y_test, y_pred)
+    r = importlib.import_module("helper")
+    r.get_metric(1, y_test, y_pred)

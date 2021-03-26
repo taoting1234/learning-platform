@@ -1,3 +1,5 @@
+import importlib
+
 import numpy as np
 from lightgbm import LGBMClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -5,8 +7,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
-
-from ..helper import get_metric
 
 
 def run(input_files, **kwargs):
@@ -19,8 +19,9 @@ def run(input_files, **kwargs):
     model = globals()[kwargs["model"]](**kwargs["model_kwargs"])
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
+    r = importlib.import_module("helper")
     # 判断二分类还是多分类
     if len(np.unique(y_test, return_counts=True)[0]) == 2:
-        get_metric(2, y_test, y_pred)
+        r.get_metric(2, y_test, y_pred)
     else:
-        get_metric(3, y_test, y_pred)
+        r.get_metric(3, y_test, y_pred)
