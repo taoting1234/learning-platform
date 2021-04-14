@@ -17,10 +17,7 @@ class ResourceSession(Resource):
     def post(self):
         args = session_parser.parse_args()
         if current_app.config["TESTING"] is False:
-            if (
-                not args["captcha"]
-                or args["captcha"].lower() != session.get("captcha", "").lower()
-            ):
+            if not args["captcha"] or args["captcha"].lower() != session.get("captcha", "").lower():
                 session["captcha"] = ""
                 abort(400, message="Captcha wrong")
         user = User.get_by_username(args["username"])

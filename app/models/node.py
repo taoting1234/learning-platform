@@ -71,9 +71,7 @@ class Node(Base):
 
     @property
     def dictionary_path(self):
-        return "{}/{}/node/{}".format(
-            current_app.config["FILE_DIRECTORY"], self.project_id, self.id
-        )
+        return "{}/{}/node/{}".format(current_app.config["FILE_DIRECTORY"], self.project_id, self.id)
 
     def join_path(self, filename):
         return os.path.join(self.dictionary_path, filename)
@@ -88,9 +86,7 @@ class Node(Base):
     def create(cls, **kwargs):
         base = super().create(**kwargs)
         os.makedirs(
-            "{}/{}/node/{}".format(
-                current_app.config["FILE_DIRECTORY"], base.project_id, base.id
-            ),
+            "{}/{}/node/{}".format(current_app.config["FILE_DIRECTORY"], base.project_id, base.id),
             exist_ok=True,
         )
         return base
@@ -116,11 +112,7 @@ class Node(Base):
         input_type = 0
         for node in nodes:
             if input_type != node.input_type:
-                raise Exception(
-                    "Node{}({}) not support input type {}".format(
-                        node.id, node.node_type, input_type
-                    )
-                )
+                raise Exception("Node{}({}) not support input type {}".format(node.id, node.node_type, input_type))
             input_type = node.output_type
         if only_check:
             return  # pragma: no cover

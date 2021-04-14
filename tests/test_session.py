@@ -17,9 +17,7 @@ def test_session(client):
     # 验证码错误
     assert (
         "Captcha wrong"
-        in client.post(
-            "/session", data={"username": "123", "password": "123", "captcha": ""}
-        ).json["message"]
+        in client.post("/session", data={"username": "123", "password": "123", "captcha": ""}).json["message"]
     )
     # 获取验证码
     assert client.get("/captcha").status_code == 200

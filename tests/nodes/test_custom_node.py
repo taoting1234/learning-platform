@@ -74,9 +74,7 @@ def test_custom_node_1(client):
     # 运行
     node2.run()
     # 确认是否成功
-    assert client.get("/node/{}".format(node2.id)).json["input_shape"] == [
-        [[1000, 41], [1000, 1]]
-    ]
+    assert client.get("/node/{}".format(node2.id)).json["input_shape"] == [[[1000, 41], [1000, 1]]]
     assert client.get("/node/{}".format(node2.id)).json["output_shape"] == [
         [800, 41],
         [200, 41],

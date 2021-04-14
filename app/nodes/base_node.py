@@ -32,9 +32,7 @@ class BaseNode:
         # input size
         if self.__class__.__name__ != "CustomNode" and len(in_edges) != self.input_size:
             raise Exception(
-                "node-{}({}) only allow {} input_size".format(
-                    self.id, self.__class__.__name__, self.input_size
-                )
+                "node-{}({}) only allow {} input_size".format(self.id, self.__class__.__name__, self.input_size)
             )
         # extra
         for param in self.params:
@@ -50,9 +48,7 @@ class BaseNode:
 
     @property
     def user_dir(self):
-        return os.path.realpath(
-            "{}/{}/user".format(current_app.config["FILE_DIRECTORY"], self.project_id)
-        )
+        return os.path.realpath("{}/{}/user".format(current_app.config["FILE_DIRECTORY"], self.project_id))
 
     def join_path(self, filename, id_=None):
         return os.path.join(self.node_dir(id_), filename)
@@ -78,9 +74,7 @@ class BaseNode:
                 y_train = pd.read_csv(self.join_path("y_train.csv", in_edge))
                 y_test = pd.read_csv(self.join_path("y_test.csv", in_edge))
                 input_files.append([x_train, x_test, y_train, y_test])
-                self.input_shape.append(
-                    [x_train.shape, x_test.shape, y_train.shape, y_test.shape]
-                )
+                self.input_shape.append([x_train.shape, x_test.shape, y_train.shape, y_test.shape])
         with open(self.join_path("input_files.pickle"), "wb") as f:
             pickle.dump(input_files, f)
         with open(self.join_path("kwargs.pickle"), "wb") as f:
@@ -105,9 +99,7 @@ class BaseNode:
             user_code_dir = self.checked_params["directory"] + "/"  # 防止被覆盖
             volumes[user_code_dir] = {"bind": "/app/user_code", "mode": "ro"}
         client = docker.from_env()
-        container = client.containers.run(
-            detach=True, image="taoting/learning-platform-node", volumes=volumes
-        )
+        container = client.containers.run(detach=True, image="taoting/learning-platform-node", volumes=volumes)
         status = container.wait()
         print(container.logs().decode())
         container.remove()

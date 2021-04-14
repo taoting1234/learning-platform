@@ -60,9 +60,7 @@ def test_scaler_node(client):
     # 运行
     node3.run()
     # 确认是否成功
-    assert client.get("/node/{}".format(node3.id)).json["input_shape"] == [
-        [[40, 500], [10, 500], [40, 1], [10, 1]]
-    ]
+    assert client.get("/node/{}".format(node3.id)).json["input_shape"] == [[[40, 500], [10, 500], [40, 1], [10, 1]]]
     assert client.get("/node/{}".format(node3.id)).json["output_shape"] == [
         [40, 500],
         [10, 500],

@@ -1,9 +1,14 @@
 import datetime
 import os
+import pickle
 import random
 import string
 import sys
 import traceback
+from io import StringIO
+
+import pandas as pd
+import shap
 
 from app.libs.global_varible import g
 from app.models.node import Node
@@ -29,9 +34,7 @@ def run_nodes(nodes, testing, thread):
     if not testing or thread:
         from flask_app import create_app
 
-        app = create_app(
-            test=testing, file_directory=getattr(g, "file_directory", None)
-        )
+        app = create_app(test=testing, file_directory=getattr(g, "file_directory", None))
         app.app_context().push()
     fail_flag = False
     for node in nodes:
@@ -95,15 +98,9 @@ def get_files(path):
                     "name": filename,
                     "type": "file",
                     "size": os.path.getsize(filepath),
-                    "access_time": datetime.datetime.fromtimestamp(
-                        os.path.getatime(filepath)
-                    ),
-                    "create_time": datetime.datetime.fromtimestamp(
-                        os.path.getctime(filepath)
-                    ),
-                    "modify_time": datetime.datetime.fromtimestamp(
-                        os.path.getmtime(filepath)
-                    ),
+                    "access_time": datetime.datetime.fromtimestamp(os.path.getatime(filepath)),
+                    "create_time": datetime.datetime.fromtimestamp(os.path.getctime(filepath)),
+                    "modify_time": datetime.datetime.fromtimestamp(os.path.getmtime(filepath)),
                 }
             )
         elif os.path.isdir(filepath):
@@ -113,3 +110,52 @@ def get_files(path):
 
 def get_random_string(length):
     return "".join(random.sample(string.ascii_letters + string.digits, length))
+
+
+def split_csv(data):
+    data = data.split("\n")
+    header = data[0]
+    r = []
+    for i in data[1:]:
+        if i == "":
+            continue
+        r.append(header + "\n" + i)
+    return r
+
+
+def get_predict(node, type_, start, end):
+    if type_ == 1:
+        x = pd.read_csv(node.join_path("x_train.csv", node.in_edges[0]))
+    else:
+        x = pd.read_csv(node.join_path("x_test.csv", node.in_edges[0]))
+    x = x[start:end]
+    with open(node.join_path("x.model"), "rb") as f:
+        model = pickle.load(f)
+    y = model.predict(x, validate_features=False)
+    y = pd.DataFrame(y)
+    # x
+    s_io = StringIO()
+    x.to_csv(s_io, index=False)
+    input_data = split_csv(s_io.getvalue())
+    # y
+    s_io = StringIO()
+    y.to_csv(s_io, index=False)
+    output_data = split_csv(s_io.getvalue())
+    # shap
+    force_plot = []
+    explainer = shap.Explainer(model)
+    shap_values = explainer(x)
+    for i in range(x.shape[0]):
+        plot = shap.plots.force(shap_values[i], feature_names=x.columns)
+        s_io = StringIO()
+        shap.save_html(s_io, plot)
+        save_html = StringIO()
+        shap.save_html(save_html, plot)
+        force_plot.append(save_html.getvalue())
+    return {
+        "input_type": "csv",
+        "input_data": input_data,
+        "output_type": "csv",
+        "output_data": output_data,
+        "force_plot": force_plot,
+    }

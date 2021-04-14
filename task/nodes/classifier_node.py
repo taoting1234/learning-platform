@@ -1,4 +1,5 @@
 import importlib
+import pickle
 
 import numpy as np
 from lightgbm import LGBMClassifier
@@ -18,6 +19,7 @@ def run(input_files, **kwargs):
     y_test = y_test.reshape((-1,))
     model = globals()[kwargs["model"]](**kwargs["model_kwargs"])
     model.fit(x_train, y_train)
+    pickle.dump(model, open("/app/files/node/x.model", "wb"))
     y_pred = model.predict(x_test)
     r = importlib.import_module("helper")
     # 判断二分类还是多分类

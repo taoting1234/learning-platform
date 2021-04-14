@@ -39,8 +39,6 @@ class CustomNode(BaseNode):
         self.checked_params["directory"] = os.path.realpath(
             os.path.join(self.user_dir, self.checked_params["directory"])
         )
-        assert os.path.commonpath(
-            [self.user_dir, self.checked_params["directory"]]
-        ) == self.user_dir or os.path.exists(
+        assert os.path.commonpath([self.user_dir, self.checked_params["directory"]]) == self.user_dir or os.path.exists(
             self.checked_params["directory"]
         ), "directory not found！"

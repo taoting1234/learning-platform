@@ -47,3 +47,11 @@ node_description_field = {
 }
 
 nodes_description_field = {"data": fields.List(fields.Nested(node_description_field))}
+
+node_predict_field = {
+    "input_type": fields.String,
+    "output_type": fields.String,
+    "input_data": fields.List(fields.Raw),
+    "output_data": fields.List(fields.Raw),
+    "force_plot": fields.List(fields.Raw),
+}

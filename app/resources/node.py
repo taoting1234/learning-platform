@@ -1,3 +1,4 @@
+import os
 from io import StringIO
 
 import pandas as pd
@@ -5,13 +6,9 @@ from flask import current_app
 from flask_login import login_required
 from flask_restful import Resource, abort, marshal_with
 
-from app.fields.node import (
-    node_csv_field,
-    node_field,
-    nodes_description_field,
-    nodes_field,
-)
+from app.fields.node import node_csv_field, node_field, node_predict_field, nodes_description_field, nodes_field
 from app.libs.auth import self_only
+from app.libs.helper import change_node, get_predict
 from app.models.node import Node
 from app.nodes import node_mapping
 from app.parsers.node import (
@@ -20,6 +17,7 @@ from app.parsers.node import (
     node_edge_parser,
     node_list_parser,
     node_modify_parser,
+    node_predict_parser,
 )
 
 
@@ -74,10 +72,7 @@ class ResourceNodeEdge(Resource):
         node2 = Node.get_by_id(args["node2_id"])
         if node1 is None or node2 is None:
             abort(400, message="Node not found")
-        if (
-            node1.project_id != args["project_id"]
-            or node2.project_id != args["project_id"]
-        ):
+        if node1.project_id != args["project_id"] or node2.project_id != args["project_id"]:
             abort(403)
         out_edges = node1.out_edges
         in_edges = node2.in_edges
@@ -97,10 +92,7 @@ class ResourceNodeEdge(Resource):
         node2 = Node.get_by_id(args["node2_id"])
         if node1 is None or node2 is None:
             abort(400, message="Node not found")
-        if (
-            node1.project_id != args["project_id"]
-            or node2.project_id != args["project_id"]
-        ):
+        if node1.project_id != args["project_id"] or node2.project_id != args["project_id"]:
             abort(403)
         try:
             out_edges = node1.out_edges
@@ -159,3 +151,19 @@ class ResourceNodeDescription(Resource):
                 tmp[name] = getattr(v, name, None)
             res.append({"type": k, **tmp})
         return {"data": res}
+
+
+class ResourceNodePredict(Resource):
+    @login_required
+    @marshal_with(node_predict_field)
+    @self_only(Node)
+    def post(self, id_):
+        args = node_predict_parser.parse_args()
+        node = Node.get_by_id(id_)
+        if not os.path.exists(node.join_path("x.model")):
+            abort(400, message="Model not found!")
+        node = change_node(node)
+        page = args["page"] if args["page"] else 1
+        page_size = args["page_size"] if args["page_size"] else 20
+        data = get_predict(node, args["type"], (page - 1) * page_size, page * page_size)
+        return data
