@@ -10,6 +10,7 @@ from io import BytesIO, StringIO
 import matplotlib.pyplot as plt
 import pandas as pd
 import shap
+from flask import Response
 
 from app.libs.global_varible import g
 from app.models.node import Node
@@ -155,22 +156,29 @@ def get_predict(node, type_, start, end):
     }
 
 
-def get_force_plot(node, type_, data_id):
+def get_force_plot(node, type_, data_id, shap_type):
     if type_ == 1:
         x = pd.read_csv(node.join_path("x_train.csv", node.in_edges[0]))
     else:
         x = pd.read_csv(node.join_path("x_test.csv", node.in_edges[0]))
-    x = x[data_id : data_id + 1]
+    x = x[data_id - 1 : data_id]
     with open(node.join_path("x.model"), "rb") as f:
         model = pickle.load(f)
     explainer = shap.Explainer(model)
-    shap_values = explainer(x)
-    plot = shap.plots.force(shap_values[0], feature_names=x.columns)
-    s_io = StringIO()
-    shap.save_html(s_io, plot)
-    save_html = StringIO()
-    shap.save_html(save_html, plot)
-    return save_html.getvalue()
+    shap_values = explainer(x)[0]
+    if shap_type == 1:
+        plot = shap.plots.force(shap_values, feature_names=x.columns)
+        s_io = StringIO()
+        shap.save_html(s_io, plot)
+        save_html = StringIO()
+        shap.save_html(save_html, plot)
+        return Response(s_io.getvalue(), mimetype="text/html")
+    else:
+        shap.plots.waterfall(shap_values, show=False)
+        b_io = BytesIO()
+        plt.savefig(b_io)
+        plt.close()
+        return Response(b_io.getvalue(), mimetype="image/jpeg")
 
 
 def get_predict_analysis(node, type_, shap_type):
@@ -182,10 +190,19 @@ def get_predict_analysis(node, type_, shap_type):
         model = pickle.load(f)
     explainer = shap.Explainer(model)
     shap_values = explainer(x)
-    if shap_type == 1:
-        shap.plots.beeswarm(shap_values, show=False)
+    if shap_type in [1, 2]:
+        if shap_type == 1:
+            shap.plots.beeswarm(shap_values, show=False, plot_size=(25, 10))
+        else:
+            shap.plots.bar(shap_values, show=False)
+        b_io = BytesIO()
+        plt.savefig(b_io)
+        plt.close()
+        return Response(b_io.getvalue(), mimetype="image/jpeg")
     else:
-        shap.plots.bar(shap_values, show=False)
-    b_io = BytesIO()
-    plt.savefig(b_io)
-    return b_io.getvalue()
+        plot = shap.plots.force(explainer.expected_value, shap_values.values, shap_values.data, show=False)
+        s_io = StringIO()
+        shap.save_html(s_io, plot)
+        save_html = StringIO()
+        shap.save_html(save_html, plot)
+        return Response(s_io.getvalue(), mimetype="text/html")

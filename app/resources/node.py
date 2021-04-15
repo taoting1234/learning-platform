@@ -183,7 +183,7 @@ class ResourceNodePredictList(Resource):
             abort(400, message="Model not found!")
         node = change_node(node)
         data = get_predict_analysis(node, args["type"], args["shap_type"])
-        return Response(data, mimetype="image/jpeg")
+        return data
 
 
 class ResourceNodePredictAnalysis(Resource):
@@ -195,5 +195,5 @@ class ResourceNodePredictAnalysis(Resource):
         if not os.path.exists(node.join_path("x.model")):
             abort(400, message="Model not found!")
         node = change_node(node)
-        data = get_force_plot(node, args["type"], args["data_id"])
-        return Response(data, mimetype="text/html")
+        data = get_force_plot(node, args["type"], args["data_id"], args["shap_type"])
+        return data
