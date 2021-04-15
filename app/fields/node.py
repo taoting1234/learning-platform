@@ -1,5 +1,7 @@
 from flask_restful import fields
 
+from app.fields.search import meta_field
+
 node_field = {
     "id": fields.Integer,
     "project_id": fields.Integer,
@@ -48,10 +50,9 @@ node_description_field = {
 
 nodes_description_field = {"data": fields.List(fields.Nested(node_description_field))}
 
+node_predict_data_field = {"type": fields.String, "data": fields.List(fields.Raw)}
 node_predict_field = {
-    "input_type": fields.String,
-    "output_type": fields.String,
-    "input_data": fields.List(fields.Raw),
-    "output_data": fields.List(fields.Raw),
-    "force_plot": fields.List(fields.Raw),
+    "input": fields.List(fields.Nested(node_predict_data_field)),
+    "output": fields.List(fields.Nested(node_predict_data_field)),
+    "meta": fields.Nested(meta_field),
 }

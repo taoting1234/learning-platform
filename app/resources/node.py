@@ -2,13 +2,13 @@ import os
 from io import StringIO
 
 import pandas as pd
-from flask import current_app
+from flask import Response, current_app
 from flask_login import login_required
 from flask_restful import Resource, abort, marshal_with
 
 from app.fields.node import node_csv_field, node_field, node_predict_field, nodes_description_field, nodes_field
 from app.libs.auth import self_only
-from app.libs.helper import change_node, get_predict
+from app.libs.helper import change_node, get_force_plot, get_predict, get_predict_analysis
 from app.models.node import Node
 from app.nodes import node_mapping
 from app.parsers.node import (
@@ -17,6 +17,8 @@ from app.parsers.node import (
     node_edge_parser,
     node_list_parser,
     node_modify_parser,
+    node_predict_analysis_parser,
+    node_predict_list_parser,
     node_predict_parser,
 )
 
@@ -157,7 +159,7 @@ class ResourceNodePredict(Resource):
     @login_required
     @marshal_with(node_predict_field)
     @self_only(Node)
-    def post(self, id_):
+    def get(self, id_):
         args = node_predict_parser.parse_args()
         node = Node.get_by_id(id_)
         if not os.path.exists(node.join_path("x.model")):
@@ -166,4 +168,32 @@ class ResourceNodePredict(Resource):
         page = args["page"] if args["page"] else 1
         page_size = args["page_size"] if args["page_size"] else 20
         data = get_predict(node, args["type"], (page - 1) * page_size, page * page_size)
+        data["meta"]["page"] = page
+        data["meta"]["page_size"] = page_size
         return data
+
+
+class ResourceNodePredictList(Resource):
+    @login_required
+    @self_only(Node)
+    def get(self, id_):
+        args = node_predict_list_parser.parse_args()
+        node = Node.get_by_id(id_)
+        if not os.path.exists(node.join_path("x.model")):
+            abort(400, message="Model not found!")
+        node = change_node(node)
+        data = get_predict_analysis(node, args["type"], args["shap_type"])
+        return Response(data, mimetype="image/jpeg")
+
+
+class ResourceNodePredictAnalysis(Resource):
+    @login_required
+    @self_only(Node)
+    def get(self, id_):
+        args = node_predict_analysis_parser.parse_args()
+        node = Node.get_by_id(id_)
+        if not os.path.exists(node.join_path("x.model")):
+            abort(400, message="Model not found!")
+        node = change_node(node)
+        data = get_force_plot(node, args["type"], args["data_id"])
+        return Response(data, mimetype="text/html")

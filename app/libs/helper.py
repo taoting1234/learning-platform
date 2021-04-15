@@ -5,8 +5,9 @@ import random
 import string
 import sys
 import traceback
-from io import StringIO
+from io import BytesIO, StringIO
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import shap
 
@@ -128,6 +129,7 @@ def get_predict(node, type_, start, end):
         x = pd.read_csv(node.join_path("x_train.csv", node.in_edges[0]))
     else:
         x = pd.read_csv(node.join_path("x_test.csv", node.in_edges[0]))
+    count = x.shape[0]
     x = x[start:end]
     with open(node.join_path("x.model"), "rb") as f:
         model = pickle.load(f)
@@ -141,21 +143,49 @@ def get_predict(node, type_, start, end):
     s_io = StringIO()
     y.to_csv(s_io, index=False)
     output_data = split_csv(s_io.getvalue())
-    # shap
-    force_plot = []
+    return {
+        "input": [
+            {
+                "type": "csv",
+                "data": input_data,
+            },
+        ],
+        "output": [{"type": "csv", "data": output_data}],
+        "meta": {"count": count},
+    }
+
+
+def get_force_plot(node, type_, data_id):
+    if type_ == 1:
+        x = pd.read_csv(node.join_path("x_train.csv", node.in_edges[0]))
+    else:
+        x = pd.read_csv(node.join_path("x_test.csv", node.in_edges[0]))
+    x = x[data_id : data_id + 1]
+    with open(node.join_path("x.model"), "rb") as f:
+        model = pickle.load(f)
     explainer = shap.Explainer(model)
     shap_values = explainer(x)
-    for i in range(x.shape[0]):
-        plot = shap.plots.force(shap_values[i], feature_names=x.columns)
-        s_io = StringIO()
-        shap.save_html(s_io, plot)
-        save_html = StringIO()
-        shap.save_html(save_html, plot)
-        force_plot.append(save_html.getvalue())
-    return {
-        "input_type": "csv",
-        "input_data": input_data,
-        "output_type": "csv",
-        "output_data": output_data,
-        "force_plot": force_plot,
-    }
+    plot = shap.plots.force(shap_values[0], feature_names=x.columns)
+    s_io = StringIO()
+    shap.save_html(s_io, plot)
+    save_html = StringIO()
+    shap.save_html(save_html, plot)
+    return save_html.getvalue()
+
+
+def get_predict_analysis(node, type_, shap_type):
+    if type_ == 1:
+        x = pd.read_csv(node.join_path("x_train.csv", node.in_edges[0]))
+    else:
+        x = pd.read_csv(node.join_path("x_test.csv", node.in_edges[0]))
+    with open(node.join_path("x.model"), "rb") as f:
+        model = pickle.load(f)
+    explainer = shap.Explainer(model)
+    shap_values = explainer(x)
+    if shap_type == 1:
+        shap.plots.beeswarm(shap_values, show=False)
+    else:
+        shap.plots.bar(shap_values, show=False)
+    b_io = BytesIO()
+    plt.savefig(b_io)
+    return b_io.getvalue()

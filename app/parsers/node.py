@@ -36,3 +36,11 @@ node_csv_parser.add_argument("summary", type=bool)
 
 node_predict_parser = search_parser.copy()
 node_predict_parser.add_argument("type", type=int, required=True)
+
+node_predict_list_parser = reqparse.RequestParser()
+node_predict_list_parser.add_argument("type", type=int, required=True)
+node_predict_list_parser.add_argument("shap_type", type=int, required=True)
+
+node_predict_analysis_parser = reqparse.RequestParser()
+node_predict_analysis_parser.add_argument("type", type=int, required=True)
+node_predict_analysis_parser.add_argument("data_id", type=int, required=True)

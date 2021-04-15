@@ -14,6 +14,8 @@ from app.resources.node import (
     ResourceNodeEdge,
     ResourceNodeList,
     ResourceNodePredict,
+    ResourceNodePredictAnalysis,
+    ResourceNodePredictList,
     ResourceNodeRun,
 )
 from app.resources.project import ResourceProject, ResourceProjectList, ResourceProjectRun
@@ -89,6 +91,8 @@ def register_resource(app_):
     api.add_resource(ResourceNodeRun, "/node/<int:id_>/run")
     api.add_resource(ResourceNodeCSV, "/node/<int:id_>/csv")
     api.add_resource(ResourceNodePredict, "/node/<int:id_>/predict")
+    api.add_resource(ResourceNodePredictList, "/node/<int:id_>/predict/list")
+    api.add_resource(ResourceNodePredictAnalysis, "/node/<int:id_>/predict/analysis")
     api.add_resource(ResourceNodeDescription, "/node/description")
     api.add_resource(ResourceUserNode, "/user_node/<int:id_>")
     api.add_resource(ResourceUserNodeList, "/user_node")
