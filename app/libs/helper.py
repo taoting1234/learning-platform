@@ -4,6 +4,7 @@ import pickle
 import random
 import string
 import sys
+import time
 import traceback
 from io import BytesIO, StringIO
 
@@ -156,7 +157,11 @@ def get_predict(node, type_, start, end):
     }
 
 
+is_used = False
+
+
 def get_force_plot(node, type_, data_id, shap_type):
+    global is_used
     if type_ == 1:
         x = pd.read_csv(node.join_path("x_train.csv", node.in_edges[0]))
     else:
@@ -174,14 +179,19 @@ def get_force_plot(node, type_, data_id, shap_type):
         shap.save_html(save_html, plot)
         return Response(s_io.getvalue(), mimetype="text/html")
     else:
+        while is_used:
+            time.sleep(0.01)
+        is_used = True
         shap.plots.waterfall(shap_values, show=False)
         b_io = BytesIO()
         plt.savefig(b_io)
         plt.close()
+        is_used = False
         return Response(b_io.getvalue(), mimetype="image/jpeg")
 
 
 def get_predict_analysis(node, type_, shap_type):
+    global is_used
     if type_ == 1:
         x = pd.read_csv(node.join_path("x_train.csv", node.in_edges[0]))
     else:
@@ -191,6 +201,9 @@ def get_predict_analysis(node, type_, shap_type):
     explainer = shap.Explainer(model)
     shap_values = explainer(x)
     if shap_type in [1, 2]:
+        while is_used:
+            time.sleep(0.01)
+        is_used = True
         if shap_type == 1:
             shap.plots.beeswarm(shap_values, show=False, plot_size=(25, 10))
         else:
@@ -198,9 +211,16 @@ def get_predict_analysis(node, type_, shap_type):
         b_io = BytesIO()
         plt.savefig(b_io)
         plt.close()
+        is_used = False
         return Response(b_io.getvalue(), mimetype="image/jpeg")
     else:
-        plot = shap.plots.force(explainer.expected_value, shap_values.values, shap_values.data, show=False)
+        plot = shap.plots.force(
+            explainer.expected_value,
+            shap_values=shap_values.values,
+            features=shap_values.data,
+            feature_names=x.columns,
+            show=False,
+        )
         s_io = StringIO()
         shap.save_html(s_io, plot)
         save_html = StringIO()
