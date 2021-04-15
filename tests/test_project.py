@@ -36,17 +36,11 @@ def test_create(client):
     User.create(username="user1", password="123")
     Project.create(user_id=1, name="project1")
     # 创建失败（未登录）
-    assert (
-        client.post("/project", data={"name": "project", "tag": "123"}).status_code
-        == 401
-    )
+    assert client.post("/project", data={"name": "project", "tag": "123"}).status_code == 401
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 创建失败（重名）
-    assert (
-        client.post("/project", data={"name": "project1", "tag": "123"}).status_code
-        == 400
-    )
+    assert client.post("/project", data={"name": "project1", "tag": "123"}).status_code == 400
     # 创建成功
     res = client.post("/project", data={"name": "project", "tag": "123"})
     assert res.status_code == 201
@@ -61,27 +55,15 @@ def test_modify(client):
     Project.create(user_id=1, name="project2")
     Project.create(user_id=2, name="project3")
     # 修改失败（未登录）
-    assert (
-        client.put("/project/1", data={"name": "project3", "tag": "123"}).status_code
-        == 401
-    )
+    assert client.put("/project/1", data={"name": "project3", "tag": "123"}).status_code == 401
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 修改失败（项目不存在）
-    assert (
-        client.put("/project/-1", data={"name": "project3", "tag": "123"}).status_code
-        == 404
-    )
+    assert client.put("/project/-1", data={"name": "project3", "tag": "123"}).status_code == 404
     # 修改失败（项目不属于你）
-    assert (
-        client.put("/project/3", data={"name": "project3", "tag": "123"}).status_code
-        == 403
-    )
+    assert client.put("/project/3", data={"name": "project3", "tag": "123"}).status_code == 403
     # 修改成功
-    assert (
-        client.put("/project/1", data={"name": "project3", "tag": "123"}).status_code
-        == 200
-    )
+    assert client.put("/project/1", data={"name": "project3", "tag": "123"}).status_code == 200
     assert client.get("/project/1").json["name"] == "project3"
 
 
@@ -91,24 +73,13 @@ def test_delete(client):
     Project.create(user_id=1, name="project1")
     Project.create(user_id=2, name="project2")
     # 删除失败（未登录）
-    assert (
-        client.delete("/project/1", data={"name": "project3", "tag": "123"}).status_code
-        == 401
-    )
+    assert client.delete("/project/1", data={"name": "project3", "tag": "123"}).status_code == 401
     # 登录
     client.post("/session", data={"username": "user1", "password": "123"})
     # 删除失败（项目不存在）
-    assert (
-        client.delete(
-            "/project/10", data={"name": "project3", "tag": "123"}
-        ).status_code
-        == 404
-    )
+    assert client.delete("/project/10", data={"name": "project3", "tag": "123"}).status_code == 404
     # 删除失败（项目不属于你）
-    assert (
-        client.delete("/project/2", data={"name": "project3", "tag": "123"}).status_code
-        == 403
-    )
+    assert client.delete("/project/2", data={"name": "project3", "tag": "123"}).status_code == 403
     # 删除成功
     assert client.delete("/project/1").status_code == 204
     assert client.get("/project/1").status_code == 404
@@ -129,23 +100,16 @@ def test_run(client):
     client.post("/node", data={"project_id": project.id, "node_type": "input_node"})
     client.post("/node", data={"project_id": project.id, "node_type": "input_node"})
     current_app.config["TESTING"] = False
-    assert (
-        "Project has multiple graph"
-        in client.post("/project/{}/run".format(project.id)).json["message"]
-    )
+    assert "Project has multiple graph" in client.post("/project/{}/run".format(project.id)).json["message"]
     current_app.config["TESTING"] = True
     # 运行失败（项目有环）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
     project_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "input_node"})
     assert res.status_code == 201
     node1_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "input_node"})
     assert res.status_code == 201
     node2_id = res.json["id"]
     assert (
@@ -163,28 +127,19 @@ def test_run(client):
         == 201
     )
     current_app.config["TESTING"] = False
-    assert (
-        "Graph have cycle"
-        in client.post("/project/{}/run".format(project_id)).json["message"]
-    )
+    assert "Graph have cycle" in client.post("/project/{}/run".format(project_id)).json["message"]
     current_app.config["TESTING"] = True
     # 运行失败（项目部分有环）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
     project_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "input_node"})
     assert res.status_code == 201
     node1_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "input_node"})
     assert res.status_code == 201
     node2_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "input_node"})
     assert res.status_code == 201
     node3_id = res.json["id"]
     assert (
@@ -209,14 +164,8 @@ def test_run(client):
         == 201
     )
     current_app.config["TESTING"] = False
-    assert (
-        "Graph have cycle"
-        in client.post("/project/{}/run".format(project_id)).json["message"]
-    )
-    assert (
-        "Graph have cycle"
-        in client.post("/node/{}/run".format(node3_id)).json["message"]
-    )
+    assert "Graph have cycle" in client.post("/project/{}/run".format(project_id)).json["message"]
+    assert "Graph have cycle" in client.post("/node/{}/run".format(node3_id)).json["message"]
     current_app.config["TESTING"] = True
     # 运行失败（项目有无效节点）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
@@ -233,24 +182,17 @@ def test_run(client):
         == 200
     )
     current_app.config["TESTING"] = False
-    assert (
-        "not support"
-        in client.post("/project/{}/run".format(project_id)).json["message"]
-    )
+    assert "not support" in client.post("/project/{}/run".format(project_id)).json["message"]
     assert "not support" in client.post("/node/{}/run".format(node_id)).json["message"]
     current_app.config["TESTING"] = True
     # 运行失败（输入数量错误）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
     project_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "split_input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "split_input_node"})
     assert res.status_code == 201
     node1_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "regressor_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "regressor_node"})
     assert res.status_code == 201
     node2_id = res.json["id"]
     assert client.post(
@@ -285,28 +227,19 @@ def test_run(client):
         == 200
     )
     current_app.config["TESTING"] = False
-    assert (
-        "not support input"
-        in client.post("/project/{}/run".format(project_id)).json["message"]
-    )
+    assert "not support input" in client.post("/project/{}/run".format(project_id)).json["message"]
     current_app.config["TESTING"] = True
     # 运行失败（输入节点错误）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
     project_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "split_input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "split_input_node"})
     assert res.status_code == 201
     node1_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "split_input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "split_input_node"})
     assert res.status_code == 201
     node2_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "regressor_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "regressor_node"})
     assert res.status_code == 201
     node3_id = res.json["id"]
     assert client.post(
@@ -360,18 +293,13 @@ def test_run(client):
         == 200
     )
     current_app.config["TESTING"] = False
-    assert (
-        "only allow"
-        in client.post("/project/{}/run".format(project_id)).json["message"]
-    )
+    assert "only allow" in client.post("/project/{}/run".format(project_id)).json["message"]
     current_app.config["TESTING"] = True
     # 运行成功（运行节点报错）
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
     project_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "input_node"})
     assert res.status_code == 201
     node_id = res.json["id"]
     assert (
@@ -388,9 +316,7 @@ def test_run(client):
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
     project_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "split_input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "split_input_node"})
     assert res.status_code == 201
     node_id = res.json["id"]
     with open(pkg_resources.resource_filename("tests.files", "x1.csv"), "rb") as f:

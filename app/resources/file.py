@@ -23,11 +23,7 @@ class ResourceFile(Resource):
     @self_only(None, file_list_parser)
     def get(self):
         args = file_list_parser.parse_args()
-        root_dir = os.path.realpath(
-            "{}/{}/user".format(
-                current_app.config["FILE_DIRECTORY"], args["project_id"]
-            )
-        )
+        root_dir = os.path.realpath("{}/{}/user".format(current_app.config["FILE_DIRECTORY"], args["project_id"]))
         file_dir = os.path.realpath(os.path.join(root_dir, args["dir"]))
         if os.path.commonpath([root_dir, file_dir]) != root_dir:
             abort(400, message="Path not belong you")
@@ -42,11 +38,7 @@ class ResourceFile(Resource):
     @self_only(None, file_create_parser)
     def post(self):
         args = file_create_parser.parse_args()
-        root_dir = os.path.realpath(
-            "{}/{}/user".format(
-                current_app.config["FILE_DIRECTORY"], args["project_id"]
-            )
-        )
+        root_dir = os.path.realpath("{}/{}/user".format(current_app.config["FILE_DIRECTORY"], args["project_id"]))
         file = args["file"]
         filename = file.filename.split("/")[-1]
         filepath = os.path.realpath(os.path.join(root_dir, args["dir"], filename))
@@ -60,11 +52,7 @@ class ResourceFile(Resource):
     @self_only(None, file_modify_parser)
     def put(self):
         args = file_modify_parser.parse_args()
-        root_dir = os.path.realpath(
-            "{}/{}/user".format(
-                current_app.config["FILE_DIRECTORY"], args["project_id"]
-            )
-        )
+        root_dir = os.path.realpath("{}/{}/user".format(current_app.config["FILE_DIRECTORY"], args["project_id"]))
         old_filepath = os.path.realpath(os.path.join(root_dir, args["old_filename"]))
         new_filepath = os.path.realpath(os.path.join(root_dir, args["new_filename"]))
         if (
@@ -84,11 +72,7 @@ class ResourceFile(Resource):
     @self_only(None, file_delete_parser)
     def delete(self):
         args = file_delete_parser.parse_args()
-        root_dir = os.path.realpath(
-            "{}/{}/user".format(
-                current_app.config["FILE_DIRECTORY"], args["project_id"]
-            )
-        )
+        root_dir = os.path.realpath("{}/{}/user".format(current_app.config["FILE_DIRECTORY"], args["project_id"]))
         filepath = os.path.realpath(os.path.join(root_dir, args["filename"]))
         if os.path.commonpath([root_dir, filepath]) != root_dir:
             abort(400, message="Path not belong you")
@@ -105,11 +89,7 @@ class ResourceFileDirectory(Resource):
     @self_only(None, file_directory_parser)
     def post(self):
         args = file_list_parser.parse_args()
-        root_dir = os.path.realpath(
-            "{}/{}/user".format(
-                current_app.config["FILE_DIRECTORY"], args["project_id"]
-            )
-        )
+        root_dir = os.path.realpath("{}/{}/user".format(current_app.config["FILE_DIRECTORY"], args["project_id"]))
         file_dir = os.path.realpath(os.path.join(root_dir, args["dir"]))
         if os.path.commonpath([root_dir, file_dir]) != root_dir:
             abort(400, message="Path not belong you")
@@ -122,11 +102,7 @@ class ResourceFileDirectory(Resource):
     @self_only(None, file_directory_parser)
     def delete(self):
         args = file_list_parser.parse_args()
-        root_dir = os.path.realpath(
-            "{}/{}/user".format(
-                current_app.config["FILE_DIRECTORY"], args["project_id"]
-            )
-        )
+        root_dir = os.path.realpath("{}/{}/user".format(current_app.config["FILE_DIRECTORY"], args["project_id"]))
         file_dir = os.path.realpath(os.path.join(root_dir, args["dir"]))
         if root_dir == file_dir:
             abort(400, message="Path is root directory")
@@ -145,11 +121,7 @@ class ResourceFileDownload(Resource):
     @self_only(None, file_delete_parser)
     def get(self):
         args = file_delete_parser.parse_args()
-        root_dir = os.path.realpath(
-            "{}/{}/user".format(
-                current_app.config["FILE_DIRECTORY"], args["project_id"]
-            )
-        )
+        root_dir = os.path.realpath("{}/{}/user".format(current_app.config["FILE_DIRECTORY"], args["project_id"]))
         filepath = os.path.realpath(os.path.join(root_dir, args["filename"]))
         if os.path.commonpath([root_dir, filepath]) != root_dir:
             abort(400, message="Path not belong you")

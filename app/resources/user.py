@@ -6,11 +6,7 @@ from app.fields.user import user_field, user_search_field
 from app.libs.auth import self_only
 from app.models.invitation_code import InvitationCode
 from app.models.user import User
-from app.parsers.user import (
-    user_modify_parser,
-    user_register_parser,
-    user_search_parser,
-)
+from app.parsers.user import user_modify_parser, user_register_parser, user_search_parser
 
 
 class ResourceUser(Resource):
@@ -29,11 +25,7 @@ class ResourceUser(Resource):
             abort(403)
         user = User.get_by_id(id_)
         args = user_modify_parser.parse_args()
-        if (
-            not current_user.permission
-            and args["password"]
-            and user.check_password(args["old_password"]) is not True
-        ):
+        if not current_user.permission and args["password"] and user.check_password(args["old_password"]) is not True:
             abort(400, message="Old password Wrong")
         if not current_user.permission and (args["block"] or args["permission"]):
             abort(403)
@@ -54,10 +46,7 @@ class ResourceUserList(Resource):
     def post(self):
         args = user_register_parser.parse_args()
         if current_app.config["TESTING"] is False:
-            if (
-                not args["captcha"]
-                or args["captcha"].lower() != session.get("captcha", "").lower()
-            ):
+            if not args["captcha"] or args["captcha"].lower() != session.get("captcha", "").lower():
                 session["captcha"] = ""
                 abort(400, message="Captcha wrong")
         user = User.get_by_username(args["username"])

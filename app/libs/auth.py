@@ -14,25 +14,16 @@ def self_only(model, parser=None):
             if kwargs.__contains__("id_"):
                 base = model.get_by_id(kwargs["id_"])
                 if base is None:
-                    abort(
-                        404, message="{} not found".format(model.__tablename__.title())
-                    )
+                    abort(404, message="{} not found".format(model.__tablename__.title()))
                 if isinstance(base, User):
-                    if (
-                        current_user.permission != 1
-                        and kwargs["id_"] != current_user.id
-                    ):
+                    if current_user.permission != 1 and kwargs["id_"] != current_user.id:
                         abort(403)
                 project = None
                 if isinstance(base, Project):
                     project = base
                 if getattr(base, "project_id", None):
                     project = Project.get_by_id(base.project_id)
-                if (
-                    project
-                    and current_user.permission != 1
-                    and project.user_id != current_user.id
-                ):
+                if project and current_user.permission != 1 and project.user_id != current_user.id:
                     abort(403)
             if parser:
                 parser_args = parser.parse_args()
@@ -40,10 +31,7 @@ def self_only(model, parser=None):
                     project = Project.get_by_id(parser_args["project_id"])
                     if project is None:
                         abort(404, message="Project not found")
-                    if (
-                        current_user.permission != 1
-                        and project.user_id != current_user.id
-                    ):
+                    if current_user.permission != 1 and project.user_id != current_user.id:
                         abort(403)
                 # 非管理员禁止搜索用户
                 if current_user.permission != 1 and model and issubclass(User, model):

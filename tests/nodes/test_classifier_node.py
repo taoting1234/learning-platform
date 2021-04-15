@@ -63,13 +63,9 @@ def test_classifier_node_2(client):  # 多分类
     # 创建项目
     project = Project.create(name=str(random.random()), tag="", user_id=1)
     # 上传文件
-    with open(
-        pkg_resources.resource_filename("tests.files", "cancer_x.csv"), "rb"
-    ) as f:
+    with open(pkg_resources.resource_filename("tests.files", "cancer_x.csv"), "rb") as f:
         client.post("/file", data={"file": f, "project_id": project.id, "dir": "/"})
-    with open(
-        pkg_resources.resource_filename("tests.files", "cancer_y.csv"), "rb"
-    ) as f:
+    with open(pkg_resources.resource_filename("tests.files", "cancer_y.csv"), "rb") as f:
         client.post("/file", data={"file": f, "project_id": project.id, "dir": "/"})
     # 创建节点
     node1 = Node.create(

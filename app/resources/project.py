@@ -5,11 +5,7 @@ from flask_restful import Resource, abort, marshal_with
 from app.fields.project import project_field, project_search_field
 from app.libs.auth import self_only
 from app.models.project import Project
-from app.parsers.project import (
-    project_create_parser,
-    project_modify_parser,
-    project_search_parser,
-)
+from app.parsers.project import project_create_parser, project_modify_parser, project_search_parser
 
 
 class ResourceProject(Resource):

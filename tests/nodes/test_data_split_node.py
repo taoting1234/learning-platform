@@ -16,14 +16,10 @@ def test_data_split_node(client):
     res = client.post("/project", data={"name": str(random.random()), "tag": "test"})
     assert res.status_code == 201
     project_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "split_input_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "split_input_node"})
     assert res.status_code == 201
     node1_id = res.json["id"]
-    res = client.post(
-        "/node", data={"project_id": project_id, "node_type": "data_split_node"}
-    )
+    res = client.post("/node", data={"project_id": project_id, "node_type": "data_split_node"})
     assert res.status_code == 201
     node2_id = res.json["id"]
     with open(pkg_resources.resource_filename("tests.files", "x1.csv"), "rb") as f:
@@ -71,22 +67,10 @@ def test_data_split_node(client):
         [10, 1],
     ]
     assert os.path.exists(
-        "{}/{}/node/{}/x_train.csv".format(
-            current_app.config["FILE_DIRECTORY"], project_id, node2_id
-        )
+        "{}/{}/node/{}/x_train.csv".format(current_app.config["FILE_DIRECTORY"], project_id, node2_id)
     )
+    assert os.path.exists("{}/{}/node/{}/x_test.csv".format(current_app.config["FILE_DIRECTORY"], project_id, node2_id))
     assert os.path.exists(
-        "{}/{}/node/{}/x_test.csv".format(
-            current_app.config["FILE_DIRECTORY"], project_id, node2_id
-        )
+        "{}/{}/node/{}/y_train.csv".format(current_app.config["FILE_DIRECTORY"], project_id, node2_id)
     )
-    assert os.path.exists(
-        "{}/{}/node/{}/y_train.csv".format(
-            current_app.config["FILE_DIRECTORY"], project_id, node2_id
-        )
-    )
-    assert os.path.exists(
-        "{}/{}/node/{}/y_test.csv".format(
-            current_app.config["FILE_DIRECTORY"], project_id, node2_id
-        )
-    )
+    assert os.path.exists("{}/{}/node/{}/y_test.csv".format(current_app.config["FILE_DIRECTORY"], project_id, node2_id))
