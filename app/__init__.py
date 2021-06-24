@@ -5,6 +5,7 @@ from flask_restful import Api, abort
 
 from app.models.base import db
 from app.resources.captcha import ResourceCaptcha
+from app.resources.configuration import ResourceConfiguration, ResourceConfigurationLanguage
 from app.resources.file import ResourceFile, ResourceFileDirectory, ResourceFileDownload
 from app.resources.invitation_code import ResourceInvitationCode, ResourceInvitationCodeList
 from app.resources.node import (
@@ -73,6 +74,8 @@ def register_plugin(app_):
 
 def register_resource(app_):
     api = Api(catch_all_404s=True)
+    api.add_resource(ResourceConfiguration, "/configuration")
+    api.add_resource(ResourceConfigurationLanguage, "/configuration/language")
     api.add_resource(ResourceSession, "/session")
     api.add_resource(ResourceCaptcha, "/captcha")
     api.add_resource(ResourceInvitationCode, "/invitation_code/<int:id_>")
