@@ -16,7 +16,7 @@ class ResourceSession(Resource):
     @marshal_with(user_field)
     def post(self):
         args = session_parser.parse_args()
-        if current_app.config["TESTING"] is False:
+        if not current_app.config["TESTING"] and not current_app.config["DEBUG"]:
             if not args["captcha"] or args["captcha"].lower() != session.get("captcha", "").lower():
                 session["captcha"] = ""
                 abort(400, message="Captcha wrong")
