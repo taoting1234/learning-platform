@@ -27,4 +27,4 @@ jobs:
         env:
           COMPLETE_TEST: true
       - name: Report Coverage
-        uses: codecov/codecov-action@v1.3.2
+        uses: codecov/codecov-action@v4.1.1
